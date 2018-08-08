@@ -9,9 +9,9 @@ maven-build:
   stage: test
   script: 
     - mvn clean package sonar:sonar -Dsonar.host.url=http://sonar.gft.com -Dsonar.jacoco.reportPaths=target/jacoco.exec
-  compile:    
-    stage: build    
-    only: [tags]    
-    script:        
-    - echo Working...    
-    tags: [bench-pl-01] 
+compile:    
+  stage: build    
+  only: [tags]    
+  script:        
+  - echo Working...    
+  tags: [bench-pl-01] 
