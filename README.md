@@ -1,6 +1,6 @@
 [![Quality Gate](http://sonar.gft.com/api/badges/gate?key=devman-generator:devman-generator)](http://sonar.gft.com/dashboard/index/devman-generator)
 
-[![Quality Gate](http://sonar.gft.com/api/badges/measure?key=devman-generator:devman-generator&metric=coverage)](http://sonar.gft.com/dashboard/index/devman-generator)
+[![Quality Gate](http://sonar.gft.com/api/badges/measure?key=devman-generator:devman-generator&metric=coverage)](http://sonar.gft.com/dashboard/index/devman-generator:devman-generator)
 
 [![Quality Gate](http://sonar.gft.com/api/badges/measure?key=devman-generator:devman-generator&metric=ncloc)](http://sonar.gft.com/dashboard/index/devman-generator)
 [![Quality Gate](http://sonar.gft.com/api/badges/measure?key=devman-generator:devman-generator&metric=bugs)](http://sonar.gft.com/dashboard/index/devman-generator)
