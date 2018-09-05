@@ -8,14 +8,31 @@ public class Mentee {
     private int level;
     Family family;
     private Mentor devman;
-    private List<Mentor> mtrCandidates;
+    private boolean isDev;
 
-    List<Mentor> getMentors(List<Mentor> mentorList, Mentee mnt) {
-        ArrayList<Mentor> candidates = new ArrayList<>();
+    public boolean checkIfDev() {
+        switch (family) {
+            case DIGITAL:
+                return isDev = true;
+            case DEVELOPMENT:
+                return isDev = true;
+            case ARCHITECTURE:
+                return isDev = true;
+            case DATA:
+                return isDev = true;
+            default:
+                return false;
+        }
+    }
+
+    protected List<Mentor> getMentors(List<Mentor> mentorList) {
+        List<Mentor> candidates = new ArrayList<>();
         for (Mentor mtr : mentorList
                 ) {
-            if (mnt.family.toString().equalsIgnoreCase(String.valueOf(mtr.family))) {
-                candidates.add(mtr);
+            if (family.toString().equalsIgnoreCase(String.valueOf(mtr.family))) {
+                candidates.add((Mentor) mtr.clone());
+            } else if (checkIfDev() && mtr.checkIfDev()) {
+                candidates.add((Mentor) mtr.clone());
             }
         }
         return candidates;
@@ -27,12 +44,12 @@ public class Mentee {
         this.level = level;
     }
 
-    public Mentor getDevman() {
-        return devman;
+    public long getId() {
+        return id;
     }
 
-    public void setDevman(Mentor devman) {
-        this.devman = devman;
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

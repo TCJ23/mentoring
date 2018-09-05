@@ -8,7 +8,37 @@ public class Mentor {
     private int level;
     private int rating;
     Family family;
-    private List<Mentee> mentees;
+    private boolean isDev;
+
+    public boolean checkIfDev() {
+        switch (family) {
+            case DIGITAL:
+                return isDev = true;
+            case DEVELOPMENT:
+                return isDev = true;
+            case ARCHITECTURE:
+                return isDev = true;
+            case DATA:
+                return isDev = true;
+            default:
+                return false;
+        }
+    }
+
+    protected List<Mentee> getMentees(List<Mentee> menteeList) {
+      /*  return mentees.stream().
+                map(mentee -> (Mentee)mentee.clone()).collect(Collectors.toList());*/
+        List<Mentee> mentosy = new ArrayList<>();
+        for (Mentee mnt : menteeList
+                ) {
+            if (family.toString().equalsIgnoreCase(String.valueOf(mnt.family))) {
+                mentosy.add((Mentee) mnt.clone());
+            } else if (checkIfDev() && mnt.checkIfDev()) {
+                mentosy.add((Mentee) mnt.clone());
+            }
+        }
+        return mentosy;
+    }
 
     public Mentor(long id, int level, int rating, gft.mentoring.matching.Family family) {
         this.id = id;
@@ -17,19 +47,12 @@ public class Mentor {
         this.family = family;
     }
 
-    public List<Mentee> getMentees() {
-      /*  return mentees.stream().
-                map(mentee -> (Mentee)mentee.clone()).collect(Collectors.toList());*/
-        List<Mentee> myMnts = new ArrayList<>();
-        for (Mentee mnt : this.mentees
-                ) {
-            myMnts.add((Mentee) mnt.clone());
-        }
-        return myMnts;
+    public long getId() {
+        return id;
     }
 
-    public void setMentees(List<Mentee> mentees) {
-        this.mentees = mentees;
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
