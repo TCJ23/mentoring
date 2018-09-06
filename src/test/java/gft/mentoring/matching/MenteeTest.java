@@ -12,7 +12,8 @@ public class MenteeTest {
     //Given
     private static List<Mentee> menteeList;
     private static List<Mentor> mentorList;
-    private static int countMtr = 0;
+    private static int countDevMtr = 0;
+    private static int countNoneDevMtr = 0;
 
 
     //Given
@@ -21,16 +22,40 @@ public class MenteeTest {
         MenteeTest menteeTest = new MenteeTest();
         menteeTest.setMentorList();
         menteeTest.setMenteeList();
-        menteeTest.countDevFamMtr();
+        menteeTest.countFamilyMentors();
     }
 
     //When
     @Test
-    public void getMentorsForDevelopmentMenteeShouldFind4() {
+    public void getMentorsForDevelopmentMentorsShouldFind4() {
         int mentorsNumber = menteeList.get(0).getMentors(mentorList).size();
         //Then
-        assertEquals(countMtr, mentorsNumber);
+        assertEquals(countDevMtr, mentorsNumber);
         System.out.println("In our data set we have 4 potential mentors for any mentee from Development Family");
+    }
+
+    @Test
+    public void getAllDevelopmentMentorsForDevMentees() {
+        for (Mentee mnt : menteeList
+                ) {
+            if (mnt.checkIfDev()) {
+                int mentorsAmount = mnt.getMentors(mentorList).size();
+                assertEquals(countDevMtr, mentorsAmount);
+            }
+        }
+        System.out.println("We should find 4 mentors that are part of Development Family.");
+    }
+
+    @Test
+    public void getAllNoneDevelopmentMentorsForNoneDevMentees() {
+        for (Mentee mnt : menteeList
+                ) {
+            if (!mnt.checkIfDev()) {
+                int mentorsAmount = mnt.getMentors(mentorList).size();
+                assertEquals(countNoneDevMtr, mentorsAmount);
+            }
+        }
+        System.out.println("We should find 2 mentors that are not part of Development Family.");
     }
 
     private void setMenteeList() {
@@ -66,11 +91,13 @@ public class MenteeTest {
         mentorList.add(mentor6);
     }
 
-    private void countDevFamMtr() {
+    private void countFamilyMentors() {
         for (Mentor mtr : mentorList
                 ) {
             if (mtr.checkIfDev()) {
-                countMtr++;
+                countDevMtr++;
+            } else if (!mtr.checkIfDev()) {
+                countNoneDevMtr++;
             }
         }
     }
