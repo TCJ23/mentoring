@@ -22,7 +22,7 @@ public class Mentor extends GFTEmployee {
         return mentosy;
     }
 
-    public Mentor(long id, int level, int rating, gft.mentoring.matching.Family family) {
+    public Mentor(long id, int level, gft.mentoring.matching.Family family, int rating) {
         this.id = id;
         this.level = level;
         this.rating = rating;
@@ -49,7 +49,7 @@ public class Mentor extends GFTEmployee {
 
     @Override
     protected Object clone() {
-        Mentor klon = new Mentor(this.id = id, this.level = level, this.rating = rating, this.family = family);
+        Mentor klon = new Mentor(this.id = id, this.level = level, this.family = family, this.rating = rating);
         return klon;
     }
 }

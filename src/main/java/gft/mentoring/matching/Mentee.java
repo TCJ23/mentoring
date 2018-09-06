@@ -19,7 +19,7 @@ public class Mentee extends GFTEmployee {
         return candidates;
     }
 
-    public Mentee(long id, Family family, int level) {
+    public Mentee(long id, int level, Family family) {
         this.id = id;
         this.family = family;
         this.level = level;
@@ -45,7 +45,7 @@ public class Mentee extends GFTEmployee {
 
     @Override
     protected Object clone() {
-        Mentee klon = new Mentee(this.id, this.family, this.level);
+        Mentee klon = new Mentee(this.id,  this.level, this.family);
         return klon;
     }
 }
