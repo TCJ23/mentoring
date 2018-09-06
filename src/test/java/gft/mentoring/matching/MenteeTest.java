@@ -1,20 +1,38 @@
 package gft.mentoring.matching;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-class MenteeTest {
+public class MenteeTest {
+    //Given
+    private static List<Mentee> menteeList;
+    private static List<Mentor> mentorList;
 
-    List<Mentee> menteeList = new ArrayList<>();
-    List<Mentor> mentorList = new ArrayList<>();
 
-    @BeforeEach
-    public void setMenteeList() {
+    //Given
+    @BeforeClass
+    public static void setup() {
+        MenteeTest menteeTest = new MenteeTest();
+        menteeTest.setMentorList();
+        menteeTest.setMenteeList();
+    }
+
+    //When
+    @Test
+    public void getMentorsForDevMenteeShouldFind4() {
+        int mentorsNumber = menteeList.get(0).getMentors(mentorList).size();
+        //Then
+        assertEquals(4, mentorsNumber);
+        System.out.println("In our data set we have 4 potential mentors for any mentee from Development Family");
+    }
+
+    private void setMenteeList() {
+        menteeList = new ArrayList<>();
         System.out.println("We create 6 GFT mentees, 4 of them are part of larger development family");
         Mentee mentee = new Mentee(1, Family.DEVELOPMENT, 1);
         menteeList.add(mentee);
@@ -30,8 +48,8 @@ class MenteeTest {
         menteeList.add(mentee6);
     }
 
-    @BeforeEach
-    public void setMentorList() {
+    private void setMentorList() {
+        mentorList = new ArrayList<>();
         System.out.println("We create 6 GFT mentors, 4 of them are part of larger development family");
         Mentor mentor = new Mentor(1, 4, 6, Family.DEVELOPMENT);
         mentorList.add(mentor);
@@ -45,12 +63,5 @@ class MenteeTest {
         mentorList.add(mentor5);
         Mentor mentor6 = new Mentor(6, 5, 6, Family.OTHER);
         mentorList.add(mentor6);
-    }
-
-    @Test
-    public void getMentorsForDevMenteeShouldFind4() {
-        int mentorsNumber = menteeList.get(0).getMentors(mentorList).size();
-        assertEquals(4, mentorsNumber);
-        System.out.println("In our data set we have 4 potential mentors for any  mentee from Development Family");
     }
 }
