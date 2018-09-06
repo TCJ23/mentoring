@@ -1,14 +1,15 @@
 package gft.mentoring.matching;
 
-public class Util {
-    private Mentee mnt;
-    private Mentor mtr;}
+public class GFTEmployee {
+    protected long id;
+    protected int level;
+    Family family;
+    protected boolean isDev;
 
-/*
-    public boolean checkIfDev(Object o) {
-        switch (o instanceof ) {
+    public boolean checkIfDev() {
+        switch (family) {
             case DIGITAL:
-                return mtr.isDev = true;
+                return isDev = true;
             case DEVELOPMENT:
                 return isDev = true;
             case ARCHITECTURE:
@@ -20,4 +21,3 @@ public class Util {
         }
     }
 }
-*/

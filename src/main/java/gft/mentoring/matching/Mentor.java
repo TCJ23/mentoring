@@ -3,27 +3,9 @@ package gft.mentoring.matching;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mentor {
-    private long id;
-    private int level;
+public class Mentor extends GFTEmployee {
     private int rating;
-    Family family;
-    private boolean isDev;
 
-    public boolean checkIfDev() {
-        switch (family) {
-            case DIGITAL:
-                return isDev = true;
-            case DEVELOPMENT:
-                return isDev = true;
-            case ARCHITECTURE:
-                return isDev = true;
-            case DATA:
-                return isDev = true;
-            default:
-                return false;
-        }
-    }
 
     protected List<Mentee> getMentees(List<Mentee> menteeList) {
       /*  return mentees.stream().
