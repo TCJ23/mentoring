@@ -42,15 +42,15 @@ public class TestMatching {
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
         return Stream.of(
-                new SingleMatchingParam("Scenario: Mentor & Mentee are both in Development Group",
+                new SingleMatchingParam("Scenario: Mentor & Mentee ARE BOTH in Development Group",
                         Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, true),
-                new SingleMatchingParam("Scenario: Mentor & Mentee: one is NOT in Development Group",
+                new SingleMatchingParam("Scenario: Mentor & Mentee: ONLY ONE IS in Development Group",
                         Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false),
-                new SingleMatchingParam("Scenario: Mentor & Mentee one is NOT in Development Group",
+                new SingleMatchingParam("Scenario: Mentor & Mentee ONLY ONE IS in Development Group",
                         Family.DIGITAL, Family.AMS, false),
-                new SingleMatchingParam("Scenario: Mentor & Mentee are both in Development Group",
+                new SingleMatchingParam("Scenario: Mentor & Mentee ARE BOTH in Development Group",
                         Family.DATA, Family.ARCHITECTURE, true),
-                new SingleMatchingParam("Scenario: Mentor & Mentee both are NOT in Development Group",
+                new SingleMatchingParam("Scenario: Mentor & Mentee NEITHER IS in Development Group",
                         Family.AMS, Family.BUSINESS_CONSULTING, true));
     }
 

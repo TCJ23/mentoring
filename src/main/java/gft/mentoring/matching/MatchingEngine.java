@@ -49,11 +49,9 @@ class MatchingEngine {
         return proposals;*/
     List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
         return Arrays.asList(candidates).stream()
-                .filter(mtr -> {
-                    return (mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup())
-                            ||
-                            (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup());
-                })
+                .filter(mtr -> (mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup())
+                        ||
+                        (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup()))
                 .collect(Collectors.toList());
     }
 }
