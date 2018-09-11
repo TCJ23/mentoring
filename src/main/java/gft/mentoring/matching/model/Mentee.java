@@ -1,10 +1,9 @@
-package gft.mentoring.matching;
+package gft.mentoring.matching.model;
 
 import lombok.Value;
 
 @Value
-public class Mentor {
+public class Mentee {
     private long id;
-    private int level;
     private Family family;
 }
