@@ -6,7 +6,18 @@ import java.util.List;
 public class Mentee extends GFTEmployee {
     private Mentor devman;
 
-    protected List<Mentor> getMentors(List<Mentor> mentorList) {
+    protected List<Mentor> findProposals(Mentor... mentorList) {
+        List<Mentor> candidates = new ArrayList<>();
+        for (Mentor mtr : mentorList
+                ) {
+             if (checkIfDev() && mtr.checkIfDev()) {
+                candidates.add(mtr);
+            }
+        }
+        return candidates;
+    }
+    // ASK Sławek!
+   /* protected Iterator<Mentor> getMentorsIT(List<Mentor> mentorList) {
         List<Mentor> candidates = new ArrayList<>();
         for (Mentor mtr : mentorList
                 ) {
@@ -16,36 +27,12 @@ public class Mentee extends GFTEmployee {
                 candidates.add((Mentor) mtr.clone());
             }
         }
-        return candidates;
-    }
+        return candidates.iterator();
+    }*/
 
     public Mentee(long id, int level, Family family) {
         this.id = id;
         this.family = family;
         this.level = level;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Mentee{" +
-                "id=" + id +
-                ", level=" + level +
-                ", family=" + family +
-//                ", devman=" + devman +
-                '}';
-    }
-
-    @Override
-    protected Object clone() {
-        Mentee klon = new Mentee(this.id,  this.level, this.family);
-        return klon;
     }
 }

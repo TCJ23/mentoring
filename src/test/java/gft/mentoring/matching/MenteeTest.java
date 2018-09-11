@@ -1,14 +1,19 @@
 package gft.mentoring.matching;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import lombok.Value;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class MenteeTest {
+/*
     //Given
     private static List<Mentee> menteeList;
     private static List<Mentor> mentorList;
@@ -28,36 +33,60 @@ public class MenteeTest {
     //When
     @Test
     public void getMentorsForDevelopmentMentorsShouldFind4() {
-        int mentorsNumber = menteeList.get(0).getMentors(mentorList).size();
+        int mentorsNumber = menteeList.get(0).findProposals(mentorList).size();
         //Then
         assertEquals(countDevMtr, mentorsNumber);
-        System.out.println("In our data set we have 4 potential mentors for any mentee from Development Family");
     }
 
     @Test
-    public void getAllDevelopmentMentorsForDevMentees() {
+    public void shouldFindValidProposalsForDevelopmentGroupMentee() {
         for (Mentee mnt : menteeList
                 ) {
             if (mnt.checkIfDev()) {
-                int mentorsAmount = mnt.getMentors(mentorList).size();
+                int mentorsAmount = mnt.findProposals(mentorList).size();
+                //Then
                 assertEquals(countDevMtr, mentorsAmount);
             }
         }
-        System.out.println("We should find 4 mentors that are part of Development Family.");
     }
 
-    @Test
-    public void getAllNoneDevelopmentMentorsForNoneDevMentees() {
+    *//*@Test
+    public void shouldFindValidProposalsForNonDevelopmentGroupMentee() {
         for (Mentee mnt : menteeList
                 ) {
             if (!mnt.checkIfDev()) {
-                int mentorsAmount = mnt.getMentors(mentorList).size();
+                int mentorsAmount = mnt.findProposals(mentorList).size();
+                //Then
                 assertEquals(countNoneDevMtr, mentorsAmount);
             }
         }
         System.out.println("We should find 2 mentors that are not part of Development Family.");
     }
 
+*//*
+  *//*  @Parameterized.Parameters
+    public static Collection<SingleMatchingParam> singleMatchingParams() {
+        return Arrays.asList(
+                new SingleMatchingParam(Family.DEVELOPMENT, Family.DEVELOPMENT, true),
+                new SingleMatchingParam(Family.DATA, Family.ARCHITECTURE, true),
+                new SingleMatchingParam(Family.OTHER, Family.DEVELOPMENT, false)
+        );
+    }
+
+    @Test
+    public void testMatchingParams() {
+
+    }*//*
+
+    @Value
+    static class SingleMatchingParam {
+
+        private Family menteeFamily;
+        private Family mentorCandidateFamily;
+        private boolean accepted;
+    }
+
+    //    @Parameterized.Parameters
     private void setMenteeList() {
         menteeList = new ArrayList<>();
         System.out.println("We created 6 GFT mentees, 4 of them are part of larger development family");
@@ -100,5 +129,5 @@ public class MenteeTest {
                 countNoneDevMtr++;
             }
         }
-    }
+    }*/
 }

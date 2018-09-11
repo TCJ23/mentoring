@@ -1,6 +1,5 @@
 package gft.mentoring.matching;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MentorTest {
 
-    List<Mentee> menteeList = new ArrayList<>();
+ /*   List<Mentee> menteeList = new ArrayList<>();
     List<Mentor> mentorList = new ArrayList<>();
     int countDevMnt = 0;
     int countNoneDevMnt = 0;
@@ -59,14 +58,13 @@ class MentorTest {
             }
         }
     }
+
     @Test
     void getMenteesForDevelopmentMenteesShouldFind5() {
-        System.out.println("We created 6 GFT mentees, 5 of them are part of larger development family");
-        System.out.println("We created 6 GFT mentors, 4 of them are part of larger development family");
         int menteesNumber = mentorList.get(3).getMentees(menteeList).size();
         assertEquals(countDevMnt, menteesNumber);
-        System.out.println("In our data set we have 5 potential mentees for any mentor in Development Family");
     }
+
     @Test
     public void getAllDevelopmentMenteesForDevMentors() {
         for (Mentor mtr : mentorList
@@ -76,8 +74,8 @@ class MentorTest {
                 Assert.assertEquals(countDevMnt, mentorsAmount);
             }
         }
-        System.out.println("We should find 5 mentees that are part of Development Family.");
     }
+
     @Test
     public void getAllNoneDevelopmentMenteesForNoneDevMentors() {
         for (Mentor mtr : mentorList
@@ -87,6 +85,5 @@ class MentorTest {
                 Assert.assertEquals(countNoneDevMnt, mentorsAmount);
             }
         }
-        System.out.println("We should find 1 mentee that is not part of Development Family.");
-    }
+    }*/
 }

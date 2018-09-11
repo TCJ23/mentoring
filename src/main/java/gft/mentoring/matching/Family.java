@@ -1,7 +1,14 @@
 package gft.mentoring.matching;
 
 enum Family {
-    DEVELOPMENT,
+    AMS,
     ARCHITECTURE,
-    DIGITAL, DATA, OTHER,
+    BUSINESS_CONSULTING,
+    CORPORATE_SERVICES,
+    DATA,
+    DIGITAL,
+    EXECUTIVE_DIRECTOR,
+    PROJECT_DEVELOPMENT,
+    PROJECT_GOVERNANCE,
+    TESTING,
 }
