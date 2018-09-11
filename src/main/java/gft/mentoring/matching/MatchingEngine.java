@@ -29,16 +29,28 @@ consist only of Mentors from same wide Development Group.
 import gft.mentoring.matching.model.Mentee;
 import gft.mentoring.matching.model.Mentor;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 class MatchingEngine {
 
-    List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
+    public List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
+        List<Mentor> proposals = new ArrayList<>();
+        for (Mentor mtr : candidates
+                ) {
+            if ((mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup()) ||
+                    (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup())) {
+                {
+                    proposals.add(mtr);
+                }
+            }
+        }
+        return proposals;
+    /*List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
         return Arrays.asList(candidates).stream()
                 .filter(mentor -> mentor.getFamily().isDevelopmentGroup())
                 .collect(Collectors.toList());
+    }*/
+
     }
 }
-

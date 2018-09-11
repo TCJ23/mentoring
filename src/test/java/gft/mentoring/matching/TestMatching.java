@@ -9,12 +9,18 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.util.stream.Stream;
 
 /*
 @author tzje
-* This class should test MatchingEngine().findProposals */
+* This class should test MatchingEngine().findProposals
+* for Mentee in
+Project Development
+Architecture
+Digital
+Data
+we can assign Mentors from above Families treated as one*/
+
 public class TestMatching {
 
     /* in @ParameterizedTest you either keep
@@ -22,7 +28,7 @@ public class TestMatching {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("singleMatchingParam")
-    @DisplayName("Check if MatchingEngine triages mentors per Family")
+    @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
     void findSingleCandidateMentorFromProposals(SingleMatchingParam singleMatchingParam) {
         //given
         val candidate = new Mentor(1, singleMatchingParam.mentorCandidateFamily);
@@ -37,8 +43,14 @@ public class TestMatching {
         return Stream.of(
                 new SingleMatchingParam("Scenario: Mentor & Mentee are both in Development Group",
                                         Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, true),
-                new SingleMatchingParam("Scenario: Mentor & Mentee are NOT in Development Group",
-                                        Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false));
+                new SingleMatchingParam("Scenario: Mentor & Mentee: one is NOT in Development Group",
+                                        Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false),
+                new SingleMatchingParam("Scenario: Mentor & Mentee one is NOT in Development Group",
+                                        Family.DIGITAL, Family.AMS, false),
+                new SingleMatchingParam("Scenario: Mentor & Mentee are both in Development Group",
+                                        Family.DATA, Family.ARCHITECTURE, true),
+                new SingleMatchingParam("Scenario: Mentor & Mentee both are NOT in Development Group",
+                                        Family.AMS, Family.BUSINESS_CONSULTING, true));
     }
 
     @Value
