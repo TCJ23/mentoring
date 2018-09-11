@@ -37,7 +37,7 @@ public class TestMatching {
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
         //then
-        Assertions.assertThat(candidate.size() == 1).isEqualTo(singleMatchingParam.accepted);
+        Assertions.assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {

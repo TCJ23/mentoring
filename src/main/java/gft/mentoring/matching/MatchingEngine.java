@@ -32,6 +32,7 @@ import gft.mentoring.matching.model.Mentor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class MatchingEngine {
 
@@ -47,11 +48,10 @@ class MatchingEngine {
             }
         }
         return proposals;*/
-    List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
-        return Arrays.asList(candidates).stream()
+    Stream<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
+        return Arrays.stream(candidates)
                 .filter(mtr -> (mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup())
                         ||
-                        (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup()))
-                .collect(Collectors.toList());
+                        (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup()));
     }
 }
