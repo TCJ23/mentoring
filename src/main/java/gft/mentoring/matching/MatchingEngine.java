@@ -28,12 +28,13 @@ consist only of Mentors from same wide Development Group.
 
 import gft.mentoring.matching.model.Mentee;
 import gft.mentoring.matching.model.Mentor;
-import java.util.Arrays;
-import java.util.stream.Stream;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class MatchingEngine {
 
-    /*public List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
+    List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
         List<Mentor> proposals = new ArrayList<>();
         for (Mentor mtr : candidates
                 ) {
@@ -44,11 +45,28 @@ class MatchingEngine {
                 }
             }
         }
-        return proposals;*/
-    Stream<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
+        return proposals;
+    }
+   /* Stream<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
         return Arrays.stream(candidates)
                 .filter(mtr -> (mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup())
                         ||
                         (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup()));
+    }*/
+
+    /*Mentor findBestCandidate(Mentee mnt, Mentor... candidates) {
+        Stream<Mentor> proposals = findProposals(mnt, candidates);
+        proposals.findFirst();
+        if (mnt.getFamily().equals())
+    }*/
+    Mentor findBestCandidate(Mentee mnt, Mentor... candidates) {
+        List<Mentor> proposals1 = findProposals(mnt, candidates);
+        Mentor bestCandidate = null;
+        for (Mentor mentor : proposals1) {
+            if (mentor.getFamily().equals(mnt.getFamily())) {
+                bestCandidate = mentor;
+            }
+        }
+        return bestCandidate;
     }
 }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,9 @@ we can assign Mentors from above Families treated as one*/
 @DisplayName("Main Class to test MatchingEngine")
 public class TestMatching {
 
-    /* in @ParameterizedTest you either keep
+
+    /*This test if to meet requirement 1.1 in REQUIREMENTS.md
+    in @ParameterizedTest you either keep
     your testmethod name and method source name the same or use parameters as below*/
 
     @ParameterizedTest(name = "{index} => {0}")
@@ -40,7 +43,8 @@ public class TestMatching {
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
         //then
-        assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
+//        assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
+        assertThat(candidate.size() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
@@ -58,8 +62,8 @@ public class TestMatching {
     }
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
-    @Test
-    void findBestCandidateFromManyMentors() {
+    /*@Test
+    void findBestCandidateFromManyMentorsStream() {
         //given
         Mentee mentee = new Mentee(1, Family.DATA);
         Mentor[] proposals = {new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA)};
@@ -67,9 +71,25 @@ public class TestMatching {
         //when
         Stream<Mentor> candidates = matchingEngine.findProposals(mentee, proposals);
         //then
-//        Mentor bestCandidate = candidates.findFirst().orElse(new Mentor(999, Family.PROJECT_GOVERNANCE));
         Mentor bestCandidate = candidates.findFirst().orElse(null);
         assertThat(bestCandidate.getFamily()).isEqualTo(mentee.getFamily());
+//      Mentor bestCandidate = candidates.findFirst().orElse(new Mentor(999, Family.PROJECT_GOVERNANCE));
+    }*/
+
+    @Test
+    @DisplayName("From 2 Mentors find Mentor from exact same Family as Mentee")
+    void findBestCandidateFromManyMentors() {
+        //given
+        Mentee mentee = new Mentee(1, Family.DATA);
+        Mentor[] proposals = {new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA)};
+        MatchingEngine matchingEngine = new MatchingEngine();
+        //when
+//        List<Mentor> candidates = matchingEngine.findProposals(mentee, proposals);
+        Mentor bestCandidate = matchingEngine.findBestCandidate(mentee, proposals);
+        //then
+//        Mentor bestCandidate = candidates.get(0);
+        assertThat(bestCandidate.getFamily()).isEqualTo(mentee.getFamily());
+//      Mentor bestCandidate = candidates.findFirst().orElse(new Mentor(999, Family.PROJECT_GOVERNANCE));
     }
 
     @Value
