@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 /*
@@ -56,6 +57,20 @@ public class TestMatching {
                         Family.DATA, Family.ARCHITECTURE, true),
                 new SingleMatchingParam("Scenario: Mentor & Mentee NEITHER IS in Development Group",
                         Family.AMS, Family.BUSINESS_CONSULTING, true));
+    }
+
+    /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
+    @Test
+    void findBestCandidateFromManyMentors() {
+        //given
+        Mentee mentee = new Mentee(1, Family.DATA);
+        Mentor[] proposals = {new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA)};
+        //        List<Mentor> proposals = Arrays.asList(new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA));
+        MatchingEngine matchingEngine = new MatchingEngine();
+        //when
+        matchingEngine.findProposals(mentee, proposals);
+        //then
+
     }
 
     @Value
