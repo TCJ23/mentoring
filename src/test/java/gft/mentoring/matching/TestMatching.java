@@ -58,7 +58,6 @@ public class TestMatching {
                         Family.AMS, Family.BUSINESS_CONSULTING, true));
     }
 
-
     @Value
     static class SingleMatchingParam {
         private String scenario;
@@ -71,4 +70,5 @@ public class TestMatching {
             return scenario;
         }
     }
+
 }
