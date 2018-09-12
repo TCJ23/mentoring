@@ -5,16 +5,14 @@ import gft.mentoring.matching.model.Mentee;
 import gft.mentoring.matching.model.Mentor;
 import lombok.Value;
 import lombok.val;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /*
 @author tzje
@@ -42,7 +40,7 @@ public class TestMatching {
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
         //then
-        Assertions.assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
+        assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
@@ -65,12 +63,13 @@ public class TestMatching {
         //given
         Mentee mentee = new Mentee(1, Family.DATA);
         Mentor[] proposals = {new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA)};
-        //        List<Mentor> proposals = Arrays.asList(new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA));
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        matchingEngine.findProposals(mentee, proposals);
+        Stream<Mentor> candidates = matchingEngine.findProposals(mentee, proposals);
         //then
-
+//        Mentor bestCandidate = candidates.findFirst().orElse(new Mentor(999, Family.PROJECT_GOVERNANCE));
+        Mentor bestCandidate = candidates.findFirst().orElse(null);
+        assertThat(bestCandidate.getFamily()).isEqualTo(mentee.getFamily());
     }
 
     @Value
