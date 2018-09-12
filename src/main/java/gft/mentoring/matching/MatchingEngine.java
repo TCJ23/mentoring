@@ -28,10 +28,7 @@ consist only of Mentors from same wide Development Group.
 
 import gft.mentoring.matching.model.Mentee;
 import gft.mentoring.matching.model.Mentor;
-
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class MatchingEngine {
