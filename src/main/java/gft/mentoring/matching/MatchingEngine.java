@@ -60,13 +60,22 @@ class MatchingEngine {
         if (mnt.getFamily().equals())
     }*/
     Mentor findBestCandidate(Mentee mnt, Mentor... candidates) {
-        List<Mentor> proposals1 = findProposals(mnt, candidates);
-        Mentor bestCandidate = null;
-        for (Mentor mentor : proposals1) {
-            if (mentor.getFamily().equals(mnt.getFamily())) {
-                bestCandidate = mentor;
-            }
+        try {
+            List<Mentor> propositions = findProposals(mnt, candidates);
+            // propositions == null
+            Mentor bestCandidate = propositions.get(0);
+            if (!mnt.getFamily().equals(bestCandidate.getFamily()))
+                for (Mentor mentor : propositions) {
+                    if (mentor.getFamily().equals(mnt.getFamily())) {
+                        bestCandidate = mentor;
+                        break;
+                    }
+                }
+            return bestCandidate;
+        } catch (Exception e) {
+            System.out.println("Make sure your proposal list is not empty" + e.getMessage());
+            e.printStackTrace();
         }
-        return bestCandidate;
+        return null;
     }
 }
