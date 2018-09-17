@@ -1,8 +1,7 @@
 package gft.mentoring.matching;
 
 import gft.mentoring.matching.model.Family;
-import gft.mentoring.matching.model.Mentee;
-import gft.mentoring.matching.model.Mentor;
+import gft.mentoring.matching.model.MentoringModel;
 import lombok.Value;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @author tzje
 * This class should test MatchingEngine().findProposals
 *                   test MatchingEngine().findBestCandidate
-* for Mentee in
+* for MentoringModel in
 Project Development
 Architecture
 Digital
@@ -38,59 +36,58 @@ public class TestMatching {
     @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
     void findSingleCandidateMentorFromProposals(SingleMatchingParam singleMatchingParam) {
         //given
-        val proposal = new Mentor(1, singleMatchingParam.mentorCandidateFamily);
-        val mentee = new Mentee(1, singleMatchingParam.menteeFamily);
+        val proposal = new MentoringModel(1, singleMatchingParam.mentorCandidateFamily);
+        val mentee = new MentoringModel(1, singleMatchingParam.menteeFamily);
         //when
-        val candidate = new MatchingEngine().findProposals(mentee, proposal);
+        val candidate = new MatchingEngine().findProposalsStream(mentee, proposal);
         //then
-//        assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
-        assertThat(candidate.size() == 1).isEqualTo(singleMatchingParam.accepted);
+        assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
+//        assertThat(candidate.size() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
         return Stream.of(
-                new SingleMatchingParam("Scenario: Mentor & Mentee ARE BOTH in Development Group",
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group",
                         Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, true),
-                new SingleMatchingParam("Scenario: Mentor & Mentee: ONLY ONE IS in Development Group",
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel: ONLY ONE IS in Development Group",
                         Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false),
-                new SingleMatchingParam("Scenario: Mentor & Mentee ONLY ONE IS in Development Group",
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ONLY ONE IS in Development Group",
                         Family.DIGITAL, Family.AMS, false),
-                new SingleMatchingParam("Scenario: Mentor & Mentee ARE BOTH in Development Group",
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group",
                         Family.DATA, Family.ARCHITECTURE, true),
-                new SingleMatchingParam("Scenario: Mentor & Mentee NEITHER IS in Development Group",
-                        Family.AMS, Family.BUSINESS_CONSULTING, true));
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel NEITHER IS in Development Group",
+                        Family.AMS, Family.BUSINESS_CONSULTING, false));
     }
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
-    /*@Test
-    void findBestCandidateFromManyMentorsStream() {
+    @Test
+    @DisplayName("STREAM -> From 2 Mentors prefers MentoringModel from exact same Family as MentoringModel")
+    void findPreferedCandidateFromManyMentorsStream() {
         //given
-        Mentee mentee = new Mentee(1, Family.DATA);
-        Mentor[] proposals = {new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA)};
+        MentoringModel mentee = new MentoringModel(1, Family.DATA);
+        MentoringModel[] candidates = {new MentoringModel(1, Family.ARCHITECTURE), new MentoringModel(2, Family.DATA)};
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<Mentor> candidates = matchingEngine.findProposals(mentee, proposals);
+        Stream<MentoringModel> bestMentorCandidate = matchingEngine.findProposalsStream(mentee, candidates);
+
         //then
-        Mentor bestCandidate = candidates.findFirst().orElse(null);
-        assertThat(bestCandidate.getFamily()).isEqualTo(mentee.getFamily());
-//      Mentor bestCandidate = candidates.findFirst().orElse(new Mentor(999, Family.PROJECT_GOVERNANCE));
-    }*/
+        assertThat(bestMentorCandidate.limit(1))
+                .containsExactly(new MentoringModel(2, Family.DATA));
+    }
 
     @Test
-    @DisplayName("From 2 Mentors find Mentor from exact same Family as Mentee")
+    @DisplayName("From 2 Mentors find MentoringModel from exact same Family as MentoringModel")
     void findBestCandidateFromManyMentors() {
         //given
-        Mentee mentee = new Mentee(1, Family.DATA);
-        Mentor[] proposals = {new Mentor(1, Family.ARCHITECTURE), new Mentor(2, Family.DATA)};
+        MentoringModel mentee = new MentoringModel(1, Family.DATA);
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-//        List<Mentor> candidates = matchingEngine.findProposals(mentee, proposals);
-        Mentor bestCandidate = matchingEngine.findBestCandidate(mentee, proposals);
+        Stream<MentoringModel> bestCandidate = matchingEngine.findProposalsStream(mentee, new MentoringModel(1, Family.ARCHITECTURE),
+                new MentoringModel(2, Family.DATA));
         //then
-//        Mentor bestCandidate = candidates.get(0);
-        assertThat(bestCandidate.getFamily()).isEqualTo(mentee.getFamily());
-//      Mentor bestCandidate = candidates.findFirst().orElse(new Mentor(999, Family.PROJECT_GOVERNANCE));
+        assertThat(bestCandidate.findFirst().get().getFamily()).isEqualTo(mentee.getFamily());
     }
+
 
     @Value
     static class SingleMatchingParam {

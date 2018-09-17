@@ -17,7 +17,7 @@ Project Development
 Architecture
 Digital
 Data
-are cross functional in term of choosing DevMan and Mentee so that person from from Project Development Family
+are cross functional in term of choosing DevMan and MentoringModel so that person from from Project Development Family
 will not be constantly overburden by allowing Digital, Architecture & Data - Mentors to be assigned Mentees from above 4
 Families altogether, considered as one common other Development Group.
 ------------------------------------------------------------------------------------------------------------------------
@@ -26,56 +26,34 @@ consist only of Mentors from same wide Development Group.
 */
 
 
-import gft.mentoring.matching.model.Mentee;
-import gft.mentoring.matching.model.Mentor;
+import gft.mentoring.matching.model.MentoringModel;
+import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 class MatchingEngine {
 
-    List<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
-        List<Mentor> proposals = new ArrayList<>();
-        for (Mentor mtr : candidates
-                ) {
-            if ((mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup()) ||
-                    (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup())) {
-                {
-                    proposals.add(mtr);
-                }
-            }
-        }
-        return proposals;
-    }
-   /* Stream<Mentor> findProposals(Mentee mnt, Mentor... candidates) {
+    Stream<MentoringModel> findProposalsStream(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
-                .filter(mtr -> (mnt.getFamily().isDevelopmentGroup() && mtr.getFamily().isDevelopmentGroup())
-                        ||
-                        (!mnt.getFamily().isDevelopmentGroup() && !mtr.getFamily().isDevelopmentGroup()));
-    }*/
+                .map(it -> new MyTuple(it, sympathy(mentee, it)))
+                .filter(it -> it.sympathy > 0)
+                .sorted((v1, v2) -> -(v1.sympathy - v2.sympathy))
+                .map(it -> it.mentor);
 
-    /*Mentor findBestCandidate(Mentee mnt, Mentor... candidates) {
-        Stream<Mentor> proposals = findProposals(mnt, candidates);
-        proposals.findFirst();
-        if (mnt.getFamily().equals())
-    }*/
-    Mentor findBestCandidate(Mentee mnt, Mentor... candidates) {
-        try {
-            List<Mentor> propositions = findProposals(mnt, candidates);
-            // propositions == null
-            Mentor bestCandidate = propositions.get(0);
-            if (!mnt.getFamily().equals(bestCandidate.getFamily()))
-                for (Mentor mentor : propositions) {
-                    if (mentor.getFamily().equals(mnt.getFamily())) {
-                        bestCandidate = mentor;
-                        break;
-                    }
-                }
-            return bestCandidate;
-        } catch (Exception e) {
-            System.out.println("Make sure your proposal list is not empty" + e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
+    }
+
+    @AllArgsConstructor
+    static class MyTuple {
+        private MentoringModel mentor;
+        private int sympathy;
+    }
+
+    static int sympathy(MentoringModel mentee, MentoringModel mentor) {
+        int sympathy = -1;
+        if (mentee.getFamily().isDevelopmentGroup() && mentor.getFamily().isDevelopmentGroup()) sympathy = 1;
+        if (Objects.equals(mentee.getFamily(), mentor.getFamily())) sympathy = 2;
+        return sympathy;
     }
 }
