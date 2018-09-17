@@ -64,9 +64,8 @@
                 <version>2.22.0</version>
                 <configuration>
                     <includes>
-                        <include>**/*Tests.java</include>
                         <include>**/*Test.java</include>
-                        <include>**/Test*.java</include>
+                        <include>**/*Spec.java</include>
                     </includes>
                     <excludes>
                         <exclude>**/Abstract*.java</exclude>
