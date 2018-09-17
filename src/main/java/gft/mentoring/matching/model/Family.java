@@ -12,15 +12,4 @@ public enum Family {
     PROJECT_GOVERNANCE,
     TESTING;
 
-    public boolean isDevelopmentGroup() {
-        switch (this) {
-            case DIGITAL:
-            case PROJECT_DEVELOPMENT:
-            case ARCHITECTURE:
-            case DATA:
-                return true;
-            default:
-                return false;
-        }
-    }
 }

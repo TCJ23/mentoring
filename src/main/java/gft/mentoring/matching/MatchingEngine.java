@@ -27,13 +27,18 @@ consist only of Mentors from same wide Development Group.
 
 
 import gft.mentoring.matching.model.MentoringModel;
+import gft.mentoring.matching.model.PreferDevManFromDevGroupStrategy;
+import gft.mentoring.matching.model.PreferDevManFromSameJobFamily;
+import gft.mentoring.matching.model.VotingStrategy;
 import lombok.AllArgsConstructor;
+import lombok.val;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 class MatchingEngine {
+
+    static VotingStrategy[] strategies = {new PreferDevManFromDevGroupStrategy(), new PreferDevManFromSameJobFamily()};
 
     Stream<MentoringModel> findProposalsStream(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
@@ -52,8 +57,9 @@ class MatchingEngine {
 
     static int sympathy(MentoringModel mentee, MentoringModel mentor) {
         int sympathy = -1;
-        if (mentee.getFamily().isDevelopmentGroup() && mentor.getFamily().isDevelopmentGroup()) sympathy = 1;
-        if (Objects.equals(mentee.getFamily(), mentor.getFamily())) sympathy = 2;
+        for (val strategy : strategies) {
+            sympathy += strategy.calculateSympathy(mentee, mentor);
+        }
         return sympathy;
     }
 }
