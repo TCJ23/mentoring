@@ -1,6 +1,7 @@
 package gft.mentoring;
 /* This class implements logic to meet business requirements described in requirements.md*/
 
+import gft.mentoring.strategies.MentorHasToWorkAtLeastOneYearInGFT;
 import gft.mentoring.strategies.PreferDevManFromCorporateServicesWithSameSpecializaton;
 import gft.mentoring.strategies.PreferDevManFromDevGroupStrategy;
 import gft.mentoring.strategies.PreferDevManFromSameJobFamily;
@@ -19,7 +20,8 @@ class MatchingEngine {
     static VotingStrategy[] strategies = {
             new PreferDevManFromDevGroupStrategy(),
             new PreferDevManFromSameJobFamily(),
-            new PreferDevManFromCorporateServicesWithSameSpecializaton()
+            new PreferDevManFromCorporateServicesWithSameSpecializaton(),
+            new MentorHasToWorkAtLeastOneYearInGFT()
     };
 
     Stream<MentoringModel> findProposalsStream(MentoringModel mentee, MentoringModel... candidates) {
@@ -44,7 +46,6 @@ class MatchingEngine {
     }
 
     static SympathyResult sympathy(MentoringModel mentee, MentoringModel mentor) {
-//        konwersja
         List<VotingResult> votings = new ArrayList<>();
         for (val strategy : strategies) {
             val result = strategy.calculateSympathy(mentee, mentor);

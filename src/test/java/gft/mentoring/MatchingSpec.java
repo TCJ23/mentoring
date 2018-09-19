@@ -155,7 +155,7 @@ public class MatchingSpec {
     }
 
     @Test
-    @DisplayName("When we use helper methods : newMentee and newMentor we make sure these are valid")
+    @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
         // MentoringModel definition so created mentor as by definition accepted as a mentor for created mentee.
