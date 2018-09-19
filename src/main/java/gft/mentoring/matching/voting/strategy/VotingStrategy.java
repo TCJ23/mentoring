@@ -1,7 +1,7 @@
-package gft.mentoring.matching.model;
+package gft.mentoring.matching.voting.strategy;
 
-import lombok.Value;
-import lombok.val;
+import gft.mentoring.matching.model.MentoringModel;
+import gft.mentoring.matching.voting.result.VotingResult;
 
 /*@author tzje
  * this interface should be implemented for correct sympathy rate accordingly to voting strategy*/

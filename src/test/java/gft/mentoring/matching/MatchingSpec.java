@@ -132,7 +132,7 @@ public class MatchingSpec {
 //    }
 
     @Test
-    @DisplayName("Generic Test")
+    @DisplayName("When we use helper methods : newMentee and newMentor we make sure these are valid")
     public void UseValidAssumptionsInTests()
     {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
