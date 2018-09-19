@@ -3,6 +3,7 @@ package gft.mentoring.matching.voting.strategy;
 import gft.mentoring.matching.model.Family;
 import gft.mentoring.matching.model.MentoringModel;
 import gft.mentoring.matching.voting.result.Neutral;
+import gft.mentoring.matching.voting.result.Rejected;
 import gft.mentoring.matching.voting.result.Support;
 import gft.mentoring.matching.voting.result.VotingResult;
 import lombok.NonNull;
@@ -39,6 +40,6 @@ public class PreferDevManFromCorporateServicesWithSameSpecializaton implements V
         if (Objects.equals(mentee.getSpecialization(), mentor.getSpecialization())) {
             return new Support(100);
         }
-        return Neutral.INSTANCE;
+        return new Rejected();
     }
 }
