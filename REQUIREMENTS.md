@@ -22,7 +22,7 @@
 1.3. Corporate Services separation by Specialisation
   (Sławomir Siudek)
   For Corporate Services there are too many different specialisations
-  so Specialisation fiels - which contains specialisations (like Finance, HR etc) is used
+  so Specialisation fields - which contains specialisations (like Finance, HR etc) is used
   to separate matching of mentor <--> mentee.
   In other words, if the person is from Corporate Services JobFamily
   we take into account matching by specialisation as required.

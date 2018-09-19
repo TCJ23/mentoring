@@ -2,10 +2,10 @@ package gft.mentoring.matching.model;
 
 public class PreferDevManFromSameJobFamily implements VotingStrategy{
     @Override
-    public int calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
+    public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
         if (mentee.getFamily().equals(mentor.getFamily()))
-        return 100;
+        return new Support();
 
-        return 0;
+        return new Neutral();
     }
 }

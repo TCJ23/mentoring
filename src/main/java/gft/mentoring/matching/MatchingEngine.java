@@ -26,10 +26,7 @@ consist only of Mentors from same wide Development Group.
 */
 
 
-import gft.mentoring.matching.model.MentoringModel;
-import gft.mentoring.matching.model.PreferDevManFromDevGroupStrategy;
-import gft.mentoring.matching.model.PreferDevManFromSameJobFamily;
-import gft.mentoring.matching.model.VotingStrategy;
+import gft.mentoring.matching.model.*;
 import lombok.AllArgsConstructor;
 import lombok.val;
 
@@ -46,7 +43,6 @@ class MatchingEngine {
                 .filter(it -> it.sympathy > 0)
                 .sorted((v1, v2) -> -(v1.sympathy - v2.sympathy))
                 .map(it -> it.mentor);
-
     }
 
     @AllArgsConstructor
@@ -58,7 +54,7 @@ class MatchingEngine {
     static int sympathy(MentoringModel mentee, MentoringModel mentor) {
         int sympathy = -1;
         for (val strategy : strategies) {
-            sympathy += strategy.calculateSympathy(mentee, mentor);
+            sympathy += strategy.calculateSympathy(mentee, mentor).getSympathy();
         }
         return sympathy;
     }

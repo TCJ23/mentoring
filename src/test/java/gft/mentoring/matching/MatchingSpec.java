@@ -14,24 +14,19 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/*
-@author tzje
-* This class should test MatchingEngine().findProposals
-*                   test MatchingEngine().findBestCandidate
-* for MentoringModel in
-Project Development
-Architecture
-Digital
-Data
-we can assign Mentors from above Families treated as one*/
 @DisplayName("Main Class to test MatchingEngine")
 public class MatchingSpec {
 
 
-    /*This test if to meet requirement 1.1 in REQUIREMENTS.md
+   /* This test if to meet requirement 1.1 in REQUIREMENTS.md
     in @ParameterizedTest you either keep
-    your testmethod name and method source name the same or use parameters as below*/
-
+    your testmethod name and method source name the same or use parameters as below
+    This class should test MatchingEngine().findProposalsStream
+    for MentoringModel in
+    Project Development
+    Architecture Digital
+    Data
+    we can assign Mentors from above Families treated as one*/
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("singleMatchingParam")
     @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
@@ -137,6 +132,7 @@ public class MatchingSpec {
 //    }
 
     @Test
+    @DisplayName("Generic Test")
     public void UseValidAssumptionsInTests()
     {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation

@@ -1,6 +1,7 @@
 package gft.mentoring.matching.model;
 
 import lombok.Value;
+import lombok.val;
 
 /*@author tzje
  * this interface should be implemented for correct sympathy rate accordingly to voting strategy*/
@@ -13,16 +14,5 @@ public interface VotingStrategy {
     VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor);
 }
 
-abstract class VotingResult { }
 
-@Value
-class Rejected extends VotingResult { }
-
-@Value
-class Neutral extends VotingResult { }
-
-@Value
-class Support extends VotingResult {
-    private int value;
-}
 

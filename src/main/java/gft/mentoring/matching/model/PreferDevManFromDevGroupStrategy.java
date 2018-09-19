@@ -3,11 +3,11 @@ package gft.mentoring.matching.model;
 public class PreferDevManFromDevGroupStrategy implements VotingStrategy {
     /*this method*/
     @Override
-    public int calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
+    public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
         if (isDevelopmentGroup(mentee.getFamily()) && isDevelopmentGroup(mentor.getFamily()))
-            return 50;
+            return new Support();
 
-        return 0;
+        return new Neutral();
     }
 
     public boolean isDevelopmentGroup(Family family) {
