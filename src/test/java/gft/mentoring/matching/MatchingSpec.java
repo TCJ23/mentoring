@@ -132,6 +132,31 @@ public class MatchingSpec {
 //    }
 
     @Test
+    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization..")
+    public void shouldFindMatchinSpecializationInCorporateServices() {
+        val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
+        val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
+        val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
+        val matchingEngine = new MatchingEngine();
+
+        val proposals = matchingEngine.findProposalsStream(mentee, mentor1, mentor2);
+
+        Assertions.assertThat(proposals).containsExactly(mentor2);
+    }
+
+    @Test
+    @DisplayName("validate seniority for mentor")
+    public void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
+        val mentee = newMentee().build();
+        //boundary values edge cases
+        val toYoungToBeMentor = newMentor().seniority(364).build();
+        val justSeniorMentor = newMentor().seniority(365).build();
+        val matchingEngine = new MatchingEngine();
+        val proposals = matchingEngine.findProposalsStream(mentee, toYoungToBeMentor, justSeniorMentor);
+        Assertions.assertThat(proposals).containsExactly(justSeniorMentor);
+    }
+
+    @Test
     @DisplayName("When we use helper methods : newMentee and newMentor we make sure these are valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
@@ -147,23 +172,10 @@ public class MatchingSpec {
     }
 
     static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA").toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA").toBuilder();
-    }
-
-    @Test
-    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization..")
-    public void shouldFindMatchinSpecializationInCorporateServices() {
-        val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
-        val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
-        val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
-        val matchingEngine = new MatchingEngine();
-
-        val proposals = matchingEngine.findProposalsStream(mentee, mentor1, mentor2);
-
-        Assertions.assertThat(proposals).containsExactly(mentor2);
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30).toBuilder();
     }
 }
