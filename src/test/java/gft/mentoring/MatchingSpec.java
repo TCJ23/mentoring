@@ -1,4 +1,4 @@
-package gft.mentoring.matching;
+package gft.mentoring;
 
 import lombok.Value;
 import lombok.val;

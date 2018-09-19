@@ -1,6 +1,9 @@
-package gft.mentoring.matching;
+package gft.mentoring;
 /* This class implements logic to meet business requirements described in requirements.md*/
 
+import gft.mentoring.strategies.PreferDevManFromCorporateServicesWithSameSpecializaton;
+import gft.mentoring.strategies.PreferDevManFromDevGroupStrategy;
+import gft.mentoring.strategies.PreferDevManFromSameJobFamily;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.val;

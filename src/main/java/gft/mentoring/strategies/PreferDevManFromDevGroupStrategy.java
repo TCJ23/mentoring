@@ -1,4 +1,4 @@
-package gft.mentoring.matching;
+package gft.mentoring.strategies;
 
 /*
 1.1 JobFamily equivalent for Development
@@ -16,6 +16,8 @@ Data
 are cross functional in term of choosing DevMan and Mentee so that person from from Project Development Family will
 not be constantly overburden by allowing Digital, Architecture & Data - Mentors to be assigned Mentees from above 4 Families
 altogether, considered as one common other Development Group.*/
+
+import gft.mentoring.*;
 
 public class PreferDevManFromDevGroupStrategy implements VotingStrategy {
     /* this method will calculate sympathy between mentee and corresponding mentor or mentors

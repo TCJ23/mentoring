@@ -1,4 +1,4 @@
-package gft.mentoring.matching;
+package gft.mentoring;
 
 public enum Family {
     AMS,

@@ -1,5 +1,6 @@
-package gft.mentoring.matching;
+package gft.mentoring.strategies;
 
+import gft.mentoring.*;
 import lombok.NonNull;
 
 import java.util.Objects;
