@@ -1,10 +1,5 @@
-package gft.mentoring.matching.voting.strategy;
+package gft.mentoring.matching;
 
-import gft.mentoring.matching.model.Family;
-import gft.mentoring.matching.model.MentoringModel;
-import gft.mentoring.matching.voting.result.Neutral;
-import gft.mentoring.matching.voting.result.Support;
-import gft.mentoring.matching.voting.result.VotingResult;
 /*
 1.1 JobFamily equivalent for Development
 Context: In GFT Career Model we have Job Families some of them are considered as one technical perspective.

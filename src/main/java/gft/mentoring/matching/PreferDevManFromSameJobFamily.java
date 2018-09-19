@@ -1,9 +1,4 @@
-package gft.mentoring.matching.voting.strategy;
-
-import gft.mentoring.matching.model.MentoringModel;
-import gft.mentoring.matching.voting.result.Neutral;
-import gft.mentoring.matching.voting.result.Support;
-import gft.mentoring.matching.voting.result.VotingResult;
+package gft.mentoring.matching;
 
 public class PreferDevManFromSameJobFamily implements VotingStrategy {
     @Override

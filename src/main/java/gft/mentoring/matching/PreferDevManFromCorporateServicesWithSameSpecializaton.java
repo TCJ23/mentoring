@@ -1,11 +1,5 @@
-package gft.mentoring.matching.voting.strategy;
+package gft.mentoring.matching;
 
-import gft.mentoring.matching.model.Family;
-import gft.mentoring.matching.model.MentoringModel;
-import gft.mentoring.matching.voting.result.Neutral;
-import gft.mentoring.matching.voting.result.Rejected;
-import gft.mentoring.matching.voting.result.Support;
-import gft.mentoring.matching.voting.result.VotingResult;
 import lombok.NonNull;
 
 import java.util.Objects;

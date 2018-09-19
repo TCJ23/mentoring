@@ -1,4 +1,4 @@
-package gft.mentoring.matching.model;
+package gft.mentoring.matching;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

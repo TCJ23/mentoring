@@ -1,7 +1,5 @@
 package gft.mentoring.matching;
 
-import gft.mentoring.matching.model.Family;
-import gft.mentoring.matching.model.MentoringModel;
 import lombok.Value;
 import lombok.val;
 import org.assertj.core.api.Assertions;

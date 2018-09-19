@@ -1,4 +1,4 @@
-package gft.mentoring.matching.voting.result;
+package gft.mentoring.matching;
 
 public class Neutral extends VotingResult{
 

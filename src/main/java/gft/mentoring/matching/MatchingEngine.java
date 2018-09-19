@@ -1,14 +1,6 @@
 package gft.mentoring.matching;
 /* This class implements logic to meet business requirements described in requirements.md*/
 
-import gft.mentoring.matching.model.MentoringModel;
-import gft.mentoring.matching.voting.result.Rejected;
-import gft.mentoring.matching.voting.result.Support;
-import gft.mentoring.matching.voting.result.VotingResult;
-import gft.mentoring.matching.voting.strategy.PreferDevManFromCorporateServicesWithSameSpecializaton;
-import gft.mentoring.matching.voting.strategy.PreferDevManFromDevGroupStrategy;
-import gft.mentoring.matching.voting.strategy.PreferDevManFromSameJobFamily;
-import gft.mentoring.matching.voting.strategy.VotingStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.val;
