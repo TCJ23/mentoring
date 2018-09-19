@@ -18,15 +18,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MatchingSpec {
 
 
-   /* This test if to meet requirement 1.1 in REQUIREMENTS.md
-    in @ParameterizedTest you either keep
-    your testmethod name and method source name the same or use parameters as below
-    This class should test MatchingEngine().findProposalsStream
-    for MentoringModel in
-    Project Development
-    Architecture Digital
-    Data
-    we can assign Mentors from above Families treated as one*/
+    /* This test if to meet requirement 1.1 in REQUIREMENTS.md
+     in @ParameterizedTest you either keep
+     your testmethod name and method source name the same or use parameters as below
+     This class should test MatchingEngine().findProposalsStream
+     for MentoringModel in
+     Project Development
+     Architecture Digital
+     Data
+     we can assign Mentors from above Families treated as one*/
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("singleMatchingParam")
     @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
@@ -133,8 +133,7 @@ public class MatchingSpec {
 
     @Test
     @DisplayName("When we use helper methods : newMentee and newMentor we make sure these are valid")
-    public void UseValidAssumptionsInTests()
-    {
+    public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
         // MentoringModel definition so created mentor as by definition accepted as a mentor for created mentee.
         // So before starting tests, need to check if those methods are working as predicted.
@@ -144,7 +143,7 @@ public class MatchingSpec {
 
         val proposals = matchingEngine.findProposalsStream(mentee, mentor);
 
-        Assertions.assertThat(proposals).containsOnlyOnce(mentor);
+        Assertions.assertThat(proposals).containsExactly(mentor);
     }
 
     static MentoringModel.MentoringModelBuilder newMentor() {
@@ -155,4 +154,16 @@ public class MatchingSpec {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA").toBuilder();
     }
 
+    @Test
+    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization..")
+    public void shouldFindMatchinSpecializationInCorporateServices() {
+        val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
+        val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
+        val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
+        val matchingEngine = new MatchingEngine();
+
+        val proposals = matchingEngine.findProposalsStream(mentee, mentor1, mentor2);
+
+        Assertions.assertThat(proposals).containsExactly(mentor2);
+    }
 }

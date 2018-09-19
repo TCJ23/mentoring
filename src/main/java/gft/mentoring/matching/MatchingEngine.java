@@ -7,6 +7,7 @@ import gft.mentoring.matching.voting.strategy.PreferDevManFromDevGroupStrategy;
 import gft.mentoring.matching.voting.strategy.PreferDevManFromSameJobFamily;
 import gft.mentoring.matching.voting.strategy.VotingStrategy;
 import lombok.AllArgsConstructor;
+import lombok.Value;
 import lombok.val;
 
 import java.util.Arrays;
@@ -22,19 +23,26 @@ class MatchingEngine {
 
     Stream<MentoringModel> findProposalsStream(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
-                .map(it -> new MyTuple(it, sympathy(mentee, it)))
-                .filter(it -> it.sympathy > 0)
-                .sorted((v1, v2) -> -(v1.sympathy - v2.sympathy))
+                .map(it -> new MyTuple1(it, sympathy(mentee, it)))
+                .filter(it -> it.sympathy != SympathyResult.None)
+                .map(it -> new MyTuple2(it.mentor, ((SympathyResult.Some) it.sympathy).getValue()))
+                .sorted((it1, it2) -> -(it1.sympathy - it2.sympathy))
                 .map(it -> it.mentor);
     }
 
     @AllArgsConstructor
-    static class MyTuple {
+    static class MyTuple1 {
+        private MentoringModel mentor;
+        private SympathyResult sympathy;
+    }
+
+    @AllArgsConstructor
+    static class MyTuple2 {
         private MentoringModel mentor;
         private int sympathy;
     }
 
-    static int sympathy(MentoringModel mentee, MentoringModel mentor) {
+    static SympathyResult sympathy(MentoringModel mentee, MentoringModel mentor) {
         int sympathy = -1;
         for (val strategy : strategies) {
             val result = strategy.calculateSympathy(mentee, mentor);
@@ -42,6 +50,21 @@ class MatchingEngine {
                 sympathy += ((Support) result).getSympathy();
             }
         }
-        return sympathy;
+
+        if (sympathy == -1) return SympathyResult.None;
+        else
+            return new SympathyResult.Some(sympathy);
+    }
+
+}
+
+abstract class SympathyResult {
+
+    static final SympathyResult None = new SympathyResult() {
+    };
+
+    @Value
+    public static class Some extends SympathyResult {
+        private int value;
     }
 }
