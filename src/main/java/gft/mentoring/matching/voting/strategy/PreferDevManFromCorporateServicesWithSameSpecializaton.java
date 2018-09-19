@@ -22,14 +22,13 @@ import java.util.Objects;
 
 public class PreferDevManFromCorporateServicesWithSameSpecializaton implements VotingStrategy {
 
-    /* this method will calculate sympathy between mentee and corresponding mentor or mentors
+    /**
+     * Calculates sympathy between mentee and corresponding mentor or mentors
      * in Corporate Services
+     *
      * @return value should be Support @see VotingResult
-     * IF
      * @param mentee is in one of 4 families considered as larger Development Group
-     * AND
      * @param mentor(s)is in one of 4 families considered as larger Development Group
-     * ELSE
      * @return value should be Neutral @see VotingResult*/
     @Override
     public VotingResult calculateSympathy(@NonNull MentoringModel mentee, @NonNull MentoringModel mentor) {

@@ -16,6 +16,7 @@ import lombok.val;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 class MatchingEngine {
@@ -55,19 +56,20 @@ class MatchingEngine {
             votings.add(result);
         }
 
-        int sympathy = 0;
+        Optional<Integer> sympathyLevel = Optional.empty();
         for (VotingResult vote : votings) {
             if (vote instanceof Support) {
-                sympathy += ((Support) vote).getSympathy();
+                val current = sympathyLevel.orElse(0);
+                sympathyLevel = Optional.of(current + ((Support) vote).getSympathy());
             }
             if (vote instanceof Rejected) {
                 return SympathyResult.None;
             }
         }
 
-        if (sympathy == 0) return SympathyResult.None;
-        else
-            return new SympathyResult.Some(sympathy);
+        return sympathyLevel.isPresent()
+                ? new SympathyResult.Some(sympathyLevel.get())
+                : SympathyResult.None;
     }
 
 }
