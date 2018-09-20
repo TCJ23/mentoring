@@ -18,13 +18,13 @@ import java.util.stream.Stream;
 class MatchingEngine {
 
     static VotingStrategy[] strategies = {
-            new PreferDevManFromDevGroupStrategy(),
+            new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameJobFamily(),
-            new PreferDevManFromCorporateServicesWithSameSpecializaton(),
-            new MentorHasToWorkAtLeastOneYearInGFT()
+            new PreferDevManFromDevGroupStrategy(),
+            new PreferDevManFromCorporateServicesWithSameSpecializaton()
     };
 
-    Stream<MentoringModel> findProposalsStream(MentoringModel mentee, MentoringModel... candidates) {
+    Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
                 .map(it -> new MyTuple1(it, sympathy(mentee, it)))
                 .filter(it -> it.sympathy != SympathyResult.None)
@@ -79,4 +79,5 @@ abstract class SympathyResult {
     public static class Some extends SympathyResult {
         private int value;
     }
+
 }

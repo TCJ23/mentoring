@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,11 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Main Class to test MatchingEngine")
 public class MatchingSpec {
 
-
     /* This test if to meet requirement 1.1 in REQUIREMENTS.md
      in @ParameterizedTest you either keep
      your testmethod name and method source name the same or use parameters as below
-     This class should test MatchingEngine().findProposalsStream
+     This class should test MatchingEngine().findProposals
      for MentoringModel in
      Project Development
      Architecture Digital
@@ -28,15 +29,16 @@ public class MatchingSpec {
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("singleMatchingParam")
     @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
-    void findSingleCandidateMentorFromProposals(SingleMatchingParam singleMatchingParam) {
+    void findSingleProposedMentorFromCandidates(SingleMatchingParam singleMatchingParam) {
         //given
         val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily).build();
         val mentee = newMentee().family(singleMatchingParam.menteeFamily).build();
         //when
-        val candidate = new MatchingEngine().findProposalsStream(mentee, proposal);
+        val candidate = new MatchingEngine().findProposals(mentee, proposal);
+//        val dupa = candidate.collect(Collectors.toList());
         //then
         assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
-//        assertThat(candidate.size() == 1).isEqualTo(singleMatchingParam.accepted);
+//        assertThat(dupa.size() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
@@ -55,15 +57,15 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("STREAM -> From 2 Mentors prefers MentoringModel from exact same Family as MentoringModel")
-    void findPreferedCandidateFromManyMentorsStream() {
+    @DisplayName("From 2 Mentors prefers MentoringModel from exact same Family as MentoringModel")
+    void findPreferedCandidateFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.DATA).build();
         val mentor1 = newMentor().family(Family.ARCHITECTURE).build();
         val mentor2 = newMentor().family(Family.DATA).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<MentoringModel> bestMentorCandidate = matchingEngine.findProposalsStream(mentee, mentor1, mentor2);
+        Stream<MentoringModel> bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2);
 
         //then
         assertThat(bestMentorCandidate.limit(1))
@@ -77,7 +79,7 @@ public class MatchingSpec {
         MentoringModel mentee = newMentee().family(Family.DATA).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<MentoringModel> bestCandidate = matchingEngine.findProposalsStream(mentee,
+        Stream<MentoringModel> bestCandidate = matchingEngine.findProposals(mentee,
                 newMentor().family(Family.ARCHITECTURE).build(),
                 newMentor().family(Family.DATA).build());
         //then
@@ -131,13 +133,13 @@ public class MatchingSpec {
 
     @Test
     @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization..")
-    public void shouldFindMatchinSpecializationInCorporateServices() {
+    public void shouldFindMatchingSpecializationInCorporateServices() {
         val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
         val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
         val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
         val matchingEngine = new MatchingEngine();
 
-        val proposals = matchingEngine.findProposalsStream(mentee, mentor1, mentor2);
+        val proposals = matchingEngine.findProposals(mentee, mentor1, mentor2);
 
         Assertions.assertThat(proposals).containsExactly(mentor2);
     }
@@ -150,7 +152,7 @@ public class MatchingSpec {
         val toYoungToBeMentor = newMentor().seniority(364).build();
         val justSeniorMentor = newMentor().seniority(365).build();
         val matchingEngine = new MatchingEngine();
-        val proposals = matchingEngine.findProposalsStream(mentee, toYoungToBeMentor, justSeniorMentor);
+        val proposals = matchingEngine.findProposals(mentee, toYoungToBeMentor, justSeniorMentor);
         Assertions.assertThat(proposals).containsExactly(justSeniorMentor);
     }
 
@@ -164,7 +166,7 @@ public class MatchingSpec {
         val mentor = newMentor().build();
         val matchingEngine = new MatchingEngine();
 
-        val proposals = matchingEngine.findProposalsStream(mentee, mentor);
+        val proposals = matchingEngine.findProposals(mentee, mentor);
 
         Assertions.assertThat(proposals).containsExactly(mentor);
     }

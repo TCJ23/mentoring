@@ -11,6 +11,7 @@ public class MentorHasToWorkAtLeastOneYearInGFT implements VotingStrategy {
     @Override
     public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
         if (mentor.getSeniority() < 365) return new Rejected();
-        return new Support(100);
+//        return new Support(100);
+        return Neutral.INSTANCE;
     }
 }
