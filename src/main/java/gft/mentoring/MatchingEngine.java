@@ -1,10 +1,7 @@
 package gft.mentoring;
 /* This class implements logic to meet business requirements described in requirements.md*/
 
-import gft.mentoring.strategies.MentorHasToWorkAtLeastOneYearInGFT;
-import gft.mentoring.strategies.PreferDevManFromCorporateServicesWithSameSpecializaton;
-import gft.mentoring.strategies.PreferDevManFromDevGroupStrategy;
-import gft.mentoring.strategies.PreferDevManFromSameJobFamily;
+import gft.mentoring.strategies.*;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.val;
@@ -18,6 +15,7 @@ import java.util.stream.Stream;
 class MatchingEngine {
 
     static VotingStrategy[] strategies = {
+            new PreferSameLocalizationDevMan(),
             new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameJobFamily(),
             new PreferDevManFromDevGroupStrategy(),

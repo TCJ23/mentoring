@@ -18,6 +18,7 @@ not be constantly overburden by allowing Digital, Architecture & Data - Mentors 
 altogether, considered as one common other Development Group.*/
 
 import gft.mentoring.*;
+import org.jetbrains.annotations.NotNull;
 
 public class PreferDevManFromDevGroupStrategy implements VotingStrategy {
     /* this method will calculate sympathy between mentee and corresponding mentor or mentors
@@ -30,7 +31,7 @@ public class PreferDevManFromDevGroupStrategy implements VotingStrategy {
      * ELSE
      * @return value should be Neutral @see VotingResult*/
     @Override
-    public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
+    public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
         if (isDevelopmentGroup(mentee.getFamily()) && isDevelopmentGroup(mentor.getFamily()))
             return new Support(100);
 

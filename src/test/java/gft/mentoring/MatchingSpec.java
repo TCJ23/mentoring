@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,6 +98,87 @@ public class MatchingSpec {
         }
     }
 
+
+    @Test
+    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization")
+    public void shouldFindMatchingSpecializationInCorporateServices() {
+        val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
+        val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
+        val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
+        val matchingEngine = new MatchingEngine();
+
+        val proposals = matchingEngine.findProposals(mentee, mentor1, mentor2);
+
+        Assertions.assertThat(proposals).containsExactly(mentor2);
+    }
+
+    /*This test if to meet requirement 1.4 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("validate seniority for mentor")
+    public void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
+        val mentee = newMentee().build();
+        //boundary values edge cases
+        val toYoungToBeMentor = newMentor().seniority(364).build();
+        val justSeniorMentor = newMentor().seniority(365).build();
+        val matchingEngine = new MatchingEngine();
+        val proposals = matchingEngine.findProposals(mentee, toYoungToBeMentor, justSeniorMentor);
+        Assertions.assertThat(proposals).containsExactly(justSeniorMentor);
+    }
+
+    /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("validate same localization preference")
+    public void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
+        //given
+        val mentee = newMentee().localization("Warszawa").build();
+
+        val differentLocalizationMentor = newMentor().localization("Lodz").build();
+        val sameLocalizationMentor = newMentor().localization("Warszawa").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        Stream<MentoringModel> proposals = matchingEngine.findProposals(mentee, differentLocalizationMentor, sameLocalizationMentor);
+
+        assertThat(proposals.limit(1)).containsExactly(sameLocalizationMentor);
+    }
+
+    /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("validate different localization doesn't reject candidate")
+    public void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
+        //given
+        val mentee = newMentee().localization("Warszawa").build();
+
+        val differentLocalizationMentor = newMentor().localization("Lodz").build();
+        val sameLocalizationMentor = newMentor().localization("Warszawa").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        Stream<MentoringModel> proposals = matchingEngine.findProposals(mentee, differentLocalizationMentor, sameLocalizationMentor);
+
+        assertThat(proposals.count()).isEqualTo(2);
+    }
+
+    @DisplayName("Helper methods with default test data should always be valid")
+    public void UseValidAssumptionsInTests() {
+        // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
+        // MentoringModel definition so created mentor as by definition accepted as a mentor for created mentee.
+        // So before starting tests, need to check if those methods are working as predicted.
+        val mentee = newMentee().build();
+        val mentor = newMentor().build();
+        val matchingEngine = new MatchingEngine();
+
+        val proposals = matchingEngine.findProposals(mentee, mentor);
+
+        Assertions.assertThat(proposals).containsExactly(mentor);
+    }
+
+    static MentoringModel.MentoringModelBuilder newMentor() {
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365, "Lodz").toBuilder();
+    }
+
+    static MentoringModel.MentoringModelBuilder newMentee() {
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
+    }
+}
 ////    @Test
 //    public void RequireSameSpecializationForCorporateServices()
 //    {
@@ -129,66 +209,3 @@ public class MatchingSpec {
 //        // not proposed candidate should not be accepted.
 //        Assert.That(Candidates(mentorCandidate, mentorCandidate), Is.Empty);
 //    }
-
-    @Test
-    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization")
-    public void shouldFindMatchingSpecializationInCorporateServices() {
-        val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
-        val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
-        val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
-        val matchingEngine = new MatchingEngine();
-
-        val proposals = matchingEngine.findProposals(mentee, mentor1, mentor2);
-
-        Assertions.assertThat(proposals).containsExactly(mentor2);
-    }
-
-    @Test
-    @DisplayName("validate seniority for mentor")
-    public void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
-        val mentee = newMentee().build();
-        //boundary values edge cases
-        val toYoungToBeMentor = newMentor().seniority(364).build();
-        val justSeniorMentor = newMentor().seniority(365).build();
-        val matchingEngine = new MatchingEngine();
-        val proposals = matchingEngine.findProposals(mentee, toYoungToBeMentor, justSeniorMentor);
-        Assertions.assertThat(proposals).containsExactly(justSeniorMentor);
-    }
-
-    /*This test if to meet requirement 1.4 in REQUIREMENTS.md*/
-    @Test
-    @DisplayName("validate same localization preference")
-    public void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
-        //given
-        val mentee = newMentee().localization("Warszawa").build();
-
-        val differentLocalizationMentor = newMentor().localization("Lodz").build();
-        val sameLocalizationMentor = newMentor().localization("Warszawa").build();
-        val matchingEngine = new MatchingEngine();
-        //when
-        Stream<MentoringModel> proposals = matchingEngine.findProposals(mentee, differentLocalizationMentor, sameLocalizationMentor);
-
-        assertThat(proposals.limit(1)).containsExactly(sameLocalizationMentor);
-    }
-    @DisplayName("Helper methods with default test data should always be valid")
-    public void UseValidAssumptionsInTests() {
-        // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
-        // MentoringModel definition so created mentor as by definition accepted as a mentor for created mentee.
-        // So before starting tests, need to check if those methods are working as predicted.
-        val mentee = newMentee().build();
-        val mentor = newMentor().build();
-        val matchingEngine = new MatchingEngine();
-
-        val proposals = matchingEngine.findProposals(mentee, mentor);
-
-        Assertions.assertThat(proposals).containsExactly(mentor);
-    }
-
-    static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365, "Lodz").toBuilder();
-    }
-
-    static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Lodz").toBuilder();
-    }
-}
