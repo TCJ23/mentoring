@@ -7,8 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,13 +40,13 @@ public class MatchingSpec {
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
         return Stream.of(
-                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group",
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group & Exact SAME FAMILY",
                         Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, true),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel: ONLY ONE IS in Development Group",
                         Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ONLY ONE IS in Development Group",
                         Family.DIGITAL, Family.AMS, false),
-                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group",
+                new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group, But DIFFERENT FAMILIES",
                         Family.DATA, Family.ARCHITECTURE, true),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel NEITHER IS in Development Group",
                         Family.AMS, Family.BUSINESS_CONSULTING, false));
@@ -114,7 +112,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.4 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("validate seniority for mentor")
+    @DisplayName("Validate SENIORITY for mentor")
     public void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
         val mentee = newMentee().build();
         //boundary values edge cases
@@ -127,7 +125,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("validate same localization preference")
+    @DisplayName("Validate same LOCALIZATION preference")
     public void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
         //given
         val mentee = newMentee().localization("Warszawa").build();
@@ -143,7 +141,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("validate different localization doesn't reject candidate")
+    @DisplayName("Validate DIFFERENT LOCALIZATION doesn't REJECT candidate")
     public void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
         //given
         val mentee = newMentee().localization("Warszawa").build();
@@ -176,7 +174,8 @@ public class MatchingSpec {
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
+//        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Lodz").toBuilder();
     }
 }
 ////    @Test

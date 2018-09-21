@@ -15,11 +15,11 @@ import java.util.stream.Stream;
 class MatchingEngine {
 
     static VotingStrategy[] strategies = {
-            new PreferSameLocalizationDevMan(),
             new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameJobFamily(),
             new PreferDevManFromDevGroupStrategy(),
             new PreferDevManFromCorporateServicesWithSameSpecializaton(),
+            new PreferSameLocalizationDevMan(),
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
