@@ -11,4 +11,5 @@ public class MentoringModel {
     private Family family;
     private String specialization;
     private int seniority;
+    private String localization;
 }

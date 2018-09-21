@@ -21,7 +21,7 @@ class MatchingEngine {
             new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameJobFamily(),
             new PreferDevManFromDevGroupStrategy(),
-            new PreferDevManFromCorporateServicesWithSameSpecializaton()
+            new PreferDevManFromCorporateServicesWithSameSpecializaton(),
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {

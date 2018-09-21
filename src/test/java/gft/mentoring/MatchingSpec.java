@@ -68,8 +68,7 @@ public class MatchingSpec {
         Stream<MentoringModel> bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2);
 
         //then
-        assertThat(bestMentorCandidate.limit(1))
-                .containsExactly(mentor2);
+        assertThat(bestMentorCandidate.limit(1)).containsExactly(mentor2);
     }
 
     @Test
@@ -132,7 +131,7 @@ public class MatchingSpec {
 //    }
 
     @Test
-    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization..")
+    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization")
     public void shouldFindMatchingSpecializationInCorporateServices() {
         val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
         val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
@@ -156,7 +155,21 @@ public class MatchingSpec {
         Assertions.assertThat(proposals).containsExactly(justSeniorMentor);
     }
 
+    /*This test if to meet requirement 1.4 in REQUIREMENTS.md*/
     @Test
+    @DisplayName("validate same localization preference")
+    public void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
+        //given
+        val mentee = newMentee().localization("Warszawa").build();
+
+        val differentLocalizationMentor = newMentor().localization("Lodz").build();
+        val sameLocalizationMentor = newMentor().localization("Warszawa").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        Stream<MentoringModel> proposals = matchingEngine.findProposals(mentee, differentLocalizationMentor, sameLocalizationMentor);
+
+        assertThat(proposals.limit(1)).containsExactly(sameLocalizationMentor);
+    }
     @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
@@ -172,10 +185,10 @@ public class MatchingSpec {
     }
 
     static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365).toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365, "Lodz").toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30).toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Lodz").toBuilder();
     }
 }
