@@ -20,7 +20,7 @@ altogether, considered as one common other Development Group.*/
 import gft.mentoring.*;
 import org.jetbrains.annotations.NotNull;
 
-public class PreferDevManFromDevGroupStrategy implements VotingStrategy {
+public class PreferDevManFromSameOrSimilliarGroupStrategy implements VotingStrategy {
     /* this method will calculate sympathy between mentee and corresponding mentor or mentors
      * in Development Group
      * @return value should be Support @see VotingResult
@@ -32,10 +32,14 @@ public class PreferDevManFromDevGroupStrategy implements VotingStrategy {
      * @return value should be Neutral @see VotingResult*/
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
-        if (isDevelopmentGroup(mentee.getFamily()) && isDevelopmentGroup(mentor.getFamily()))
-            return new Support(100);
+        if (mentee.getFamily().equals(mentor.getFamily())) return new Support(100);
 
-        return  Neutral.INSTANCE;
+        if (isDevelopmentGroup(mentee.getFamily()) && isDevelopmentGroup(mentor.getFamily())) return new Support(50);
+
+        if (isDevelopmentGroup(mentee.getFamily()) ^ isDevelopmentGroup(mentor.getFamily())) return Rejected.INSTANCE;
+
+        return Rejected.INSTANCE;
+
     }
 
     public boolean isDevelopmentGroup(Family family) {

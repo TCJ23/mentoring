@@ -16,8 +16,7 @@ class MatchingEngine {
 
     static VotingStrategy[] strategies = {
             new MentorHasToWorkAtLeastOneYearInGFT(),
-            new PreferDevManFromSameJobFamily(),
-            new PreferDevManFromDevGroupStrategy(),
+            new PreferDevManFromSameOrSimilliarGroupStrategy(),
             new PreferDevManFromCorporateServicesWithSameSpecializaton(),
             new PreferSameLocalizationDevMan(),
     };

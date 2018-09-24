@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +56,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("From 2 Mentors prefers MentoringModel from exact same Family as MentoringModel")
+    @DisplayName("From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.DATA).build();
@@ -62,24 +64,26 @@ public class MatchingSpec {
         val mentor2 = newMentor().family(Family.DATA).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<MentoringModel> bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2);
+        val bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2).collect(Collectors.toList());
 
         //then
-        assertThat(bestMentorCandidate.limit(1)).containsExactly(mentor2);
+        assertThat(bestMentorCandidate.get(0)).isEqualTo(mentor2);
+        assertThat(bestMentorCandidate).size().isEqualTo(2);
     }
 
     @Test
-    @DisplayName("From 2 Mentors find MentoringModel from exact same Family as MentoringModel")
-    void findBestCandidateFromManyMentors() {
+    @DisplayName("From 2 Mentors propose only Mentor from exact same Family as Mentee")
+    void findBestProposalFromManyMentors() {
         //given
-        MentoringModel mentee = newMentee().family(Family.DATA).build();
+        MentoringModel mentee = newMentee().family(Family.AMS).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<MentoringModel> bestCandidate = matchingEngine.findProposals(mentee,
+        val bestCandidate = matchingEngine.findProposals(mentee,
                 newMentor().family(Family.ARCHITECTURE).build(),
-                newMentor().family(Family.DATA).build());
+                newMentor().family(Family.AMS).build()).collect(Collectors.toList());
         //then
-        assertThat(bestCandidate.findFirst().get().getFamily()).isEqualTo(mentee.getFamily());
+        assertThat(bestCandidate.get(0).getFamily()).isEqualTo(mentee.getFamily());
+        assertThat(bestCandidate).size().isEqualTo(1);
     }
 
 
