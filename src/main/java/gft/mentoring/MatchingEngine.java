@@ -17,8 +17,9 @@ class MatchingEngine {
     static VotingStrategy[] strategies = {
             new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameOrSimilliarGroupStrategy(),
-            new PreferDevManFromCorporateServicesWithSameSpecializaton(),
+            new PreferDevManFromCorporateServicesBySameSpecializaton(),
             new PreferSameLocalizationDevMan(),
+            new PreferSameSpecialization()
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {

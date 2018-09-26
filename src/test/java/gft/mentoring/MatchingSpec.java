@@ -162,13 +162,14 @@ public class MatchingSpec {
     public void shouldFindMatchingSpecialization() {
         //given
         val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
-        val mentor1 = newMentor().family(Family.DATA).specialization("SQL").build();
-        val mentor2 = newMentor().family(Family.DATA).specialization("BIG Data").build();
+        val diffSpecMentor = newMentor().family(Family.DATA).specialization("SQL").build();
+        val sameSpecMentor = newMentor().family(Family.DATA).specialization("BIG Data").build();
         val matchingEngine = new MatchingEngine();
         //when
-        val proposals = matchingEngine.findProposals(mentee, mentor1, mentor2);
+        val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-        Assertions.assertThat(proposals).containsExactly(mentor2);
+//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
+        assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
     @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {

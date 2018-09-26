@@ -15,7 +15,7 @@ import java.util.Objects;
   An example: HR person can't be mentor for IT Support person even they
   are both from Corporate Services.*/
 
-public class PreferDevManFromCorporateServicesWithSameSpecializaton implements VotingStrategy {
+public class PreferDevManFromCorporateServicesBySameSpecializaton implements VotingStrategy {
 
     /**
      * Calculates sympathy between mentee and corresponding mentor or mentors
