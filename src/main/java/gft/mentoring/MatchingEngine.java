@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 class MatchingEngine {
 
     static VotingStrategy[] strategies = {
+            new IgnoreContractorsStrategy(),
             new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
             new PreferDevManFromCorporateServicesBySameSpecializaton(),

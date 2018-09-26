@@ -193,7 +193,7 @@ public class MatchingSpec {
         //given
         val mentee = newMentee().contractor(false).build();
         val contractor = newMentor().contractor(true).build();
-        val employee = newMentor().contractor(true).build();
+        val employee = newMentor().contractor(false).build();
         val matchingEngine = new MatchingEngine();
         //when
         val proposals = matchingEngine.findProposals(mentee, contractor, employee).collect(Collectors.toList());
