@@ -4,5 +4,9 @@ import lombok.Value;
 
 @Value
 public class Rejected extends VotingResult {
-    private int sympathy = -1;
+    public static  final Rejected INSTANCE = new Rejected();
+
+    private Rejected() {
+    }
+
 }

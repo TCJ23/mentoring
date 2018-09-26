@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,10 +34,8 @@ public class MatchingSpec {
         val mentee = newMentee().family(singleMatchingParam.menteeFamily).build();
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
-//        val dupa = candidate.collect(Collectors.toList());
         //then
         assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
-//        assertThat(dupa.size() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
@@ -54,7 +54,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("From 2 Mentors prefers MentoringModel from exact same Family as MentoringModel")
+    @DisplayName("From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.DATA).build();
@@ -62,24 +62,25 @@ public class MatchingSpec {
         val mentor2 = newMentor().family(Family.DATA).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<MentoringModel> bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2);
-
+        val bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2).collect(Collectors.toList());
         //then
-        assertThat(bestMentorCandidate.limit(1)).containsExactly(mentor2);
+        assertThat(bestMentorCandidate.get(0)).isEqualTo(mentor2);
+        assertThat(bestMentorCandidate).size().isEqualTo(2);
     }
 
     @Test
-    @DisplayName("From 2 Mentors find MentoringModel from exact same Family as MentoringModel")
-    void findBestCandidateFromManyMentors() {
+    @DisplayName("From 2 Mentors propose only Mentor from exact same Family as Mentee")
+    void findBestProposalFromManyMentors() {
         //given
-        MentoringModel mentee = newMentee().family(Family.DATA).build();
+        MentoringModel mentee = newMentee().family(Family.AMS).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        Stream<MentoringModel> bestCandidate = matchingEngine.findProposals(mentee,
+        val bestCandidate = matchingEngine.findProposals(mentee,
                 newMentor().family(Family.ARCHITECTURE).build(),
-                newMentor().family(Family.DATA).build());
+                newMentor().family(Family.AMS).build()).collect(Collectors.toList());
         //then
-        assertThat(bestCandidate.findFirst().get().getFamily()).isEqualTo(mentee.getFamily());
+        assertThat(bestCandidate.get(0).getFamily()).isEqualTo(mentee.getFamily());
+        assertThat(bestCandidate).size().isEqualTo(1);
     }
 
 
@@ -96,9 +97,9 @@ public class MatchingSpec {
         }
     }
 
-
+    /*This test if to meet requirement 1.3 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization")
+    @DisplayName("Validate that in Corporate Services MatchingEngine prefers same specialization")
     public void shouldFindMatchingSpecializationInCorporateServices() {
         val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
         val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
@@ -141,7 +142,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate DIFFERENT LOCALIZATION doesn't REJECT candidate")
+    @DisplayName("Validate that DIFFERENT LOCALIZATION doesn't REJECT candidate")
     public void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
         //given
         val mentee = newMentee().localization("Warszawa").build();
@@ -153,6 +154,37 @@ public class MatchingSpec {
         Stream<MentoringModel> proposals = matchingEngine.findProposals(mentee, differentLocalizationMentor, sameLocalizationMentor);
 
         assertThat(proposals.count()).isEqualTo(2);
+    }
+
+    /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Validate that same from same Family Matching Engine prefers the exact same specialization")
+    public void shouldFindMatchingSpecialization() {
+        //given
+        val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
+        val diffSpecMentor = newMentor().family(Family.DATA).specialization("SQL").build();
+        val sameSpecMentor = newMentor().family(Family.DATA).specialization("BIG Data").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
+        //then
+//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
+        assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
+    }
+
+    @Test
+    @DisplayName("Validate similar Dev Group Matching Engine prefers the exact same specialization")
+    public void shouldFindMatchingSpecializationInSimilarDevGroup() {
+        //given
+        val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
+        val diffSpecMentor = newMentor().family(Family.ARCHITECTURE).specialization("SQL").build();
+        val sameSpecMentor = newMentor().family(Family.ARCHITECTURE).specialization("BIG Data").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
+        //then
+//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
+        assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
     @DisplayName("Helper methods with default test data should always be valid")

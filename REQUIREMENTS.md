@@ -42,7 +42,7 @@
 1.6. Mentor prefers the same specialisation as his mentee
   (Sławomir Siudek)
   Matching process preferes the same specialisation for Mentor and Mentee.
-  Different localisation is not an obstacle in setting Mentor-Mentee relation, it is only
+  Different specialisation is not an obstacle in setting Mentor-Mentee relation, it is only
   not preferred.
 
 1.7. Contractor can't be suggested as a mentor.
@@ -55,7 +55,7 @@
 
 1.9. Mentor marked as a leaver can't be taken into consideration
   (Sławomir Siudek)
-  When we know that Mentor candidate is going to disapeard in the near future
+  When we know that Mentor candidate is going to disappear in the near future
   we don't want to consider him/her as a valid candidate for mentoring role.
 
 1.10. Mentee prefers Mentor with higher level then mentee's grade.

@@ -6,7 +6,7 @@ public class PreferSameLocalizationDevMan implements VotingStrategy {
 
     @Override
     public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
-        if (mentee.getFamily().equals(mentor.getFamily()) && mentee.getLocalization().equals(mentor.getLocalization()))
+        if (mentee.getLocalization().equals(mentor.getLocalization()))
         {
             return new Support(100);
         }
