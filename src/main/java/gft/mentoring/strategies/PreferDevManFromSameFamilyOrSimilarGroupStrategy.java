@@ -20,7 +20,7 @@ altogether, considered as one common other Development Group.*/
 import gft.mentoring.*;
 import org.jetbrains.annotations.NotNull;
 
-public class PreferDevManFromSameOrSimilliarGroupStrategy implements VotingStrategy {
+public class PreferDevManFromSameFamilyOrSimilarGroupStrategy implements VotingStrategy {
     /* this method will calculate sympathy between mentee and corresponding mentor or mentors
      * in Development Group
      * @return value should be Support @see VotingResult

@@ -171,6 +171,22 @@ public class MatchingSpec {
 //        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
         assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
+
+    @Test
+    @DisplayName("Validate similar Dev Group Matching Engine prefers the exact same specialization")
+    public void shouldFindMatchingSpecializationInSimilarDevGroup() {
+        //given
+        val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
+        val diffSpecMentor = newMentor().family(Family.ARCHITECTURE).specialization("SQL").build();
+        val sameSpecMentor = newMentor().family(Family.ARCHITECTURE).specialization("BIG Data").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
+        //then
+//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
+        assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
+    }
+
     @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
