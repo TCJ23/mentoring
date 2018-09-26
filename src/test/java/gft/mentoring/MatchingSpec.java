@@ -34,10 +34,8 @@ public class MatchingSpec {
         val mentee = newMentee().family(singleMatchingParam.menteeFamily).build();
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
-//        val dupa = candidate.collect(Collectors.toList());
         //then
         assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
-//        assertThat(dupa.size() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
     static Stream<SingleMatchingParam> singleMatchingParam() {
@@ -65,7 +63,6 @@ public class MatchingSpec {
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
         val bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2).collect(Collectors.toList());
-
         //then
         assertThat(bestMentorCandidate.get(0)).isEqualTo(mentor2);
         assertThat(bestMentorCandidate).size().isEqualTo(2);
@@ -100,9 +97,9 @@ public class MatchingSpec {
         }
     }
 
-
+    /*This test if to meet requirement 1.3 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Check for specialization among metnor and mentee while BOTH in same specialization")
+    @DisplayName("Validate that in Corporate Services MatchingEngine prefers same specialization")
     public void shouldFindMatchingSpecializationInCorporateServices() {
         val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
         val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
@@ -145,7 +142,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate DIFFERENT LOCALIZATION doesn't REJECT candidate")
+    @DisplayName("Validate that DIFFERENT LOCALIZATION doesn't REJECT candidate")
     public void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
         //given
         val mentee = newMentee().localization("Warszawa").build();
@@ -159,6 +156,20 @@ public class MatchingSpec {
         assertThat(proposals.count()).isEqualTo(2);
     }
 
+    /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Validate that same from same Family Matching Engine prefers the exact same specialization")
+    public void shouldFindMatchingSpecialization() {
+        //given
+        val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
+        val mentor1 = newMentor().family(Family.DATA).specialization("SQL").build();
+        val mentor2 = newMentor().family(Family.DATA).specialization("BIG Data").build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        val proposals = matchingEngine.findProposals(mentee, mentor1, mentor2);
+        //then
+        Assertions.assertThat(proposals).containsExactly(mentor2);
+    }
     @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
