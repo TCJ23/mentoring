@@ -14,7 +14,6 @@ public class PreferSameSpecialization implements VotingStrategy {
     @Override
     public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
 
-        if (!mentee.getFamily().equals(mentor.getFamily())) return Rejected.INSTANCE;
         if (Objects.equals(mentee.getSpecialization(), mentor.getSpecialization())) return new Support(25);
 
         return Neutral.INSTANCE;
