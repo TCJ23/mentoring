@@ -168,10 +168,10 @@ public class MatchingSpec {
         //when
         val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
         assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
+    /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
     @Test
     @DisplayName("Validate similar Dev Group Matching Engine prefers the exact same specialization")
     public void shouldFindMatchingSpecializationInSimilarDevGroup() {
@@ -183,8 +183,22 @@ public class MatchingSpec {
         //when
         val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
         assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
+    }
+
+    /*This test if to meet requirement 1.7 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Validate that Matching Engine ignores contractors")
+    public void shouldIgnoreContractors() {
+        //given
+        val mentee = newMentee().contractor(false).build();
+        val contractor = newMentor().contractor(true).build();
+        val employee = newMentor().contractor(true).build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        val proposals = matchingEngine.findProposals(mentee, contractor, employee).collect(Collectors.toList());
+        //then
+        assertThat(proposals.size()).isEqualTo(1);
     }
 
     @DisplayName("Helper methods with default test data should always be valid")
@@ -201,13 +215,16 @@ public class MatchingSpec {
         Assertions.assertThat(proposals).containsExactly(mentor);
     }
 
+
     static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365, "Lodz").toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365,
+                                "Lodz",false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Lodz").toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30,
+                                "Lodz", false).toBuilder();
     }
 }
 ////    @Test
