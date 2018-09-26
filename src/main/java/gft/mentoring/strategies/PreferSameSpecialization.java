@@ -1,6 +1,7 @@
 package gft.mentoring.strategies;
 
 import gft.mentoring.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
 public class PreferSameSpecialization implements VotingStrategy {
 
     @Override
-    public VotingResult calculateSympathy(MentoringModel mentee, MentoringModel mentor) {
+    public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
 
         if (Objects.equals(mentee.getSpecialization(), mentor.getSpecialization())) return new Support(25);
 

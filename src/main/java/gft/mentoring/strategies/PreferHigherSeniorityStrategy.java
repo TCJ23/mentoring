@@ -1,12 +1,14 @@
 package gft.mentoring.strategies;
 
-import gft.mentoring.*;
+import gft.mentoring.MentoringModel;
+import gft.mentoring.Neutral;
+import gft.mentoring.VotingResult;
+import gft.mentoring.VotingStrategy;
 import org.jetbrains.annotations.NotNull;
 
-public class IgnoreContractorsStrategy implements VotingStrategy {
+public class PreferHigherSeniorityStrategy implements VotingStrategy {
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
-        if (mentee.isContractor() || mentor.isContractor()) return Rejected.INSTANCE;
         return Neutral.INSTANCE;
     }
 }

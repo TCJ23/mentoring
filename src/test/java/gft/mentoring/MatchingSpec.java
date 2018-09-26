@@ -30,8 +30,10 @@ public class MatchingSpec {
     @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
     void findSingleProposedMentorFromCandidates(SingleMatchingParam singleMatchingParam) {
         //given
-        val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily).contractor(singleMatchingParam.contractor).build();
-        val mentee = newMentee().family(singleMatchingParam.menteeFamily).contractor(singleMatchingParam.contractor).build();
+        val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily)
+                .contractor(singleMatchingParam.contractor).build();
+        val mentee = newMentee().family(singleMatchingParam.menteeFamily)
+                .contractor(singleMatchingParam.contractor).build();
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
         //then
@@ -41,17 +43,17 @@ public class MatchingSpec {
     static Stream<SingleMatchingParam> singleMatchingParam() {
         return Stream.of(
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group & Exact SAME FAMILY",
-                        Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, false,true),
+                        Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, false, true),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel: ONLY ONE IS in Development Group",
-                        Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false,false),
+                        Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false, false),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ONLY ONE IS in Development Group",
-                        Family.DIGITAL, Family.AMS, false,false),
+                        Family.DIGITAL, Family.AMS, false, false),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group, But DIFFERENT FAMILIES",
-                        Family.DATA, Family.ARCHITECTURE, false,true),
+                        Family.DATA, Family.ARCHITECTURE, false, true),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel NEITHER IS in Development Group",
-                        Family.AMS, Family.BUSINESS_CONSULTING, false,false),
+                        Family.AMS, Family.BUSINESS_CONSULTING, false, false),
                 new SingleMatchingParam("Scenario: One of candidates is Contractor ",
-                        Family.AMS, Family.AMS, true,false));
+                        Family.AMS, Family.AMS, true, false));
     }
 
     @Value
@@ -78,10 +80,11 @@ public class MatchingSpec {
         val mentor2 = newMentor().family(Family.DATA).build();
         MatchingEngine matchingEngine = new MatchingEngine();
         //when
-        val bestMentorCandidate = matchingEngine.findProposals(mentee, mentor1, mentor2).collect(Collectors.toList());
+        val bestMentorCandidates = matchingEngine.findProposals(mentee, mentor1, mentor2).collect(Collectors.toList());
+        val mentorProposed = bestMentorCandidates.get(0);
         //then
-        assertThat(bestMentorCandidate.get(0)).isEqualTo(mentor2);
-        assertThat(bestMentorCandidate).size().isEqualTo(2);
+        assertThat(mentorProposed).isEqualTo(mentor2);
+        assertThat(bestMentorCandidates).size().isEqualTo(2);
     }
 
     @Test
@@ -98,7 +101,6 @@ public class MatchingSpec {
         assertThat(bestCandidate.get(0).getFamily()).isEqualTo(mentee.getFamily());
         assertThat(bestCandidate).size().isEqualTo(1);
     }
-
 
 
     /*This test if to meet requirement 1.3 in REQUIREMENTS.md*/
@@ -170,9 +172,10 @@ public class MatchingSpec {
         val sameSpecMentor = newMentor().family(Family.DATA).specialization("BIG Data").build();
         val matchingEngine = new MatchingEngine();
         //when
-        val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
+        val bestProposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-        assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
+        val mentorProposed = bestProposals.get(0);
+        assertThat(mentorProposed.getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
     /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
@@ -185,9 +188,10 @@ public class MatchingSpec {
         val sameSpecMentor = newMentor().family(Family.ARCHITECTURE).specialization("BIG Data").build();
         val matchingEngine = new MatchingEngine();
         //when
-        val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
+        val bestProposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-        assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
+        val mentorProposed = bestProposals.get(0);
+        assertThat(mentorProposed.getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
     /*This test if to meet requirement 1.7 in REQUIREMENTS.md*/
@@ -203,6 +207,22 @@ public class MatchingSpec {
         val proposals = matchingEngine.findProposals(mentee, contractor, employee).collect(Collectors.toList());
         //then
         assertThat(proposals.size()).isEqualTo(1);
+    }
+
+    /*This test if to meet requirement 1.8 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Validate that MAtching Engine prefers proposed Mentor with higher seniority")
+    public void shouldPreferHigherSeniority() {
+        //given
+        val mentee = newMentee().build();
+        val juniorMentor = newMentor().seniority(1 * 365).build();
+        val seniorMentor = newMentor().seniority(5 * 365).build();
+        val matchingengine = new MatchingEngine();
+        //when
+        val proposals = matchingengine.findProposals(mentee, juniorMentor, seniorMentor);
+        //then
+        val mentorProposed = proposals.findFirst();
+        assertThat(mentorProposed.equals(seniorMentor)).isTrue();
     }
 
     @DisplayName("Helper methods with default test data should always be valid")
@@ -222,13 +242,13 @@ public class MatchingSpec {
 
     static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365,
-                                "Lodz",false).toBuilder();
+                "Lodz", false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30,
-                                "Lodz", false).toBuilder();
+                "Lodz", false).toBuilder();
     }
 }
 ////    @Test
