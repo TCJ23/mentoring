@@ -12,4 +12,5 @@ public class MentoringModel {
     private String specialization;
     private int seniority;
     private String localization;
+    private boolean contractor;
 }

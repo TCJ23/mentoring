@@ -30,8 +30,8 @@ public class MatchingSpec {
     @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
     void findSingleProposedMentorFromCandidates(SingleMatchingParam singleMatchingParam) {
         //given
-        val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily).build();
-        val mentee = newMentee().family(singleMatchingParam.menteeFamily).build();
+        val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily).contractor(singleMatchingParam.contractor).build();
+        val mentee = newMentee().family(singleMatchingParam.menteeFamily).contractor(singleMatchingParam.contractor).build();
         //when
         val candidate = new MatchingEngine().findProposals(mentee, proposal);
         //then
@@ -41,15 +41,31 @@ public class MatchingSpec {
     static Stream<SingleMatchingParam> singleMatchingParam() {
         return Stream.of(
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group & Exact SAME FAMILY",
-                        Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, true),
+                        Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, false,true),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel: ONLY ONE IS in Development Group",
-                        Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false),
+                        Family.ARCHITECTURE, Family.CORPORATE_SERVICES, false,false),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ONLY ONE IS in Development Group",
-                        Family.DIGITAL, Family.AMS, false),
+                        Family.DIGITAL, Family.AMS, false,false),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group, But DIFFERENT FAMILIES",
-                        Family.DATA, Family.ARCHITECTURE, true),
+                        Family.DATA, Family.ARCHITECTURE, false,true),
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel NEITHER IS in Development Group",
-                        Family.AMS, Family.BUSINESS_CONSULTING, false));
+                        Family.AMS, Family.BUSINESS_CONSULTING, false,false),
+                new SingleMatchingParam("Scenario: One of candidates is Contractor ",
+                        Family.AMS, Family.AMS, true,false));
+    }
+
+    @Value
+    static class SingleMatchingParam {
+        private String scenario;
+        private Family menteeFamily;
+        private Family mentorCandidateFamily;
+        private boolean contractor;
+        private boolean accepted;
+
+        @Override
+        public String toString() {
+            return scenario;
+        }
     }
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
@@ -84,18 +100,6 @@ public class MatchingSpec {
     }
 
 
-    @Value
-    static class SingleMatchingParam {
-        private String scenario;
-        private Family menteeFamily;
-        private Family mentorCandidateFamily;
-        private boolean accepted;
-
-        @Override
-        public String toString() {
-            return scenario;
-        }
-    }
 
     /*This test if to meet requirement 1.3 in REQUIREMENTS.md*/
     @Test
@@ -168,10 +172,10 @@ public class MatchingSpec {
         //when
         val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
         assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
+    /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
     @Test
     @DisplayName("Validate similar Dev Group Matching Engine prefers the exact same specialization")
     public void shouldFindMatchingSpecializationInSimilarDevGroup() {
@@ -183,8 +187,22 @@ public class MatchingSpec {
         //when
         val proposals = matchingEngine.findProposals(mentee, diffSpecMentor, sameSpecMentor).collect(Collectors.toList());
         //then
-//        Assertions.assertThat(proposals).containsExactly(sameSpecMentor);
         assertThat(proposals.get(0).getSpecialization()).isEqualTo(mentee.getSpecialization());
+    }
+
+    /*This test if to meet requirement 1.7 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Validate that Matching Engine ignores contractors")
+    public void shouldIgnoreContractors() {
+        //given
+        val mentee = newMentee().contractor(false).build();
+        val contractor = newMentor().contractor(true).build();
+        val employee = newMentor().contractor(false).build();
+        val matchingEngine = new MatchingEngine();
+        //when
+        val proposals = matchingEngine.findProposals(mentee, contractor, employee).collect(Collectors.toList());
+        //then
+        assertThat(proposals.size()).isEqualTo(1);
     }
 
     @DisplayName("Helper methods with default test data should always be valid")
@@ -201,13 +219,16 @@ public class MatchingSpec {
         Assertions.assertThat(proposals).containsExactly(mentor);
     }
 
+
     static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365, "Lodz").toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365,
+                                "Lodz",false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Lodz").toBuilder();
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30,
+                                "Lodz", false).toBuilder();
     }
 }
 ////    @Test
