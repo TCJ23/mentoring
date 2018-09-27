@@ -211,7 +211,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.8 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that MAtching Engine prefers proposed Mentor with higher seniority")
+    @DisplayName("Validate that Matching Engine prefers proposed Mentor with higher seniority")
     public void shouldPreferHigherSeniority() {
         //given
         val mentee = newMentee().build();
@@ -222,7 +222,8 @@ public class MatchingSpec {
         val proposals = matchingengine.findProposals(mentee, juniorMentor, seniorMentor);
         //then
         val mentorProposed = proposals.findFirst();
-        assertThat(mentorProposed.equals(seniorMentor)).isTrue();
+        assertThat(mentorProposed.isPresent()).isTrue();
+        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
     @DisplayName("Helper methods with default test data should always be valid")
