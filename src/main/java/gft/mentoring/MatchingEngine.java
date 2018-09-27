@@ -14,11 +14,11 @@ class MatchingEngine {
     static VotingStrategy[] strategies = {
             new IgnoreLeaversStrategy(),
             new IgnoreContractorsStrategy(),
-            new MentorHasToWorkAtLeastOneYearInGFT(),
+            new MentorHasToWorkAtLeastOneYearInGFTStrategy(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
-            new PreferDevManFromCorporateServicesBySameSpecializaton(),
-            new PreferSameLocalizationDevMan(),
-            new PreferSameSpecialization()
+            new PreferDevManFromCorporateServicesBySameSpecializatonStrategy(),
+            new PreferDevManFromSameLocalizationStrategy(),
+            new PreferDevManFromSameSpecializationStrategy()
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {

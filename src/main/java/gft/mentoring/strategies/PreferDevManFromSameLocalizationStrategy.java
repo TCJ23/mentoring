@@ -3,7 +3,7 @@ package gft.mentoring.strategies;
 import gft.mentoring.*;
 import org.jetbrains.annotations.NotNull;
 
-public class PreferSameLocalizationDevMan implements VotingStrategy {
+public class PreferDevManFromSameLocalizationStrategy implements VotingStrategy {
 
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {

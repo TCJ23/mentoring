@@ -10,7 +10,7 @@ import java.util.Objects;
   Matching process prefers the same specialisation for Mentor and Mentee.
   Different specialisation is not an obstacle in setting Mentor-Mentee relation, it is only
   not preferred.*/
-public class PreferSameSpecialization implements VotingStrategy {
+public class PreferDevManFromSameSpecializationStrategy implements VotingStrategy {
 
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {

@@ -180,7 +180,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate similar Dev Group Matching Engine prefers the exact same specialization")
+    @DisplayName("Validate similar Dev Group Matching Engine prefers the exact SAME SPECIALIZATION")
     public void shouldFindMatchingSpecializationInSimilarDevGroup() {
         //given
         val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
@@ -196,7 +196,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.7 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that Matching Engine ignores contractors")
+    @DisplayName("Validate that Matching Engine ignores CONTRACTORS")
     public void shouldIgnoreContractors() {
         //given
         val mentee = newMentee().contractor(false).build();
@@ -211,7 +211,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.8 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that Matching Engine prefers proposed Mentor with higher seniority")
+    @DisplayName("Validate that Matching Engine prefers proposed Mentor with higher SENIORITY")
     public void shouldPreferHigherSeniority() {
         //given
         val mentee = newMentee().build();
@@ -228,7 +228,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that Matching Engine ignores Mentor that will leave GFT soon")
+    @DisplayName("Validate that Matching Engine ignores Mentor that will LEAVE GFT soon")
     public void shouldIgnoreLeavers() {
         //given
         val mentee = newMentee().build();
@@ -241,6 +241,23 @@ public class MatchingSpec {
 
     }
 
+    /*This test if to meet requirement 1.10 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Mentee prefers Mentor with higher LEVEL")
+    public void shouldProposeMentorWithHighestGrade() {
+        //given
+        val mentee = newMentee().level(3).build();
+        val sameLevelMentor = newMentor().level(3).build();
+        val higherLevelMentor = newMentor().level(4).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, sameLevelMentor, higherLevelMentor);
+        //then
+        val proposedMentor = proposals.findFirst().get();
+        assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
+    }
+
+
+    @Test
     @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
@@ -257,13 +274,13 @@ public class MatchingSpec {
 
 
     static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365,
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 3 * 365,
                 "Lodz", false, false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30,
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
                 "Lodz", false, false).toBuilder();
     }
 }
