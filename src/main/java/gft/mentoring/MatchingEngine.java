@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.val;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 class MatchingEngine {
@@ -25,15 +22,16 @@ class MatchingEngine {
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
-                .map(it -> new MyTuple1(it, sympathy(mentee, it)))
+                .map(it -> new SympathyResultTuple(it, sympathy(mentee, it)))
                 .filter(it -> it.sympathy != SympathyResult.None)
                 .map(it -> new MyTuple2(it.mentor, ((SympathyResult.Some) it.sympathy).getValue()))
                 .sorted((it1, it2) -> -(it1.sympathy - it2.sympathy))
-                .map(it -> it.mentor);
+                .map(it -> it.mentor)
+                .sorted(bySeniortyASC);
     }
 
     @AllArgsConstructor
-    static class MyTuple1 {
+    static class SympathyResultTuple {
         private MentoringModel mentor;
         private SympathyResult sympathy;
     }
@@ -42,6 +40,12 @@ class MatchingEngine {
     static class MyTuple2 {
         private MentoringModel mentor;
         private int sympathy;
+    }
+
+    @AllArgsConstructor
+    static class SeniorityTuple {
+        private MentoringModel mentor;
+        private int seniority;
     }
 
     static SympathyResult sympathy(MentoringModel mentee, MentoringModel mentor) {
@@ -67,6 +71,13 @@ class MatchingEngine {
                 : SympathyResult.None;
     }
 
+    Comparator<MentoringModel> bySeniortyASC = (mentor1, mentor2) -> {
+        if (mentor1.getSeniority() < mentor2.getSeniority()) return 1;
+        if (mentor1.getSeniority() == mentor2.getSeniority()) return 0;
+        else {
+            return -1;
+        }
+    };
 }
 
 abstract class SympathyResult {
