@@ -24,7 +24,7 @@ class MatchingEngine {
         return Arrays.stream(candidates)
                 .map(it -> new SympathyResultTuple(it, sympathy(mentee, it)))
                 .filter(it -> it.sympathy != SympathyResult.None)
-                .map(it -> new MyTuple2(it.mentor, ((SympathyResult.Some) it.sympathy).getValue()))
+                .map(it -> new SymapthyLevelTuple(it.mentor, ((SympathyResult.Some) it.sympathy).getValue()))
                 .sorted((it1, it2) -> -(it1.sympathy - it2.sympathy))
                 .map(it -> it.mentor)
                 .sorted(bySeniortyASC);
@@ -37,15 +37,9 @@ class MatchingEngine {
     }
 
     @AllArgsConstructor
-    static class MyTuple2 {
+    static class SymapthyLevelTuple {
         private MentoringModel mentor;
         private int sympathy;
-    }
-
-    @AllArgsConstructor
-    static class SeniorityTuple {
-        private MentoringModel mentor;
-        private int seniority;
     }
 
     static SympathyResult sympathy(MentoringModel mentee, MentoringModel mentor) {
