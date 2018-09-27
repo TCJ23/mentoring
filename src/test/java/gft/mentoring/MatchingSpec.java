@@ -265,11 +265,30 @@ public class MatchingSpec {
         val lowerLevelMentor = newMentor().level(3).build();
         val higherLevelMentor = newMentor().level(5).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, lowerLevelMentor, higherLevelMentor).collect(Collectors.toList());
+        val proposals = new MatchingEngine().findProposals(mentee, lowerLevelMentor, higherLevelMentor)
+                .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposals.size() == 1).isTrue();
         assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
+    }
+
+    @Test
+    @DisplayName("Mentee is always at LOWER LEVEL than Mentor group test")
+    public void shouldReject1outOf4ProposedMentorWithLowerGradeThanMentee() {
+        //given
+        val mentee = newMentee().level(4).build();
+        val lowerLevelMentor = newMentor().level(3).build();
+        val highLevelMentor = newMentor().level(5).build();
+        val higherLevelMentor = newMentor().level(5).build();
+        val highestLevelMentor = newMentor().level(6).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, lowerLevelMentor, highLevelMentor, higherLevelMentor,
+                highestLevelMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposals.size() == 3).isTrue();
+        assertThat(proposedMentor.equals(highLevelMentor)).isTrue();
     }
 
     @Test
@@ -290,7 +309,7 @@ public class MatchingSpec {
 
     static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 3 * 365,
-                "Lodz", false, false,false).toBuilder();
+                "Lodz", false, false, false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
