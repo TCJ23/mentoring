@@ -53,7 +53,8 @@ public class MatchingSpec {
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel NEITHER IS in Development Group",
                         Family.AMS, Family.BUSINESS_CONSULTING, false, false),
                 new SingleMatchingParam("Scenario: One of candidates is Contractor ",
-                        Family.AMS, Family.AMS, true, false));
+                        Family.AMS, Family.AMS, true, false)
+        );
     }
 
     @Value
