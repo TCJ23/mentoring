@@ -19,17 +19,20 @@ class MatchingEngine {
             new PreferDevManFromCorporateServicesBySameSpecializatonStrategy(),
             new PreferDevManFromSameLocalizationStrategy(),
             new PreferDevManFromSameSpecializationStrategy(),
-            new PreferDevManWithHigherLevel()
+            new PreferDevManWithHigherLevel(),
+//            new PreferMentorWithHigherSeniorityStrategy()
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
-                .map(it -> new SympathyResultTuple(it, sympathy(mentee, it)))
+                .map(mentorCandidate -> new SympathyResultTuple(mentorCandidate, sympathy(mentee, mentorCandidate)))
                 .filter(it -> it.sympathy != SympathyResult.None)
-                .map(it -> new SymapthyLevelTuple(it.mentor, ((SympathyResult.Some) it.sympathy).getValue()))
-                .sorted((it1, it2) -> -(it1.sympathy - it2.sympathy))
+                .map(mentorCandidate -> new SymapthyLevelTuple(mentorCandidate.mentor, ((SympathyResult.Some) mentorCandidate.sympathy).getValue()))
+                .sorted((mentorCandidate1, mentorCandidate2) -> -(mentorCandidate1.sympathy - mentorCandidate2.sympathy))
                 .map(it -> it.mentor)
-                .sorted(bySeniortyASC);
+//                .sorted(Comparator.comparingInt(mtr -> mtr.getSeniority() * -1))
+                .sorted(bySeniortyASC)
+                ;
     }
 
     @AllArgsConstructor

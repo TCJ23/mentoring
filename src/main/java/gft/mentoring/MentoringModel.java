@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.logging.Level;
-
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @Value
@@ -17,5 +15,6 @@ public class MentoringModel {
     private String localization;
     private boolean contractor;
     private boolean leaver;
+    private boolean mentee;
 
 }

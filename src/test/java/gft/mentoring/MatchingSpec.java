@@ -256,6 +256,21 @@ public class MatchingSpec {
         assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
     }
 
+    /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Mentee is always at LOWER LEVEL than Mentor")
+    public void shouldRejectProposedMentorWithLowerGradeThanMentee() {
+        //given
+        val mentee = newMentee().level(4).build();
+        val lowerLevelMentor = newMentor().level(3).build();
+        val higherLevelMentor = newMentor().level(5).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, lowerLevelMentor, higherLevelMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposals.size() == 1).isTrue();
+        assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
+    }
 
     @Test
     @DisplayName("Helper methods with default test data should always be valid")
@@ -275,13 +290,13 @@ public class MatchingSpec {
 
     static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 3 * 365,
-                "Lodz", false, false).toBuilder();
+                "Lodz", false, false,false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, false).toBuilder();
+                "Lodz", false, false, true).toBuilder();
     }
 }
 ////    @Test
