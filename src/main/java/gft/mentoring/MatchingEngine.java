@@ -18,7 +18,8 @@ class MatchingEngine {
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
             new PreferDevManFromCorporateServicesBySameSpecializatonStrategy(),
             new PreferDevManFromSameLocalizationStrategy(),
-            new PreferDevManFromSameSpecializationStrategy()
+            new PreferDevManFromSameSpecializationStrategy(),
+            new PreferDevManWithHigherLevel()
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
