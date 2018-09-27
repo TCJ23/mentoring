@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 class MatchingEngine {
 
     static VotingStrategy[] strategies = {
+            new IgnoreLeaversStrategy(),
             new IgnoreContractorsStrategy(),
             new MentorHasToWorkAtLeastOneYearInGFT(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
