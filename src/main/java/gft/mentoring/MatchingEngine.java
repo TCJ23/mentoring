@@ -20,6 +20,7 @@ class MatchingEngine {
             new PreferDevManFromSameLocalizationStrategy(),
             new PreferDevManFromSameSpecializationStrategy(),
             new PreferDevManWithHigherLevel(),
+            new RejectLowerLevelMentorStrategy()
 //            new PreferMentorWithHigherSeniorityStrategy()
     };
 
