@@ -226,6 +226,21 @@ public class MatchingSpec {
         assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
+    /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("Validate that Matching Engine ignores Mentor that will leave GFT soon")
+    public void shouldIgnoreLeavers() {
+        //given
+        val mentee = newMentee().build();
+        val leaver = newMentor().leaver(true).build();
+        val matchingMentor = newMentor().build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, leaver, matchingMentor);
+        //then
+        assertThat(proposals.count()).isEqualTo(1);
+
+    }
+
     @DisplayName("Helper methods with default test data should always be valid")
     public void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
@@ -243,13 +258,13 @@ public class MatchingSpec {
 
     static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3 * 365,
-                "Lodz", false).toBuilder();
+                "Lodz", false, false).toBuilder();
     }
 
     static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30,
-                "Lodz", false).toBuilder();
+                "Lodz", false, false).toBuilder();
     }
 }
 ////    @Test
