@@ -40,7 +40,7 @@ class MatchingSpec {
         assertThat(candidate.count() == 1).isEqualTo(singleMatchingParam.accepted);
     }
 
-    static Stream<SingleMatchingParam> singleMatchingParam() {
+    private static Stream<SingleMatchingParam> singleMatchingParam() {
         return Stream.of(
                 new SingleMatchingParam("Scenario: MentoringModel & MentoringModel ARE BOTH in Development Group & Exact SAME FAMILY",
                         Family.PROJECT_DEVELOPMENT, Family.PROJECT_DEVELOPMENT, false, true),
@@ -288,10 +288,7 @@ class MatchingSpec {
         val proposals = new MatchingEngine().findProposals(mentee, lowerLevelMentor, highLevelMentor, higherLevelMentor,
                 highestLevelMentor).collect(Collectors.toList());
         //then
-//        val proposedMentor = proposals.get(0);
-        val actualSizeofProposals = proposals.size();
-        assertThat(proposals.size() == actualSizeofProposals).isTrue();
-//        assertThat(proposedMentor.equals(highestLevelMentor)).isTrue();
+        assertThat(proposals.size() == 3).isTrue();
     }
 
     /*This test if to meet requirement 1.12 in REQUIREMENTS.md*/
@@ -300,17 +297,38 @@ class MatchingSpec {
     void shouldPreferMentorWithLessMenteesAssigned() {
         //given
         val mentee = newMentee().build();
-        val bigAmountofMentees = newMentor().menteesAssigned(6).build();
+        val bigAmountofMentees = newMentor().menteesAssigned(5).build();
         val smallAmountofMentees = newMentor().menteesAssigned(3).build();
+        val zeroMenteesAssigned = newMentor().menteesAssigned(0).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, bigAmountofMentees, smallAmountofMentees
-                ).collect(Collectors.toList());
+        val proposals = new MatchingEngine().findProposals(mentee, bigAmountofMentees, smallAmountofMentees, zeroMenteesAssigned
+        ).collect(Collectors.toList());
+        val proposalsStrm = new MatchingEngine().findProposals(mentee, bigAmountofMentees, smallAmountofMentees, zeroMenteesAssigned);
         //then
         val proposedMentor = proposals.get(0);
-        val actualSizeofProposals = proposals.size();
+        val proposedMentorStrm = proposalsStrm.findFirst();
 
-        assertThat(proposals.size() == actualSizeofProposals).isTrue();
-        assertThat(proposedMentor.equals(smallAmountofMentees)).isTrue();
+        assertThat(proposedMentor.equals(zeroMenteesAssigned)).isTrue();
+        assertThat(proposedMentorStrm.isPresent()).isTrue();
+        assertThat(proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
+
+
+    }
+
+    /*This test if to meet requirement 1.13 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("1.13 - Mentors are only on level 4 and above")
+    void shouldRejectAllBelowLevel4asMentor() {
+        //given
+        val mentee = newMentee().build();
+        val below4thLevelNotMentor = newMentor().level(3).build();
+        val above4thLevelIsMentor = newMentor().level(4).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, below4thLevelNotMentor, above4thLevelIsMentor)
+                .collect(Collectors.toList());
+        //then
+        assertThat(proposals.size() == 1).isTrue();
+
     }
 
     @Test
