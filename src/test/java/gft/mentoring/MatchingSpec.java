@@ -281,16 +281,36 @@ class MatchingSpec {
         //given
         val mentee = newMentee().level(4).build();
         val lowerLevelMentor = newMentor().level(3).build();
-        val highLevelMentor = newMentor().level(5).build();
+        val highLevelMentor = newMentor().level(4).build();
         val higherLevelMentor = newMentor().level(5).build();
         val highestLevelMentor = newMentor().level(6).build();
         //when
         val proposals = new MatchingEngine().findProposals(mentee, lowerLevelMentor, highLevelMentor, higherLevelMentor,
                 highestLevelMentor).collect(Collectors.toList());
         //then
+//        val proposedMentor = proposals.get(0);
+        val actualSizeofProposals = proposals.size();
+        assertThat(proposals.size() == actualSizeofProposals).isTrue();
+//        assertThat(proposedMentor.equals(highestLevelMentor)).isTrue();
+    }
+
+    /*This test if to meet requirement 1.12 in REQUIREMENTS.md*/
+    @Test
+    @DisplayName("1.12 - Mentee prefers Mentor with lower number of Mentees assigned")
+    void shouldPreferMentorWithLessMenteesAssigned() {
+        //given
+        val mentee = newMentee().build();
+        val bigAmountofMentees = newMentor().menteesAssigned(6).build();
+        val smallAmountofMentees = newMentor().menteesAssigned(3).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, bigAmountofMentees, smallAmountofMentees
+                ).collect(Collectors.toList());
+        //then
         val proposedMentor = proposals.get(0);
-        assertThat(proposals.size() == 3).isTrue();
-        assertThat(proposedMentor.equals(highLevelMentor)).isTrue();
+        val actualSizeofProposals = proposals.size();
+
+        assertThat(proposals.size() == actualSizeofProposals).isTrue();
+        assertThat(proposedMentor.equals(smallAmountofMentees)).isTrue();
     }
 
     @Test
@@ -311,13 +331,13 @@ class MatchingSpec {
 
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 3 * 365,
-                "Lodz", false, false, false).toBuilder();
+                "Lodz", false, false, false, 0).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, false, true).toBuilder();
+                "Lodz", false, false, true, 0).toBuilder();
     }
 }
 ////    @Test
