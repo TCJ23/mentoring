@@ -25,7 +25,12 @@ public class PreferMentorWithLowerNumberOfAssignedMenteesStrategy implements Vot
 
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
-        val points = mentor.getMenteesAssigned() / 5 * 25;
+        /**
+         * we will use linear equation approach
+         * if Mentor has 5 mentees he should score 0 points in Supporting Voting Result
+         * if Mentor has 0 mentees he should score 100 points in Supporting Voting Result
+         * */
+        val points = (-20 * mentor.getMenteesAssigned()) + 100;
         return new Support(points);
     }
 }
