@@ -20,8 +20,8 @@ class MatchingEngine {
             new PreferDevManFromSameLocalizationStrategy(),
             new PreferDevManFromSameSpecializationStrategy(),
             new PreferDevManWithHigherLevel(),
-            new RejectLowerLevelMentorStrategy()
-//            new PreferMentorWithHigherSeniorityStrategy()
+            new RejectLowerLevelMentorStrategy(),
+            new PreferMentorWithHigherSeniorityStrategy()
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
@@ -31,29 +31,48 @@ class MatchingEngine {
                 .map(mentorCandidate -> new SymapthyLevelTuple(mentorCandidate.mentor, ((SympathyResult.Some) mentorCandidate.sympathy).getValue()))
                 .sorted((mentorCandidate1, mentorCandidate2) -> -(mentorCandidate1.sympathy - mentorCandidate2.sympathy))
                 .map(it -> it.mentor)
-//                .sorted(Comparator.comparingInt(mtr -> mtr.getSeniority() * -1))
-                .sorted(bySeniortyASC)
                 ;
     }
-
     @AllArgsConstructor
-    static class SympathyResultTuple {
+    private static class SympathyResultTuple {
         private MentoringModel mentor;
         private SympathyResult sympathy;
     }
 
     @AllArgsConstructor
-    static class SymapthyLevelTuple {
+    private static class SymapthyLevelTuple {
         private MentoringModel mentor;
         private int sympathy;
     }
 
-    static SympathyResult sympathy(MentoringModel mentee, MentoringModel mentor) {
+    /**
+     * This is 1 of 2 main methods in Matching Engine it takes
+     * @param mentee - mentee type of GFT employee
+     * @param mentor - mentor type of GFT employee
+     *               calculates level of sympathy between such proposed pair
+     *               this should result with int value of
+     * @return SympathyResult @see {@link gft.mentoring.MatchingEngine}
+     */
+    private static SympathyResult sympathy(MentoringModel mentee, MentoringModel mentor) {
+        /**
+         * first we need to collect VotingResults
+         * @see {@link gft.mentoring.VotingResult}*/
         List<VotingResult> votings = new ArrayList<>();
         for (val strategy : strategies) {
             val result = strategy.calculateSympathy(mentee, mentor);
             votings.add(result);
         }
+        /**
+         * We aggregate only values from Support type of VotingResults points from classes
+         * that implements VotingStrategy
+         * @see VotingStrategy#calculateSympathy(MentoringModel, MentoringModel)
+         * @see VotingResult
+         * @see Support#sympathy
+         * @return some sum of values
+         * @see gft.mentoring.SympathyResult.Some
+         * every other VotingResult is ignored and we
+         * @return no value
+         * @see gft.mentoring.SympathyResult.None*/
 
         Optional<Integer> sympathyLevel = Optional.empty();
         for (VotingResult vote : votings) {
@@ -71,22 +90,22 @@ class MatchingEngine {
                 : SympathyResult.None;
     }
 
-    Comparator<MentoringModel> bySeniortyASC = (mentor1, mentor2) -> {
-        if (mentor1.getSeniority() < mentor2.getSeniority()) return 1;
-        if (mentor1.getSeniority() == mentor2.getSeniority()) return 0;
-        else {
-            return -1;
-        }
-    };
 }
-
+/**
+ * Sympathy result can contain value or not
+ * Value should be aggregation of Support type of VotingResults points from classes
+ * that implements VotingStrategy
+ * @see VotingStrategy#calculateSympathy(MentoringModel, MentoringModel)
+ * @see VotingResult
+ * @see Support#sympathy
+ * */
 abstract class SympathyResult {
 
     static final SympathyResult None = new SympathyResult() {
     };
 
     @Value
-    public static class Some extends SympathyResult {
+    static class Some extends SympathyResult {
         private int value;
     }
 

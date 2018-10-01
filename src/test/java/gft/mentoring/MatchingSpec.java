@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Main Class to test MatchingEngine")
-public class MatchingSpec {
+class MatchingSpec {
 
     /* This test if to meet requirement 1.1 in REQUIREMENTS.md
      in @ParameterizedTest you either keep
@@ -27,7 +27,7 @@ public class MatchingSpec {
      we can assign Mentors from above Families treated as one*/
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("singleMatchingParam")
-    @DisplayName("Check if MatchingEngine proposes mentors correctly per Family")
+    @DisplayName("1.1 - Check if MatchingEngine proposes mentors correctly per Family")
     void findSingleProposedMentorFromCandidates(SingleMatchingParam singleMatchingParam) {
         //given
         val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily)
@@ -73,7 +73,7 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("From 2 Mentors prefer Mentor from exact same Family as Mentee")
+    @DisplayName("1.2 - From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.DATA).build();
@@ -89,7 +89,7 @@ public class MatchingSpec {
     }
 
     @Test
-    @DisplayName("From 2 Mentors propose only Mentor from exact same Family as Mentee")
+    @DisplayName("1.2 - From 2 Mentors propose only Mentor from exact same Family as Mentee")
     void findBestProposalFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.AMS).build();
@@ -106,8 +106,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.3 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that in Corporate Services MatchingEngine prefers same specialization")
-    public void shouldFindMatchingSpecializationInCorporateServices() {
+    @DisplayName("1.3 - Validate that in Corporate Services MatchingEngine prefers same specialization")
+    void shouldFindMatchingSpecializationInCorporateServices() {
         val mentee = newMentee().family(Family.CORPORATE_SERVICES).specialization("HR").build();
         val mentor1 = newMentor().family(Family.CORPORATE_SERVICES).specialization("IT").build();
         val mentor2 = newMentor().family(Family.CORPORATE_SERVICES).specialization("HR").build();
@@ -120,8 +120,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.4 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate SENIORITY for mentor")
-    public void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
+    @DisplayName("1.4 - Validate SENIORITY for mentor")
+    void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
         val mentee = newMentee().build();
         //boundary values edge cases
         val toYoungToBeMentor = newMentor().seniority(364).build();
@@ -133,8 +133,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate same LOCALIZATION preference")
-    public void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
+    @DisplayName("1.5 - Validate same LOCALIZATION preference")
+    void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
         //given
         val mentee = newMentee().localization("Warszawa").build();
 
@@ -149,8 +149,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that DIFFERENT LOCALIZATION doesn't REJECT candidate")
-    public void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
+    @DisplayName("1.5 - Validate that DIFFERENT LOCALIZATION doesn't REJECT candidate")
+    void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
         //given
         val mentee = newMentee().localization("Warszawa").build();
 
@@ -165,8 +165,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that same from same Family Matching Engine prefers the exact same specialization")
-    public void shouldFindMatchingSpecialization() {
+    @DisplayName("1.6 - Validate that same from same Family Matching Engine prefers the exact same specialization")
+    void shouldFindMatchingSpecialization() {
         //given
         val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
         val diffSpecMentor = newMentor().family(Family.DATA).specialization("SQL").build();
@@ -181,8 +181,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate similar Dev Group Matching Engine prefers the exact SAME SPECIALIZATION")
-    public void shouldFindMatchingSpecializationInSimilarDevGroup() {
+    @DisplayName("1.6 - Validate similar Dev Group Matching Engine prefers the exact SAME SPECIALIZATION")
+    void shouldFindMatchingSpecializationInSimilarDevGroup() {
         //given
         val mentee = newMentee().family(Family.DATA).specialization("BIG Data").build();
         val diffSpecMentor = newMentor().family(Family.ARCHITECTURE).specialization("SQL").build();
@@ -197,8 +197,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.7 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that Matching Engine ignores CONTRACTORS")
-    public void shouldIgnoreContractors() {
+    @DisplayName("1.7 - Validate that Matching Engine ignores CONTRACTORS")
+    void shouldIgnoreContractors() {
         //given
         val mentee = newMentee().contractor(false).build();
         val contractor = newMentor().contractor(true).build();
@@ -212,8 +212,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.8 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that Matching Engine prefers proposed Mentor with higher SENIORITY")
-    public void shouldPreferHigherSeniority() {
+    @DisplayName("1.8 - Validate that Matching Engine prefers proposed Mentor with higher SENIORITY")
+    void shouldPreferHigherSeniority() {
         //given
         val mentee = newMentee().build();
         val juniorMentor = newMentor().seniority(1 * 365).build();
@@ -229,8 +229,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Validate that Matching Engine ignores Mentor that will LEAVE GFT soon")
-    public void shouldIgnoreLeavers() {
+    @DisplayName("1.9 - Validate that Matching Engine ignores Mentor that will LEAVE GFT soon")
+    void shouldIgnoreLeavers() {
         //given
         val mentee = newMentee().build();
         val leaver = newMentor().leaver(true).build();
@@ -244,8 +244,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.10 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Mentee prefers Mentor with higher LEVEL")
-    public void shouldProposeMentorWithHighestGrade() {
+    @DisplayName("1.10 - Mentee prefers Mentor with higher LEVEL")
+    void shouldProposeMentorWithHighestGrade() {
         //given
         val mentee = newMentee().level(3).build();
         val sameLevelMentor = newMentor().level(3).build();
@@ -259,8 +259,8 @@ public class MatchingSpec {
 
     /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Mentee is always at LOWER LEVEL than Mentor")
-    public void shouldRejectProposedMentorWithLowerGradeThanMentee() {
+    @DisplayName("1.11 - Mentee is always at LOWER LEVEL than Mentor")
+    void shouldRejectProposedMentorWithLowerGradeThanMentee() {
         //given
         val mentee = newMentee().level(4).build();
         val lowerLevelMentor = newMentor().level(3).build();
@@ -274,9 +274,10 @@ public class MatchingSpec {
         assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
     }
 
+    /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("Mentee is always at LOWER LEVEL than Mentor group test")
-    public void shouldReject1outOf4ProposedMentorWithLowerGradeThanMentee() {
+    @DisplayName("1.11 - Mentee is always at LOWER LEVEL than Mentor group test")
+    void shouldReject1outOf4ProposedMentorWithLowerGradeThanMentee() {
         //given
         val mentee = newMentee().level(4).build();
         val lowerLevelMentor = newMentor().level(3).build();
@@ -294,7 +295,7 @@ public class MatchingSpec {
 
     @Test
     @DisplayName("Helper methods with default test data should always be valid")
-    public void UseValidAssumptionsInTests() {
+    void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
         // MentoringModel definition so created mentor as by definition accepted as a mentor for created mentee.
         // So before starting tests, need to check if those methods are working as predicted.
@@ -308,12 +309,12 @@ public class MatchingSpec {
     }
 
 
-    static MentoringModel.MentoringModelBuilder newMentor() {
+    private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 3 * 365,
                 "Lodz", false, false, false).toBuilder();
     }
 
-    static MentoringModel.MentoringModelBuilder newMentee() {
+    private static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
                 "Lodz", false, false, true).toBuilder();
