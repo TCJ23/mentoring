@@ -348,7 +348,7 @@ class MatchingSpec {
 
 
     private static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 3 * 365,
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
                 "Lodz", false, false, false, 0).toBuilder();
     }
 

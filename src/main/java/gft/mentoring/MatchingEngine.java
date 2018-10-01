@@ -17,6 +17,7 @@ class MatchingEngine {
     static VotingStrategy[] strategies = {
             new IgnoreLeaversStrategy(),
             new IgnoreContractorsStrategy(),
+            new MentorHasToBeAtLevel4AndAbove(),
             new MentorHasToWorkAtLeastOneYearInGFTStrategy(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
             new PreferDevManFromCorporateServicesBySameSpecializatonStrategy(),
