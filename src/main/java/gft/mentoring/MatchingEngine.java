@@ -6,7 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.val;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 class MatchingEngine {
@@ -21,18 +24,21 @@ class MatchingEngine {
             new PreferDevManFromSameSpecializationStrategy(),
             new PreferDevManWithHigherLevel(),
             new RejectLowerLevelMentorStrategy(),
-            new PreferMentorWithHigherSeniorityStrategy()
+            new PreferMentorWithHigherSeniorityStrategy(),
+            new PreferMentorWithLowerNumberOfAssignedMenteesStrategy()
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
                 .map(mentorCandidate -> new SympathyResultTuple(mentorCandidate, sympathy(mentee, mentorCandidate)))
                 .filter(it -> it.sympathy != SympathyResult.None)
-                .map(mentorCandidate -> new SymapthyLevelTuple(mentorCandidate.mentor, ((SympathyResult.Some) mentorCandidate.sympathy).getValue()))
+                .map(mentorCandidate -> new SymapthyLevelTuple(mentorCandidate.mentor,
+                        ((SympathyResult.Some) mentorCandidate.sympathy).getValue()))
                 .sorted((mentorCandidate1, mentorCandidate2) -> -(mentorCandidate1.sympathy - mentorCandidate2.sympathy))
                 .map(it -> it.mentor)
                 ;
     }
+
     @AllArgsConstructor
     private static class SympathyResultTuple {
         private MentoringModel mentor;
@@ -47,6 +53,7 @@ class MatchingEngine {
 
     /**
      * This is 1 of 2 main methods in Matching Engine it takes
+     *
      * @param mentee - mentee type of GFT employee
      * @param mentor - mentor type of GFT employee
      *               calculates level of sympathy between such proposed pair
@@ -91,14 +98,16 @@ class MatchingEngine {
     }
 
 }
+
 /**
  * Sympathy result can contain value or not
  * Value should be aggregation of Support type of VotingResults points from classes
  * that implements VotingStrategy
+ *
  * @see VotingStrategy#calculateSympathy(MentoringModel, MentoringModel)
  * @see VotingResult
  * @see Support#sympathy
- * */
+ */
 abstract class SympathyResult {
 
     static final SympathyResult None = new SympathyResult() {
