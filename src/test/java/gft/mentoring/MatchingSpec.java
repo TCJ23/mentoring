@@ -382,6 +382,21 @@ class MatchingSpec {
     }
 
     @Test
+    @DisplayName("1.16 - Mentor needs to have longer Seniority than Mentee")
+    void shouldPreferMentorBetweenAgeOf30to40() {
+        //given
+        val mentee = newMentee().build();
+        val youngMentor = newMentor().age(20).build();
+        val mentorAt30YearsOld= newMentor().age(30).build();
+        val mentorAt40YearsOld = newMentor().age(40).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
+    }
+
+    @Test
     @DisplayName("Helper methods with default test data should always be valid")
     void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
@@ -399,13 +414,13 @@ class MatchingSpec {
 
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", false, false, false, 0).toBuilder();
+                "Lodz", false, false, false, 0, 23).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
 //        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, false, true, 0).toBuilder();
+                "Lodz", false, false, true, 0, 23).toBuilder();
     }
 }
 ////    @Test

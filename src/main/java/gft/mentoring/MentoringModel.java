@@ -23,6 +23,7 @@ public class MentoringModel {
      * @param leaver - person that has submitted resignation from work in GFT
      * @param onlyMentee - GFT people can only become mentors from Level 4 and above, it means that not everyone in GFT can me Mentor
      * @param menteesAssigned - for GFT Mentor number of current mentees assigned
+     * @param age - we prefer experienced GFT Mentors starting from 30 years to 40
      */
 
     private Family family;
@@ -34,6 +35,7 @@ public class MentoringModel {
     private boolean leaver;
     private boolean onlyMentee;
     private int menteesAssigned;
+    private int age;
 
     /*public boolean isOnlyMentee() {
         if (MentoringModel.builder().level < 4) return true;
