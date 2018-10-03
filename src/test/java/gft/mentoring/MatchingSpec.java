@@ -310,8 +310,6 @@ class MatchingSpec {
 
         assertThat(proposedMentor.equals(zeroMenteesAssigned)).isTrue();
         assertThat(proposedMentorStrm.isPresent() && proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
-
-
     }
 
     /*This test if to meet requirement 1.13 in REQUIREMENTS.md*/
@@ -349,13 +347,27 @@ class MatchingSpec {
         assertThat(proposedMentor.equals(highestSeniorityMentor)).isTrue();
     }
 
+    @Test
+    @DisplayName("1.14 - Seniority over Level")
+    void shouldPreferDevManWithHigherSeniorityThanLevel() {
+        //given
+        val mentee = newMentor().build();
+        val higherLevelMentor = newMentor().level(mentee.getLevel() + 1).build();
+        val olderSeniorityMentor = newMentor().seniority(mentee.getSeniority() + 3 * 365).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, higherLevelMentor, olderSeniorityMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor).isEqualTo(olderSeniorityMentor);
+    }
+
     /*This test if to meet requirement 1.14 in REQUIREMENTS.md*/
     @Test
     @DisplayName("1.14 - Equal Seniority then prefer Level")
-    void shouldPreferDevManWithHigherLevelWhenSeniorytIsEqual() {
+    void shouldPreferDevManWithHigherLevelWhenSeniorityIsEqual() {
         //given
         val mentee = newMentee().build();
-        val highLevelMentor = newMentor().seniority(1 * 365).level(6).build();
+        val highLevelMentor = newMentor().level(6).build();
         val fourYearsSeniorityLevel5 = newMentor().seniority(4 * 365).level(5).build();
         val fourYearsSeniorityLevel4 = newMentor().seniority(4 * 365).level(4).build();
         val highestLevelMentor = newMentor().seniority(3 * 365).level(5).build();
@@ -411,10 +423,11 @@ class MatchingSpec {
         val mentorWithLimitReachL5 = newMentor().level(5).menteesAssigned(3).build();
         val mentorWithLimitReachL6 = newMentor().level(6).menteesAssigned(4).build();
         val mentorWithLimitReachL7 = newMentor().level(7).menteesAssigned(5).build();
+        val mentorWithLimitReach6Mentees = newMentor().level(7).menteesAssigned(6).build();
         val mentorWithFreeSlotL4 = newMentor().level(4).menteesAssigned(1).build();
         //when
         val proposals = new MatchingEngine().findProposals(mentee, mentorWithLimitReachL4, mentorWithLimitReachL5,
-                mentorWithLimitReachL6, mentorWithLimitReachL7, mentorWithFreeSlotL4).collect(Collectors.toList());
+                mentorWithLimitReachL6, mentorWithLimitReachL7, mentorWithFreeSlotL4, mentorWithLimitReach6Mentees).collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposals.size() == 1).isTrue();
@@ -493,42 +506,11 @@ class MatchingSpec {
 
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", false, false, false, 0, 23).toBuilder();
+                "Lodz", false, false, 0, 23).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
-//        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 30, "Warszawa").toBuilder();
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, false, true, 0, 23).toBuilder();
+                "Lodz", false, true, 0, 23).toBuilder();
     }
 }
-////    @Test
-//    public void RequireSameSpecializationForCorporateServices()
-//    {
-//        val mentee = newMentee().WithJs")obFamily("Corporate Service.WithSpecialisation("some specialization");
-//        val mentor1 = newMentor().WithJobFamily("Corporate Services").WithSpecialisation("other specialization");
-//        val mentor2 = newMentor().WithJobFamily("Corporate Services").WithSpecialisation("some specialization");
-//        val candidates = Candidates(mentee, mentor1, mentor2);
-//        val actual = candidates.FirstOrDefault();
-//        var expected = mentor2;
-//        Assert.That(actual, Is.EqualTo(expected));
-//        Assert.That(candidates.Count(), Is.EqualTo(1));
-//    }
-
-//     [Category("Non business case")]
-//    /// <summary>
-//    /// For technical reason, I see posible to set someone as his/her Mentor. It could be limitation of technical tools
-//    /// but for mentoring 'to search the best mentor' it is ofcourse invalid scenario.
-//    /// </summary>
-//        [Category("Non business case")]
-//            [Test]
-//    public void NotAcceptSelf()
-//    {
-//        var menteeCandidate = newMentor();
-//        var mentorCandidate = newMentor();
-//        // generally the mentor is acceptable for someone with identical mentoring model.
-//        Assume.That(Candidates(menteeCandidate, mentorCandidate), Is.Not.Empty);
-//        // let try to add one mor aspect - we need to add to the 'identical mentoring model' fact that this time it is the same person.
-//        // not proposed candidate should not be accepted.
-//        Assert.That(Candidates(mentorCandidate, mentorCandidate), Is.Empty);
-//    }

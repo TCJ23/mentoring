@@ -19,7 +19,7 @@ class MatchingEngine {
             new IgnoreContractorsStrategy(),
             new RejectDevManFromPoznanWhenMenteeIsFromWarsawStrategy(),
             new RejectDevManWithLimitOfMenteesAssignedStrategy(),
-            new RejectLowerLevelDevManStrategy(),
+            new RejectLowerLevelDevManThanMenteeStrategy(),
             new RejectLowerSeniorityDevManStrategy(),
             new RejectOtherLocationsForLodzAndPoznan(),
             new DevManHasToBeAtLevel4AndAbove(),
@@ -115,6 +115,8 @@ class MatchingEngine {
  * @see Support#sympathy
  */
 abstract class SympathyResult {
+    private SympathyResult() {
+    }
 
     static final SympathyResult None = new SympathyResult() {
     };

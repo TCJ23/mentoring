@@ -3,6 +3,7 @@ package gft.mentoring;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
 
 /**
  * @author tzje
@@ -10,7 +11,7 @@ import lombok.Data;
  */
 @Builder(toBuilder = true)
 @AllArgsConstructor
-@Data
+@Value
 public class MentoringModel {
     /**
      * @param family is department you work in i.e Governance
@@ -21,7 +22,7 @@ public class MentoringModel {
      * @param contractor - although model resembles all GFT people some are on permanent contract and they're employees
      * if this is B2B type of employment they're contractors.
      * @param leaver - person that has submitted resignation from work in GFT
-     * @param onlyMentee - GFT people can only become mentors from Level 4 and above, it means that not everyone in GFT can me Mentor
+//     * @param onlyMentee - GFT people can only become mentors from Level 4 and above, it means that not everyone in GFT can me Mentor
      * @param menteesAssigned - for GFT Mentor number of current mentees assigned
      * @param age - we prefer experienced GFT Mentors starting from 30 years to 40
      */
@@ -33,7 +34,6 @@ public class MentoringModel {
     private String localization;
     private boolean contractor;
     private boolean leaver;
-    private boolean onlyMentee;
     private int menteesAssigned;
     private int age;
 
