@@ -362,8 +362,23 @@ class MatchingSpec {
                 fourYearsSeniorityLevel4, highestLevelMentor).collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
-        System.out.println(proposedMentor);
         assertThat(proposedMentor.equals(fourYearsSeniorityLevel5)).isTrue();
+    }
+
+
+    @Test
+    @DisplayName("1.15 - Mentor needs to have longer Seniority than Mentee")
+    void shouldRejectMentorWithLowerSeniorityThanMentee() {
+        //given
+        val mentee = newMentee().seniority(2 * 365).build();
+        val lowerSeniorityMentor = newMentor().seniority(1 * 365).level(6).build();
+        val higherSeniorityMentor = newMentor().seniority(4 * 365).level(5).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, lowerSeniorityMentor, higherSeniorityMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(higherSeniorityMentor)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
     }
 
     @Test
