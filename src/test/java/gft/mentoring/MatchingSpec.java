@@ -330,6 +330,7 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
+    /*This test if to meet requirement 1.14 in REQUIREMENTS.md*/
     @Test
     @DisplayName("1.14 - Seniority is preferred over Level")
     void shouldPreferDevManWithHigherSeniorityInsteadofMentorWithHigherGrade() {
@@ -348,6 +349,7 @@ class MatchingSpec {
         assertThat(proposedMentor.equals(highestSeniorityMentor)).isTrue();
     }
 
+    /*This test if to meet requirement 1.14 in REQUIREMENTS.md*/
     @Test
     @DisplayName("1.14 - Equal Seniority then prefer Level")
     void shouldPreferDevManWithHigherLevelWhenSeniorytIsEqual() {
@@ -366,6 +368,7 @@ class MatchingSpec {
     }
 
 
+    /*This test if to meet requirement 1.15 in REQUIREMENTS.md*/
     @Test
     @DisplayName("1.15 - Mentor needs to have longer Seniority than Mentee")
     void shouldRejectMentorWithLowerSeniorityThanMentee() {
@@ -381,6 +384,7 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
+    /*This test if to meet requirement 1.16 in REQUIREMENTS.md*/
     @Test
     @DisplayName("1.16 - Mentor needs to have longer Seniority than Mentee")
     void shouldPreferMentorBetweenAgeOf30to40() {
@@ -397,6 +401,7 @@ class MatchingSpec {
         assertThat(proposals.size() == 3).isTrue();
     }
 
+    /*This test if to meet requirement 1.17 in REQUIREMENTS.md*/
     @Test
     @DisplayName("1.17 - there's limit of Mentees Assigned to Mentor per Level")
     void shouldRejectMentorWithMenteesAssignedOverLimit() {
@@ -416,8 +421,9 @@ class MatchingSpec {
         assertThat(proposedMentor.equals(mentorWithFreeSlotL4)).isTrue();
     }
 
+    /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromLodz() {
         //given
         val menteeLodz = newMentee().localization("Lodz").build();
@@ -433,8 +439,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
+    /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromPoznan() {
         //given
         val menteePoznan = newMentee().localization("Poznan").build();
@@ -450,11 +457,12 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
+    /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 When mentee is from Warsaw his/her mentor can't be from Poznan")
+    @DisplayName("2.1 - When mentee is from Warsaw his/her mentor can't be from Poznan")
     void shouldRejectMentorFromPoznanWhenMenteeIsFromWarsaw() {
         //given
-        val menteeWarsaw = newMentee().localization("Poznan").build();
+        val menteeWarsaw = newMentee().localization("Warsaw").build();
         val mentorFromWarsaw = newMentor().localization("Warsaw").build();
         val mentorFromPoznan = newMentor().localization("Poznan").build();
         val mentorFromLodz = newMentor().localization("Lodz").build();
@@ -463,7 +471,7 @@ class MatchingSpec {
                 .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
-//        assertThat(proposedMentor.equals(mentorFromWarsaw)).isTrue();
+        assertThat(proposedMentor.equals(mentorFromWarsaw)).isTrue();
         assertThat(proposals.size() == 2).isTrue();
     }
 
