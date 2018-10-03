@@ -17,6 +17,7 @@ class MatchingEngine {
     static VotingStrategy[] strategies = {
             new IgnoreLeaversStrategy(),
             new IgnoreContractorsStrategy(),
+            new RejectDevManWithLimitOfMenteesAssignedStrategy(),
             new RejectLowerLevelDevManStrategy(),
             new RejectLowerSeniorityDevManStrategy(),
             new DevManHasToBeAtLevel4AndAbove(),
@@ -25,7 +26,7 @@ class MatchingEngine {
             new PreferDevManFromCorporateServicesBySameSpecializatonStrategy(),
             new PreferDevManFromSameLocalizationStrategy(),
             new PreferDevManFromSameSpecializationStrategy(),
-            new PreferDevManWithHigherLevel(),
+            new PreferDevManWithHigherLevelStrategy(),
             new PreferDevManWithHigherSeniorityStrategy(),
             new PreferDevManWithLowerNumberOfAssignedMenteesStrategy(),
             new PreferDevManThatIsOlderThan30YearsOldStrategy(),

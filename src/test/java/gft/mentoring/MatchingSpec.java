@@ -398,6 +398,25 @@ class MatchingSpec {
     }
 
     @Test
+    @DisplayName("1.17 - there's limit of Mentees Assigned to Mentor per Level")
+    void shouldRejectMentorWithMenteesAssignedOverLimit() {
+        //given
+        val mentee = newMentee().build();
+        val mentorWithLimitReachL4 = newMentor().level(4).menteesAssigned(2).build();
+        val mentorWithLimitReachL5 = newMentor().level(5).menteesAssigned(3).build();
+        val mentorWithLimitReachL6 = newMentor().level(6).menteesAssigned(4).build();
+        val mentorWithLimitReachL7 = newMentor().level(7).menteesAssigned(5).build();
+        val mentorWithFreeSlotL4 = newMentor().level(4).menteesAssigned(1).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorWithLimitReachL4, mentorWithLimitReachL5,
+                mentorWithLimitReachL6, mentorWithLimitReachL7, mentorWithFreeSlotL4).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposals.size() == 1).isTrue();
+        assertThat(proposedMentor.equals(mentorWithFreeSlotL4)).isTrue();
+    }
+
+    @Test
     @DisplayName("Helper methods with default test data should always be valid")
     void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation

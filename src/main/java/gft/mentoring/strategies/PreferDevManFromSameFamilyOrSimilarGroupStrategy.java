@@ -42,7 +42,7 @@ public class PreferDevManFromSameFamilyOrSimilarGroupStrategy implements VotingS
 
     }
 
-    public boolean isDevelopmentGroup(Family family) {
+    private boolean isDevelopmentGroup(Family family) {
         switch (family) {
             case DIGITAL:
             case PROJECT_DEVELOPMENT:
