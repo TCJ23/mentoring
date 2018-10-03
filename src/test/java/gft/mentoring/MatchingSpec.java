@@ -223,8 +223,8 @@ class MatchingSpec {
         val proposals = matchingengine.findProposals(mentee, juniorMentor, seniorMentor);
         //then
         val mentorProposed = proposals.findFirst();
-        assertThat(mentorProposed.isPresent()).isTrue();
-        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
+        assertThat(mentorProposed.isPresent() && mentorProposed.get().equals(seniorMentor)).isTrue();
+//        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
@@ -253,8 +253,8 @@ class MatchingSpec {
         //when
         val proposals = new MatchingEngine().findProposals(mentee, sameLevelMentor, higherLevelMentor);
         //then
-        val proposedMentor = proposals.findFirst().get();
-        assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
+        val proposedMentor = proposals.findFirst();
+        assertThat(proposedMentor.isPresent() && proposedMentor.get().equals(higherLevelMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
@@ -309,8 +309,7 @@ class MatchingSpec {
         val proposedMentorStrm = proposalsStrm.findFirst();
 
         assertThat(proposedMentor.equals(zeroMenteesAssigned)).isTrue();
-        assertThat(proposedMentorStrm.isPresent()).isTrue();
-        assertThat(proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
+        assertThat(proposedMentorStrm.isPresent() && proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
 
 
     }
