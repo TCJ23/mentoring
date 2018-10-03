@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @implNote you will notice some hardcoded values, in this place we are exlpainig why?
  * Assumption is that Mentee always prefers Mentor with higher Seniority
  */
-public class PreferMentorWithHigherSeniorityStrategy implements VotingStrategy {
+public class PreferDevManWithHigherSeniorityStrategy implements VotingStrategy {
     /**
      * @param mentor - we assumed that 10 years in GFT is maximum years one person can work for taking GFT Poland
      *               experience as live example

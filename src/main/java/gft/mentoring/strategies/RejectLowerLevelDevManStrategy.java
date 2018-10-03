@@ -3,7 +3,7 @@ package gft.mentoring.strategies;
 import gft.mentoring.*;
 import org.jetbrains.annotations.NotNull;
 
-public class RejectLowerLevelMentorStrategy implements VotingStrategy {
+public class RejectLowerLevelDevManStrategy implements VotingStrategy {
 
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {

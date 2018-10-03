@@ -331,6 +331,42 @@ class MatchingSpec {
     }
 
     @Test
+    @DisplayName("1.14 - Seniority is preferred over Level")
+    void shouldPreferDevManWithHigherSeniorityInsteadofMentorWithHigherGrade() {
+        //given
+        val mentee = newMentee().build();
+        val highLevelMentor = newMentor().seniority(1 * 365).level(5).build();
+        val highSeniorityMentor = newMentor().seniority(3 * 365).level(5).build();
+        val highestSeniorityMentor = newMentor().seniority(4 * 365).level(4).build();
+        val highestLevelMentor = newMentor().seniority(3 * 365).level(6).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, highLevelMentor, highSeniorityMentor,
+                highestSeniorityMentor, highestLevelMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        System.out.println(proposedMentor);
+        assertThat(proposedMentor.equals(highestSeniorityMentor)).isTrue();
+    }
+
+    @Test
+    @DisplayName("1.14 - Equal Seniority then prefer Level")
+    void shouldPreferDevManWithHigherLevelWhenSeniorytIsEqual() {
+        //given
+        val mentee = newMentee().build();
+        val highLevelMentor = newMentor().seniority(1 * 365).level(6).build();
+        val fourYearsSeniorityLevel5 = newMentor().seniority(4 * 365).level(5).build();
+        val fourYearsSeniorityLevel4 = newMentor().seniority(4 * 365).level(4).build();
+        val highestLevelMentor = newMentor().seniority(3 * 365).level(5).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, highLevelMentor, fourYearsSeniorityLevel5,
+                fourYearsSeniorityLevel4, highestLevelMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        System.out.println(proposedMentor);
+        assertThat(proposedMentor.equals(fourYearsSeniorityLevel5)).isTrue();
+    }
+
+    @Test
     @DisplayName("Helper methods with default test data should always be valid")
     void UseValidAssumptionsInTests() {
         // In all tests we use helper methods : newMentee and newMentor. They were created to simplify process of creation
