@@ -398,7 +398,7 @@ class MatchingSpec {
     }
 
     @Test
-    @DisplayName("1.17 - there's limit of Mentees Assigned to Mentor")
+    @DisplayName("1.17 - there's limit of Mentees Assigned to Mentor per Level")
     void shouldRejectMentorWithMenteesAssignedOverLimit() {
         //given
         val mentee = newMentee().build();
