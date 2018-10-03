@@ -1,6 +1,5 @@
 package gft.mentoring;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 /**
  * Represents sympathy level from 1 to 100
