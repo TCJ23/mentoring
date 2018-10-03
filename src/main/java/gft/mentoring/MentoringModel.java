@@ -21,7 +21,7 @@ public class MentoringModel {
      * @param contractor - although model resembles all GFT people some are on permanent contract and they're employees
      * if this is B2B type of employment they're contractors.
      * @param leaver - person that has submitted resignation from work in GFT
-     * @param - some lower level GFT people can only be mentees, it means that not everyone in GFT can me Mentor
+     * @param onlyMentee - GFT people can only become mentors from Level 4 and above, it means that not everyone in GFT can me Mentor
      * @param menteesAssigned - for GFT Mentor number of current mentees assigned
      */
 
@@ -35,4 +35,8 @@ public class MentoringModel {
     private boolean onlyMentee;
     private int menteesAssigned;
 
+    /*public boolean isOnlyMentee() {
+        if (MentoringModel.builder().level < 4) return true;
+        return false;
+    }*/
 }
