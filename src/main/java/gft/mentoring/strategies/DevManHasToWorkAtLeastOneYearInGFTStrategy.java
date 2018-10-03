@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
         (Sławomir Siudek)
         Person who is hired less them one year can't be a Mentor.*/
 
-public class MentorHasToWorkAtLeastOneYearInGFTStrategy implements VotingStrategy {
+public class DevManHasToWorkAtLeastOneYearInGFTStrategy implements VotingStrategy {
 
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {

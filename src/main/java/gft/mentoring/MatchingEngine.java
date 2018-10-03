@@ -17,16 +17,17 @@ class MatchingEngine {
     static VotingStrategy[] strategies = {
             new IgnoreLeaversStrategy(),
             new IgnoreContractorsStrategy(),
-            new MentorHasToBeAtLevel4AndAbove(),
-            new MentorHasToWorkAtLeastOneYearInGFTStrategy(),
+            new RejectLowerLevelDevManStrategy(),
+            new RejectLowerSeniorityDevManStrategy(),
+            new DevManHasToBeAtLevel4AndAbove(),
+            new DevManHasToWorkAtLeastOneYearInGFTStrategy(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
             new PreferDevManFromCorporateServicesBySameSpecializatonStrategy(),
             new PreferDevManFromSameLocalizationStrategy(),
             new PreferDevManFromSameSpecializationStrategy(),
             new PreferDevManWithHigherLevel(),
-            new RejectLowerLevelMentorStrategy(),
-            new PreferMentorWithHigherSeniorityStrategy(),
-            new PreferMentorWithLowerNumberOfAssignedMenteesStrategy()
+            new PreferDevManWithHigherSeniorityStrategy(),
+            new PreferDevManWithLowerNumberOfAssignedMenteesStrategy(),
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {

@@ -223,8 +223,8 @@ class MatchingSpec {
         val proposals = matchingengine.findProposals(mentee, juniorMentor, seniorMentor);
         //then
         val mentorProposed = proposals.findFirst();
-        assertThat(mentorProposed.isPresent()).isTrue();
-        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
+        assertThat(mentorProposed.isPresent() && mentorProposed.get().equals(seniorMentor)).isTrue();
+//        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
@@ -253,8 +253,8 @@ class MatchingSpec {
         //when
         val proposals = new MatchingEngine().findProposals(mentee, sameLevelMentor, higherLevelMentor);
         //then
-        val proposedMentor = proposals.findFirst().get();
-        assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
+        val proposedMentor = proposals.findFirst();
+        assertThat(proposedMentor.isPresent() && proposedMentor.get().equals(higherLevelMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
@@ -309,8 +309,7 @@ class MatchingSpec {
         val proposedMentorStrm = proposalsStrm.findFirst();
 
         assertThat(proposedMentor.equals(zeroMenteesAssigned)).isTrue();
-        assertThat(proposedMentorStrm.isPresent()).isTrue();
-        assertThat(proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
+        assertThat(proposedMentorStrm.isPresent() && proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
 
 
     }
@@ -329,6 +328,57 @@ class MatchingSpec {
         //then
         assertThat(proposals.size() == 1).isTrue();
 
+    }
+
+    @Test
+    @DisplayName("1.14 - Seniority is preferred over Level")
+    void shouldPreferDevManWithHigherSeniorityInsteadofMentorWithHigherGrade() {
+        //given
+        val mentee = newMentee().build();
+        val highLevelMentor = newMentor().seniority(1 * 365).level(5).build();
+        val highSeniorityMentor = newMentor().seniority(3 * 365).level(5).build();
+        val highestSeniorityMentor = newMentor().seniority(4 * 365).level(4).build();
+        val highestLevelMentor = newMentor().seniority(3 * 365).level(6).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, highLevelMentor, highSeniorityMentor,
+                highestSeniorityMentor, highestLevelMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        System.out.println(proposedMentor);
+        assertThat(proposedMentor.equals(highestSeniorityMentor)).isTrue();
+    }
+
+    @Test
+    @DisplayName("1.14 - Equal Seniority then prefer Level")
+    void shouldPreferDevManWithHigherLevelWhenSeniorytIsEqual() {
+        //given
+        val mentee = newMentee().build();
+        val highLevelMentor = newMentor().seniority(1 * 365).level(6).build();
+        val fourYearsSeniorityLevel5 = newMentor().seniority(4 * 365).level(5).build();
+        val fourYearsSeniorityLevel4 = newMentor().seniority(4 * 365).level(4).build();
+        val highestLevelMentor = newMentor().seniority(3 * 365).level(5).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, highLevelMentor, fourYearsSeniorityLevel5,
+                fourYearsSeniorityLevel4, highestLevelMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(fourYearsSeniorityLevel5)).isTrue();
+    }
+
+
+    @Test
+    @DisplayName("1.15 - Mentor needs to have longer Seniority than Mentee")
+    void shouldRejectMentorWithLowerSeniorityThanMentee() {
+        //given
+        val mentee = newMentee().seniority(2 * 365).build();
+        val lowerSeniorityMentor = newMentor().seniority(1 * 365).level(6).build();
+        val higherSeniorityMentor = newMentor().seniority(4 * 365).level(5).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, lowerSeniorityMentor, higherSeniorityMentor).collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(higherSeniorityMentor)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
     }
 
     @Test

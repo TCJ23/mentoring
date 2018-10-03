@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @implNote you will notice some hardcoded values, in this place we are exlpainig why?
  * Assumption is that Mentee always prefers Mentor with less Mentees currently assigned
  */
-public class PreferMentorWithLowerNumberOfAssignedMenteesStrategy implements VotingStrategy {
+public class PreferDevManWithLowerNumberOfAssignedMenteesStrategy implements VotingStrategy {
     /**
      * @param mentor - we assumed that 5 mentees for 1 mentor in GFT is maximum one person can manage for taking GFT Poland
      *               experience as live example
