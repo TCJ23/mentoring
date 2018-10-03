@@ -394,6 +394,7 @@ class MatchingSpec {
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
+        assertThat(proposals.size() == 3).isTrue();
     }
 
     @Test

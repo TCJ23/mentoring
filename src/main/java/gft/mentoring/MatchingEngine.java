@@ -28,6 +28,7 @@ class MatchingEngine {
             new PreferDevManWithHigherLevel(),
             new PreferDevManWithHigherSeniorityStrategy(),
             new PreferDevManWithLowerNumberOfAssignedMenteesStrategy(),
+            new PreferDevManThatIsOlderThan30YearsOldStrategy(),
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
