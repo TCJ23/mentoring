@@ -1,9 +1,6 @@
 package gft.mentoring.strategies;
 
-import gft.mentoring.MentoringModel;
-import gft.mentoring.Support;
-import gft.mentoring.VotingResult;
-import gft.mentoring.VotingStrategy;
+import gft.mentoring.*;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +28,10 @@ public class PreferDevManWithLowerNumberOfAssignedMenteesStrategy implements Vot
          * if Mentor has 0 mentees he should score 100 points in Supporting Voting Result
          * */
         val points = (-20 * mentor.getMenteesAssigned()) + 100;
+        if (points <= 0) {
+            return Neutral.INSTANCE;
+        }
+
         return new Support(points);
     }
 }
