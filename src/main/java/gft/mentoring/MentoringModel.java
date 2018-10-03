@@ -2,7 +2,7 @@ package gft.mentoring;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
 /**
  * @author tzje
@@ -10,7 +10,7 @@ import lombok.Value;
  */
 @Builder(toBuilder = true)
 @AllArgsConstructor
-@Value
+@Data
 public class MentoringModel {
     /**
      * @param family is department you work in i.e Governance
@@ -37,8 +37,14 @@ public class MentoringModel {
     private int menteesAssigned;
     private int age;
 
-    /*public boolean isOnlyMentee() {
+   /* public boolean isOnlyMentee() {
         if (MentoringModel.builder().level < 4) return true;
         return false;
+    }*/
+    /*public void setLevel(int level) {
+        if(level < 4){
+            this.onlyMentee = true;
+        }
+        this.level = level;
     }*/
 }
