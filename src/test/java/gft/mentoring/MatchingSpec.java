@@ -387,7 +387,7 @@ class MatchingSpec {
         //given
         val mentee = newMentee().build();
         val youngMentor = newMentor().age(20).build();
-        val mentorAt30YearsOld= newMentor().age(30).build();
+        val mentorAt30YearsOld = newMentor().age(30).build();
         val mentorAt40YearsOld = newMentor().age(40).build();
         //when
         val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld).collect(Collectors.toList());
@@ -414,6 +414,40 @@ class MatchingSpec {
         val proposedMentor = proposals.get(0);
         assertThat(proposals.size() == 1).isTrue();
         assertThat(proposedMentor.equals(mentorWithFreeSlotL4)).isTrue();
+    }
+
+    @Test
+    @DisplayName("2.1 When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    void shouldRejectMentorFromOtherLocationWhenMenteeIsFromLodz() {
+        //given
+        val mentee = newMentee().localization("Lodz").build();
+        val mentorFromWarsaw = newMentor().localization("Warsaw").build();
+        val mentorFromPoznan = newMentor().localization("Poznan").build();
+        val mentorFromLodz = newMentor().localization("Lodz").build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorFromLodz, mentorFromPoznan, mentorFromWarsaw)
+                .collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentorFromLodz)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
+    }
+
+    @Test
+    @DisplayName("2.1 When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    void shouldRejectMentorFromOtherLocationWhenMenteeIsFromPoznan() {
+        //given
+        val mentee = newMentee().localization("Poznan").build();
+        val mentorFromWarsaw = newMentor().localization("Warsaw").build();
+        val mentorFromPoznan = newMentor().localization("Poznan").build();
+        val mentorFromLodz = newMentor().localization("Lodz").build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorFromLodz, mentorFromPoznan, mentorFromWarsaw)
+                .collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentorFromPoznan)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
     }
 
     @Test
