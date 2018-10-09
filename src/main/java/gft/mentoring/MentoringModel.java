@@ -37,14 +37,4 @@ public class MentoringModel {
     private int menteesAssigned;
     private int age;
 
-   /* public boolean isOnlyMentee() {
-        if (MentoringModel.builder().level < 4) return true;
-        return false;
-    }*/
-    /*public void setLevel(int level) {
-        if(level < 4){
-            this.onlyMentee = true;
-        }
-        this.level = level;
-    }*/
 }
