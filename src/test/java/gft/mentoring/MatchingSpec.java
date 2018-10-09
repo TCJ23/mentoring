@@ -389,7 +389,8 @@ class MatchingSpec {
         val lowerSeniorityMentor = newMentor().seniority(1 * 365).level(6).build();
         val higherSeniorityMentor = newMentor().seniority(4 * 365).level(5).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, lowerSeniorityMentor, higherSeniorityMentor).collect(Collectors.toList());
+        val proposals = new MatchingEngine().findProposals(mentee, lowerSeniorityMentor, higherSeniorityMentor)
+                .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(higherSeniorityMentor)).isTrue();
@@ -406,7 +407,8 @@ class MatchingSpec {
         val mentorAt30YearsOld = newMentor().age(30).build();
         val mentorAt40YearsOld = newMentor().age(40).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld).collect(Collectors.toList());
+        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld)
+                .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
