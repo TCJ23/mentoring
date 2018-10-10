@@ -14,17 +14,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReadSAPxlsxTest {
 
-    static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
+    private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
 
     @Test
-    @DisplayName("should create 25 SAPmodels")
+    @DisplayName("should create 25 SAP models from sample excel file")
     void shouldCreate25SAPmodels() throws IOException, InvalidFormatException {
         //given
         Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
-        val firstRow = workbook.getSheetAt(0).getFirstRowNum();
-        val rowsSize = workbook.getSheetAt(0).getLastRowNum()- firstRow;
+        ReadSAPxlsx readSAPxlsx = new ReadSAPxlsx();
+        /* we decrease by 1 because of 1st row is composed of column names*/
+        val rowsSize = workbook.getSheetAt(0).getLastRowNum() - 1;
         //when
-        val models = new ReadSAPxlsx().readXLSX(SAP_FILE);
+        val models = readSAPxlsx.readXLSX(SAP_FILE);
         assertThat(models).size().isEqualTo(rowsSize);
+//        assertThat(models).size().isEqualTo(25);
     }
 }
