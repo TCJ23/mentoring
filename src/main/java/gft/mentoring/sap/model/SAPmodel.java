@@ -1,11 +1,13 @@
 package gft.mentoring.sap.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+@NoArgsConstructor
 @Data
-public class SAPmodel {
+class SAPmodel {
     private String firstName;
     private String lastName;
     private String initials;
