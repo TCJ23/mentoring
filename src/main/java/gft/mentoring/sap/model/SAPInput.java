@@ -1,5 +1,6 @@
 package gft.mentoring.sap.model;
 
+import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.jetbrains.annotations.NotNull;
@@ -7,10 +8,7 @@ import org.junit.platform.commons.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,7 +21,8 @@ import java.util.stream.StreamSupport;
  */
 class SAPInput {
     /**
-     * We assume that SAP Excel file will be stored in agreed folder*/
+     * We assume that SAP Excel file will be stored in agreed folder
+     */
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
 
     private Predicate<SAPmodel> validator = new Validator();
@@ -31,13 +30,16 @@ class SAPInput {
     List<SAPmodel> readExcelSAPfile(String inputFile) throws IOException, InvalidFormatException {
         Workbook workbook = WorkbookFactory.create(new File(inputFile));
         Sheet sheet = workbook.getSheetAt(0);
-
-        Spliterator<Row> spliterator = sheet.spliterator();
-
         /* first row contains simply names of columns */
-        spliterator.tryAdvance(x -> {
-        });
-        /** We don't expect that number of columns will change, if so this will require change in application */
+        Iterator<Row> iterator = sheet.iterator();
+        iterator.next();
+        val result = read(iterator);
+        workbook.close();
+        return result;
+    }
+
+    List<SAPmodel> read(Iterator<Row> data) {
+        /** We don't expect that number of columns will change, if so this will not affect application */
         List<Function<Cell, Consumer<SAPmodel>>> sapModels = new ArrayList<>(10);
         sapModels.add(cell -> saper -> saper.setFirstName(stringFromCell(cell)));
         sapModels.add(cell -> saper -> saper.setLastName(stringFromCell(cell)));
@@ -60,14 +62,11 @@ class SAPInput {
                 };
             }
         });
-
-        List<SAPmodel> sapers = StreamSupport.stream(spliterator, false).map(row -> createSAPmodelFromRow(row, sapModels))
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false).map(row -> createSAPmodelFromRow(row, sapModels))
                 .filter(validator)
                 .collect(Collectors.toList());
-
-        workbook.close();
-        return sapers;
     }
+
 
     class Validator implements Predicate<SAPmodel> {
         @Override
