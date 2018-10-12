@@ -67,10 +67,10 @@ class SAPInputTest {
         FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
         FileLock lock = channel.tryLock();
 
-        Throwable exception = assertThrows(FileNotFoundException.class, () -> {
+        Throwable exception = assertThrows(IOException.class, () -> {
             new SAPInput().readExcelSAPfile(SAP_FILE);
         });
-        assertEquals("The process cannot access the file because it is being used by another process", exception.getMessage());
+        assertEquals("The process cannot access the file because another process has locked a portion of the file", exception.getMessage());
         lock.close();
     }
 }
