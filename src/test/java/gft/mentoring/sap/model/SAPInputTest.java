@@ -10,17 +10,20 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-
 @DisplayName("Main class to test SAP INPUT")
 class SAPInputTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
+    private static final String BROKEN_FILE = "./broken-file.xlsx";
 
     @Test
     @DisplayName("3.1 - should create 25 SAP models from sample excel file")
@@ -47,24 +50,27 @@ class SAPInputTest {
     void shouldCreate25SAPmodelsEvenWithAdditionalColumn() throws IOException, InvalidFormatException {
         //given
         SAPInput sapInput = new SAPInput();
-        Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
+        Workbook workbook = WorkbookFactory.create(new File(BROKEN_FILE));
         /* we decrease by 1 because of 1st row is composed of column names*/
         val columns = workbook.getSheetAt(0).getRow(0).getPhysicalNumberOfCells();
         //when
-        val models = sapInput.readExcelSAPfile(SAP_FILE);
+        val models = sapInput.readExcelSAPfile(BROKEN_FILE);
         val saperFields = models.get(0).getClass().getDeclaredFields().length;
         //then
         assertThat(saperFields < columns);
     }
 
     @Test
-    @DisplayName("test for throwing exceptions FileNotFoundException, The process cannot access the file because it is being used by another process ")
-    void exceptionTesting() {
+    @DisplayName("test for throwing exceptions FileNotFoundException," +
+            " The process cannot access the file because it is being used by another process ")
+    void exceptionTesting() throws IOException {
+        FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
+        FileLock lock = channel.tryLock();
+
         Throwable exception = assertThrows(FileNotFoundException.class, () -> {
-            throw new IllegalArgumentException("The process cannot access the file because it is being used by another process");
+            new SAPInput().readExcelSAPfile(SAP_FILE);
         });
         assertEquals("The process cannot access the file because it is being used by another process", exception.getMessage());
+        lock.close();
     }
-
-
 }
