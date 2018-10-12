@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
  */
 class SAPInput {
     /**
-     * */
+     * We assume that SAP Excel file will be stored in agreed folder*/
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
 
     private Predicate<SAPmodel> validator = new Validator();
@@ -37,26 +37,31 @@ class SAPInput {
         /* first row contains simply names of columns */
         spliterator.tryAdvance(x -> {
         });
-
-        List<Function<Cell, Consumer<SAPmodel>>> model = new ArrayList<>(10);
-        model.add(cell -> model1 -> model1.setFirstName(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setLastName(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setInitials(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setPersonalNR(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setEmployeeSubGrp(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setPosition(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setJob(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setCostCenter(stringFromCell(cell)));
-        model.add(cell -> model1 -> model1.setInitEntry(dateFromCell(cell)));
-        model.add(cell -> model1 -> model1.setPersNrSuperior(stringFromCell(cell)));
-        model.add(new Function<Cell, Consumer<SAPmodel>>() {
+        /** We don't expect that number of columns will change, if so this will require change in application */
+        List<Function<Cell, Consumer<SAPmodel>>> sapModels = new ArrayList<>(10);
+        sapModels.add(cell -> saper -> saper.setFirstName(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setLastName(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setInitials(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setPersonalNR(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setEmployeeSubGrp(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setPosition(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setJob(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setCostCenter(stringFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setInitEntry(dateFromCell(cell)));
+        sapModels.add(cell -> saper -> saper.setPersNrSuperior(SAPInput.this.stringFromCell(cell)));
+        sapModels.add(new Function<Cell, Consumer<SAPmodel>>() {
             @Override
             public Consumer<SAPmodel> apply(Cell cell) {
-                return model1 -> model1.setPersNrMentor(SAPInput.this.stringFromCell(cell));
+                return new Consumer<SAPmodel>() {
+                    @Override
+                    public void accept(SAPmodel saper) {
+                        saper.setPersNrMentor(SAPInput.this.stringFromCell(cell));
+                    }
+                };
             }
         });
 
-        List<SAPmodel> sapers = StreamSupport.stream(spliterator, false).map(row -> createSAPmodelFromRow(row, model))
+        List<SAPmodel> sapers = StreamSupport.stream(spliterator, false).map(row -> createSAPmodelFromRow(row, sapModels))
                 .filter(validator)
                 .collect(Collectors.toList());
 
