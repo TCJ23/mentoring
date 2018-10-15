@@ -33,14 +33,14 @@ class SAPInput {
         /* first row contains simply names of columns */
         Iterator<Row> iterator = sheet.iterator();
         iterator.next();
-        val result = read(iterator);
+        val result = readRows(iterator);
         workbook.close();
         return result;
     }
 
-    List<SAPmodel> read(Iterator<Row> data) {
+     List<SAPmodel> readRows(Iterator<Row> data) {
         /** We don't expect that number of columns will change, if so this will not affect application */
-        List<Function<Cell, Consumer<SAPmodel>>> sapModels = new ArrayList<>(10);
+        List<Function<Cell, Consumer<SAPmodel>>> sapModels = new ArrayList<>(11);
         sapModels.add(cell -> saper -> saper.setFirstName(stringFromCell(cell)));
         sapModels.add(cell -> saper -> saper.setLastName(stringFromCell(cell)));
         sapModels.add(cell -> saper -> saper.setInitials(stringFromCell(cell)));

@@ -11,5 +11,4 @@ public enum Family {
     PROJECT_DEVELOPMENT,
     PROJECT_GOVERNANCE,
     TESTING;
-
 }
