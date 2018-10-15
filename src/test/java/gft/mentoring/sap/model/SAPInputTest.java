@@ -34,7 +34,7 @@ class SAPInputTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final String BROKEN_FILE = "./broken-file.xlsx";
-    public static final int COLUMNS_COUNT = 11;
+    private static final int COLUMNS_COUNT = 11;
 
     @Test
     @DisplayName("3.1 - should create 25 SAP models from sample excel file")
@@ -57,7 +57,7 @@ class SAPInputTest {
     }
 
     @Test
-    @DisplayName("3.1 - SAP file contains additional column - model will not change")
+    @DisplayName("3.1 - SAP file contains additional column - model will not change or break")
     void shouldCreate25SAPmodelsEvenWithAdditionalColumn() throws IOException, InvalidFormatException {
         //given
         SAPInput sapInput = new SAPInput();
@@ -68,7 +68,7 @@ class SAPInputTest {
         val models = sapInput.readExcelSAPfile(BROKEN_FILE);
         val saperFields = models.get(0).getClass().getDeclaredFields().length;
         //then
-        assertThat(saperFields < columns);
+        assertThat(saperFields < columns).isTrue();
     }
 
     @Test
@@ -119,18 +119,20 @@ class SAPInputTest {
         //when
         List<Row> data = Collections.singletonList(mockRow);
         val models = new SAPInput().readRows(data.iterator());
+        //then
         assertThat(models).isNotEmpty();
-        int i = 0;
-        assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPosition()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i++]);
+        for (int i = 0; i < COLUMNS_COUNT; i++) {
+            assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getPosition()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i++]);
+        }
     }
 }
