@@ -9,8 +9,7 @@ import org.junit.platform.commons.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -38,35 +37,30 @@ class SAPInput {
         return result;
     }
 
-     List<SAPmodel> readRows(Iterator<Row> data) {
+    List<SAPmodel> readRows(Iterator<Row> data) {
         /** We don't expect that number of columns will change, if so this will not affect application */
-        List<Function<Cell, Consumer<SAPmodel>>> sapModels = new ArrayList<>(11);
-        sapModels.add(cell -> saper -> saper.setFirstName(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setLastName(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setInitials(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setPersonalNR(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setEmployeeSubGrp(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setPosition(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setJob(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setCostCenter(stringFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setInitEntry(dateFromCell(cell)));
-        sapModels.add(cell -> saper -> saper.setPersNrSuperior(SAPInput.this.stringFromCell(cell)));
-        sapModels.add(new Function<Cell, Consumer<SAPmodel>>() {
+        List<BiConsumer<Cell, SAPmodel>> sapModels = new ArrayList<>(11);
+        sapModels.add((cell, saper) -> saper.setFirstName(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setLastName(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setInitials(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setPersonalNR(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setEmployeeSubGrp(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setPosition(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setJob(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setCostCenter(stringFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setInitEntry(dateFromCell(cell)));
+        sapModels.add((cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
+        sapModels.add(new BiConsumer<Cell, SAPmodel>() {
             @Override
-            public Consumer<SAPmodel> apply(Cell cell) {
-                return new Consumer<SAPmodel>() {
-                    @Override
-                    public void accept(SAPmodel saper) {
-                        saper.setPersNrMentor(SAPInput.this.stringFromCell(cell));
-                    }
-                };
+            public void accept(Cell cell, SAPmodel saper) {
+                saper.setPersNrMentor(stringFromCell(cell));
             }
         });
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false).map(row -> createSAPmodelFromRow(row, sapModels))
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
+                .map(row -> createSAPmodelFromRow(row, sapModels))
                 .filter(validator)
                 .collect(Collectors.toList());
     }
-
 
     class Validator implements Predicate<SAPmodel> {
         @Override
@@ -75,12 +69,12 @@ class SAPInput {
         }
     }
 
-    private SAPmodel createSAPmodelFromRow(@NotNull Row row, List<Function<Cell, Consumer<SAPmodel>>> model) {
+    private SAPmodel createSAPmodelFromRow(@NotNull Row row, List<BiConsumer<Cell, SAPmodel>> model) {
         SAPmodel saper = new SAPmodel();
 
         int i = 0;
-        for (Function<Cell, Consumer<SAPmodel>> f : model) {
-            f.apply(getCell(row, i++)).accept(saper);
+        for (BiConsumer<Cell, SAPmodel> f : model) {
+            f.accept(getCell(row, i++), saper);
         }
         return saper;
     }

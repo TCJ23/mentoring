@@ -109,7 +109,8 @@ class SAPInputTest {
         val models = new SAPInput().readRows(data.iterator());
         //then
         assertThat(models).isNotEmpty();
-        for (int i = 0; i < COLUMNS_COUNT; i++) {
+        int i = 0;
+//        for (int i = 0; i < COLUMNS_COUNT; i++) {
             assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
             assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
             assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
@@ -120,7 +121,7 @@ class SAPInputTest {
             assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
             assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
             assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i++]);
+            assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i]);
         }
     }
-}
+//}
