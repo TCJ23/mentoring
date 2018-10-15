@@ -1,5 +1,6 @@
 package gft.mentoring.sap.model;
 
+import lombok.Cleanup;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Field;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.Calendar;
@@ -57,24 +59,10 @@ class SAPInputTest {
     }
 
     @Test
-    @DisplayName("3.1 - SAP file contains additional column - model will not change or break")
-    void shouldCreate25SAPmodelsEvenWithAdditionalColumn() throws IOException, InvalidFormatException {
-        //given
-        SAPInput sapInput = new SAPInput();
-        Workbook workbook = WorkbookFactory.create(new File(BROKEN_FILE));
-        /* we decrease by 1 because of 1st row is composed of column names*/
-        val columns = workbook.getSheetAt(0).getRow(0).getPhysicalNumberOfCells();
-        //when
-        val models = sapInput.readExcelSAPfile(BROKEN_FILE);
-        val saperFields = models.get(0).getClass().getDeclaredFields().length;
-        //then
-        assertThat(saperFields < columns).isTrue();
-    }
-
-    @Test
     @DisplayName("3.1 - test IOException, when Excel file is open while program runs ")
     void exceptionFileIsLocked() throws IOException {
         FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
+//        @Cleanup
         FileLock lock = channel.tryLock();
 
         Throwable exception = assertThrows(IOException.class, () -> {
@@ -104,7 +92,7 @@ class SAPInputTest {
         Object[] values = new Object[COLUMNS_COUNT];
         for (int i = 0; i < COLUMNS_COUNT; i++) {
             if (i == 8) values[i] = Calendar.getInstance().getTime();
-            else values[i] = RandomStringUtils.randomAscii(20);// randomize
+            else values[i] = RandomStringUtils.randomAscii(20);
         }
 
         for (int i = 0; i < COLUMNS_COUNT; i++) {
