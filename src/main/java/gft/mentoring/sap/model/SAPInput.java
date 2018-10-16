@@ -80,7 +80,6 @@ class SAPInput {
 
     private String dateFromCell(Cell cell) {
         return formatter.formatCellValue(cell);
-        //        return cell.getDateCellValue();
     }
 
     private String stringFromCell(Cell cell) {
@@ -91,22 +90,12 @@ class SAPInput {
         return row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
     }
 
-    int notNullRows(Workbook workbook) {
-        int notNullCount = 0;
-        Sheet sheet = workbook.getSheetAt(0);
-        for (Row row : sheet) {
-            for (Cell cell : row) {
-                if (cell.getCellTypeEnum() != CellType.BLANK) {
-                    if (cell.getCellTypeEnum() == CellType.STRING &&
-                            stringFromCell(cell).length() <= 0) {
-                        continue;
-                    }
-                    notNullCount++;
-                    break;
-                }
-            }
-        }
-        return notNullCount;
+    long notNullRows(Workbook workbook) {
+        Iterator<Row> rows = workbook.getSheetAt(0).iterator();
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(rows, Spliterator.ORDERED), false)
+                .map(row -> StreamSupport.stream(row.spliterator(), false).anyMatch(cell -> isNonEmptyCell(cell)))
+                .filter(c -> c)
+                .count();
     }
 
     private boolean isNonEmptyCell(Cell cell) {

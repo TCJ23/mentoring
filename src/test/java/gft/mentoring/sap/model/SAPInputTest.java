@@ -4,7 +4,6 @@ import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
@@ -49,6 +47,8 @@ class SAPInputTest {
         //when
         val models = sapInput.readExcelSAPfile(SAP_FILE);
         //then
+        System.out.println("notNullRows " + notNullRows);
+        System.out.println("rowsSize " + rowsSize);
         assertThat(models).size().isEqualTo(rowsSize);
         assertThat(models).size().isEqualTo(25);
         for (SAPmodel model : models) {
@@ -103,7 +103,7 @@ class SAPInputTest {
         when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
         when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
 //        getNumericCellValue
-        values[8] = String.valueOf((double)time.getTime());
+        values[8] = String.valueOf((double) time.getTime());
         //when
         List<Row> data = Collections.singletonList(mockRow);
         val models = new SAPInput().readRows(data.iterator());
