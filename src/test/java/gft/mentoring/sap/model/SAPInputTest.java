@@ -65,6 +65,7 @@ class SAPInputTest {
 
         Throwable exception = assertThrows(IOException.class, () -> {
             new SAPInput().readExcelSAPfile(SAP_FILE);
+            throw new IOException();
         });
         assertEquals("The process cannot access the file because another process has locked a portion of the file"
                 , exception.getMessage());
