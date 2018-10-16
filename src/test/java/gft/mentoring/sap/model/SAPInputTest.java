@@ -1,13 +1,10 @@
 package gft.mentoring.sap.model;
 
-import lombok.Cleanup;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,9 +13,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Field;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -83,7 +81,7 @@ class SAPInputTest {
 
     @Test
     @DisplayName("3.1 - test readRows correctly without sample file")
-    void createModelFromRandomFile() {
+    void createModelFromRandomFile() throws ParseException {
         //given
         Row mockRow = mock(Row.class);
         Cell[] mockCells = new Cell[COLUMNS_COUNT];
@@ -91,8 +89,8 @@ class SAPInputTest {
             mockCells[i] = mock(Cell.class);
         Object[] values = new Object[COLUMNS_COUNT];
         for (int i = 0; i < COLUMNS_COUNT; i++) {
-            if (i == 8) values[i] = Calendar.getInstance().getTime();
-            else values[i] = RandomStringUtils.randomAscii(20);
+            if (i != 8)
+                values[i] = RandomStringUtils.randomAscii(20);
         }
 
         for (int i = 0; i < COLUMNS_COUNT; i++) {
@@ -102,8 +100,10 @@ class SAPInputTest {
             }
         }
         Date time = Calendar.getInstance().getTime();
-        when(mockCells[8].getDateCellValue()).thenReturn(time);
-        values[8] = time;
+        when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
+        when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
+//        getNumericCellValue
+        values[8] = String.valueOf((double)time.getTime());
         //when
         List<Row> data = Collections.singletonList(mockRow);
         val models = new SAPInput().readRows(data.iterator());
@@ -111,17 +111,16 @@ class SAPInputTest {
         assertThat(models).isNotEmpty();
         int i = 0;
 //        for (int i = 0; i < COLUMNS_COUNT; i++) {
-            assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getPosition()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
-            assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i]);
-        }
+        assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getPosition()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i]);
     }
-//}
+}

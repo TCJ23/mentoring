@@ -16,7 +16,7 @@ class SAPmodel {
     private String position;
     private String job;
     private String costCenter;
-    private Date initEntry;
+    private String initEntry;
     private String persNrSuperior;
     private String persNrMentor;
 }

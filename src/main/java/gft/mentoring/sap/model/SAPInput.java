@@ -22,8 +22,7 @@ class SAPInput {
     /**
      * We assume that SAP Excel file will be stored in agreed folder
      */
-    private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
-
+    private DataFormatter formatter = new DataFormatter();
     private Predicate<SAPmodel> validator = new Validator();
 
     List<SAPmodel> readExcelSAPfile(String inputFile) throws IOException, InvalidFormatException {
@@ -79,8 +78,9 @@ class SAPInput {
         return saper;
     }
 
-    private Date dateFromCell(Cell cell) {
-        return cell.getDateCellValue();
+    private String dateFromCell(Cell cell) {
+        return formatter.formatCellValue(cell);
+        //        return cell.getDateCellValue();
     }
 
     private String stringFromCell(Cell cell) {
@@ -107,5 +107,11 @@ class SAPInput {
             }
         }
         return notNullCount;
+    }
+
+    private boolean isNonEmptyCell(Cell cell) {
+        return cell.getCellTypeEnum() != CellType.BLANK
+                && (cell.getCellTypeEnum() != CellType.STRING ||
+                stringFromCell(cell).length() > 0);
     }
 }
