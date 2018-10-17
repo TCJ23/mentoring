@@ -33,7 +33,7 @@ class SAPInputTest {
     private static final int COLUMNS_COUNT = 11;
 
     @Test
-    @DisplayName("3.1 - should create 25 SAP models from sample excel file")
+    @DisplayName("3.1.1 - should create 25 SAP models from sample excel file")
     void shouldCreate25SAPmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
         //given
         SAPInput sapInput = new SAPInput();
@@ -55,25 +55,24 @@ class SAPInputTest {
     }
 
     @Test
-    @DisplayName("3.1 - test IOException, when Excel file is open while program runs ")
+    @Disabled
+    @DisplayName("3.1.2 - test IOException, when Excel file is open while program runs ")
     void exceptionFileIsLocked() throws IOException {
         FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
-//        @Cleanup
-        FileLock lock = channel.tryLock();
-
+        FileLock lock = channel.lock();
         Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("Error reading file");
         lock.close();
     }
 
     @Test
-    @DisplayName("3.1 - test FileNotFoundException when SAP file is not there")
+    @DisplayName("3.1.3 - test FileNotFoundException when SAP file is not there")
     void fileNotFound() {
         assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE + "empty place"));
     }
 
     @Test
-    @DisplayName("3.1 - test readRows correctly without sample file")
+    @DisplayName("3.1.4 - test readRows correctly without sample file")
     void createModelFromRandomFile() {
         //given
         Row mockRow = mock(Row.class);
@@ -116,29 +115,24 @@ class SAPInputTest {
     }
 
     @Test
-    @Disabled
-    @DisplayName("3.1 - Verify that column names order matches GOLDEN FILE ")
-    void shouldMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
+    @DisplayName("3.1.5a - Verify that column names order matches GOLDEN FILE ")
+    void shouldMatchGoldenFileColumnOrder() throws ExcelException {
         //given
         ExcelValidator excelValidator = new ExcelValidator();
         //when
         boolean fileIsOK = excelValidator.verifyExcelColumnOrder(SAP_FILE);
         //then
-        System.out.println("TE SAME PLIKI " + fileIsOK);
         assertThat(fileIsOK).isTrue();
     }
 
     @Test
-    @Disabled
-    @DisplayName("3.1 - Verify that column names order DOES NOT match GOLDEN FILE ")
-    void shouldNOTMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
+    @DisplayName("3.1.5b - Verify that column names order DOES NOT match GOLDEN FILE ")
+    void shouldNOTMatchGoldenFileColumnOrder() throws ExcelException {
         //given
         ExcelValidator excelValidator = new ExcelValidator();
         //when
         boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE);
         //then
-        System.out.println("NIE TE SAME PLIKI " + fileIsNotOK);
-
         assertThat(fileIsNotOK).isFalse();
     }
 }

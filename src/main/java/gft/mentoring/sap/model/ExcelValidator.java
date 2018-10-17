@@ -9,37 +9,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 class ExcelValidator {
     private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
 
-    private static List<String> correctColumnOrder()  {
+    boolean verifyExcelColumnOrder(@NotNull String fileName) throws ExcelException {
         try {
-            return readExcelFileForColumnNames(GOLDEN_FILE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
+            List<String> columnNames = readExcelFileForHeaderNames(fileName);
+            List<String> correctColumnNames = readExcelFileForHeaderNames(GOLDEN_FILE);
+            return columnNames.equals(correctColumnNames);
+        } catch (Exception e) {
+            throw new ExcelException("Unable to check header row correctness", e);
         }
-        return correctColumnOrder();
     }
 
-    boolean verifyExcelColumnOrder(@NotNull String fileName) {
-        List<String> columnNames = null;
-        try {
-            columnNames = readExcelFileForColumnNames(fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
-        }
-        List<String> correctColumnOrder = correctColumnOrder();
-        return correctColumnOrder.equals(columnNames);
-    }
-
-    private static List<String> readExcelFileForColumnNames(@NotNull String fileName) throws IOException, InvalidFormatException {
-        List<String> columnNames = correctColumnOrder();
+     static List<String> readExcelFileForHeaderNames(@NotNull String fileName) throws IOException, InvalidFormatException {
+        List<String> columnNames = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(new File(fileName));
         Sheet sheet = workbook.getSheetAt(0);
         int lastCell = sheet.getRow(0).getLastCellNum();
