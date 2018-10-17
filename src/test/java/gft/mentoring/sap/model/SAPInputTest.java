@@ -9,19 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,7 +33,7 @@ class SAPInputTest {
 
     @Test
     @DisplayName("3.1 - should create 25 SAP models from sample excel file")
-    void shouldCreate25SAPmodelsFromSampleFile() throws IOException, InvalidFormatException {
+    void shouldCreate25SAPmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
         //given
         SAPInput sapInput = new SAPInput();
         Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
@@ -63,9 +60,9 @@ class SAPInputTest {
 //        @Cleanup
         FileLock lock = channel.tryLock();
 
-        Throwable exception = assertThrows(IOException.class, () -> {
+        Throwable exception = assertThrows(ExcelException.class, () -> {
             new SAPInput().readExcelSAPfile(SAP_FILE);
-            throw new IOException();
+            throw new ExcelException("File", "File");
         });
         /*assertEquals("The process cannot access the file because another process has locked a portion of the file"
                 , exception.getMessage());*/
@@ -74,15 +71,15 @@ class SAPInputTest {
 
     @Test
     @DisplayName("3.1 - test FileNotFoundException when SAP file is not there")
-    void fileNotFound() throws IOException {
-        Throwable exception = assertThrows(FileNotFoundException.class, () -> {
+    void fileNotFound() {
+        Throwable exception = assertThrows(ExcelException.class, () -> {
             new SAPInput().readExcelSAPfile(SAP_FILE + "empty place");
         });
     }
 
     @Test
     @DisplayName("3.1 - test readRows correctly without sample file")
-    void createModelFromRandomFile() throws ParseException {
+    void createModelFromRandomFile() {
         //given
         Row mockRow = mock(Row.class);
         Cell[] mockCells = new Cell[COLUMNS_COUNT];
@@ -103,7 +100,6 @@ class SAPInputTest {
         Date time = Calendar.getInstance().getTime();
         when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
         when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
-//        getNumericCellValue
         values[8] = String.valueOf((double) time.getTime());
         //when
         List<Row> data = Collections.singletonList(mockRow);
@@ -111,7 +107,6 @@ class SAPInputTest {
         //then
         assertThat(models).isNotEmpty();
         int i = 0;
-//        for (int i = 0; i < COLUMNS_COUNT; i++) {
         assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
         assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
         assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
@@ -123,5 +118,17 @@ class SAPInputTest {
         assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i]);
+    }
+
+    @Test
+    @DisplayName("3.1 - Verify that column names order matches GOLDEN FILE ")
+    void shouldMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
+        //given
+        ExcelValidator excelValidator = new ExcelValidator();
+        List<String> correctColumnOrder = excelValidator.correctColumnOrder();
+        //when
+        boolean fileIsOK = excelValidator.verifyExcelColumnOrder(SAP_FILE, correctColumnOrder);
+        //then
+        assertThat(fileIsOK).isTrue();
     }
 }

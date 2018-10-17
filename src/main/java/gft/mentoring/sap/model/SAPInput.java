@@ -25,14 +25,26 @@ class SAPInput {
     private DataFormatter formatter = new DataFormatter();
     private Predicate<SAPmodel> validator = new Validator();
 
-    List<SAPmodel> readExcelSAPfile(String inputFile) throws IOException, InvalidFormatException {
-        Workbook workbook = WorkbookFactory.create(new File(inputFile));
+    List<SAPmodel> readExcelSAPfile(String inputFile) throws ExcelException {
+        Workbook workbook = null;
+        try {
+            workbook = WorkbookFactory.create(new File(inputFile));
+        } catch (IOException e) {
+            throw new ExcelException("IOExc", "IO", e.getCause());
+        } catch (InvalidFormatException e) {
+            throw new ExcelException("INVform", "IV", e.getCause());
+        }
+
         Sheet sheet = workbook.getSheetAt(0);
         /* first row contains simply names of columns */
         Iterator<Row> iterator = sheet.iterator();
         iterator.next();
         val result = readRows(iterator);
-        workbook.close();
+        try {
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
@@ -70,7 +82,6 @@ class SAPInput {
 
     private SAPmodel createSAPmodelFromRow(@NotNull Row row, List<BiConsumer<Cell, SAPmodel>> model) {
         SAPmodel saper = new SAPmodel();
-
         int i = 0;
         for (BiConsumer<Cell, SAPmodel> f : model) {
             f.accept(getCell(row, i++), saper);
