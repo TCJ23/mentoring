@@ -4,6 +4,7 @@ import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,6 +14,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -56,25 +60,19 @@ class SAPInputTest {
     @Test
     @DisplayName("3.1 - test IOException, when Excel file is open while program runs ")
     void exceptionFileIsLocked() throws IOException {
-        FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
+        FileChannel channel = FileChannel.open(Paths.get(SAP_FILE), StandardOpenOption.WRITE);
 //        @Cleanup
         FileLock lock = channel.tryLock();
 
-        Throwable exception = assertThrows(ExcelException.class, () -> {
-            new SAPInput().readExcelSAPfile(SAP_FILE);
-            throw new ExcelException("File", "File");
-        });
-        /*assertEquals("The process cannot access the file because another process has locked a portion of the file"
-                , exception.getMessage());*/
+        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE));
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("Error reading file");
         lock.close();
     }
 
     @Test
     @DisplayName("3.1 - test FileNotFoundException when SAP file is not there")
     void fileNotFound() {
-        Throwable exception = assertThrows(ExcelException.class, () -> {
-            new SAPInput().readExcelSAPfile(SAP_FILE + "empty place");
-        });
+        assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE + "empty place"));
     }
 
     @Test
@@ -121,6 +119,7 @@ class SAPInputTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("3.1 - Verify that column names order matches GOLDEN FILE ")
     void shouldMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
         //given
@@ -131,7 +130,9 @@ class SAPInputTest {
         System.out.println("TE SAME PLIKI " + fileIsOK);
         assertThat(fileIsOK).isTrue();
     }
+
     @Test
+    @Disabled
     @DisplayName("3.1 - Verify that column names order DOES NOT match GOLDEN FILE ")
     void shouldNOTMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
         //given
@@ -140,6 +141,7 @@ class SAPInputTest {
         boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE);
         //then
         System.out.println("NIE TE SAME PLIKI " + fileIsNotOK);
+
         assertThat(!fileIsNotOK).isTrue();
     }
 }

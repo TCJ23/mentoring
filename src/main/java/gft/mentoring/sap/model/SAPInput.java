@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.util.StringUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -29,23 +30,22 @@ class SAPInput {
         Workbook workbook = null;
         try {
             workbook = WorkbookFactory.create(new File(inputFile));
-        } catch (IOException e) {
-            throw new ExcelException("IOExc", "IO", e.getCause());
-        } catch (InvalidFormatException e) {
-            throw new ExcelException("INVform", "IV", e.getCause());
-        }
-
-        Sheet sheet = workbook.getSheetAt(0);
-        /* first row contains simply names of columns */
-        Iterator<Row> iterator = sheet.iterator();
-        iterator.next();
-        val result = readRows(iterator);
-        try {
+            Sheet sheet = workbook.getSheetAt(0);
+            /* first row contains simply names of columns */
+            Iterator<Row> iterator = sheet.iterator();
+            iterator.next();
+            val result = readRows(iterator);
             workbook.close();
+
+            return result;
+        } catch (FileNotFoundException e) {
+            throw new ExcelException("File not found or inaccessible", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ExcelException("Error reading file", e);
+            //throw new ExcelException("The process cannot access the file because it is being used by another process")
+        } catch (InvalidFormatException e) {
+            throw new ExcelException("Invalid format exception", e);
         }
-        return result;
     }
 
     List<SAPmodel> readRows(Iterator<Row> data) {
