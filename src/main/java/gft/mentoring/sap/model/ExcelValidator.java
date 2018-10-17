@@ -16,21 +16,17 @@ class ExcelValidator {
     private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
 
     static List<String> correctColumnOrder() throws IOException, InvalidFormatException {
-        List<String> columnNames = new ArrayList<>();
-        try (Workbook workbook = WorkbookFactory.create(new File(GOLDEN_FILE))) {
-            Sheet sheet = workbook.getSheetAt(0);
-            int lastCell = sheet.getRow(0).getLastCellNum();
-            Row header = sheet.getRow(0);
-            for (int i = 0; i < lastCell; i++) {
-                columnNames.add(header.getCell(i).getRichStringCellValue().toString());
-            }
-        }
-        return columnNames;
+        return readExcelFileForColumnNames(GOLDEN_FILE);
     }
 
-    boolean verifyExcelColumnOrder(@NotNull String fileName, @NotNull List<String> correctOrder) throws IOException, InvalidFormatException {
-        List<String> columnNames = new ArrayList<>();
+    boolean verifyExcelColumnOrder(@NotNull String fileName) throws IOException, InvalidFormatException {
+        List<String> columnNames = readExcelFileForColumnNames(fileName);
         List<String> correctColumnOrder = correctColumnOrder();
+        return correctColumnOrder.equals(columnNames);
+    }
+
+    private static List<String> readExcelFileForColumnNames(@NotNull String fileName) throws IOException, InvalidFormatException {
+        List<String> columnNames = correctColumnOrder();
         try (Workbook workbook = WorkbookFactory.create(new File(fileName))) {
             Sheet sheet = workbook.getSheetAt(0);
             int lastCell = sheet.getRow(0).getLastCellNum();
@@ -39,6 +35,6 @@ class ExcelValidator {
                 columnNames.add(header.getCell(i).getRichStringCellValue().toString());
             }
         }
-        return correctColumnOrder.equals(columnNames);
+        return columnNames;
     }
 }

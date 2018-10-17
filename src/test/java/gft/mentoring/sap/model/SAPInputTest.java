@@ -125,10 +125,10 @@ class SAPInputTest {
     void shouldMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
         //given
         ExcelValidator excelValidator = new ExcelValidator();
-        List<String> correctColumnOrder = excelValidator.correctColumnOrder();
         //when
-        boolean fileIsOK = excelValidator.verifyExcelColumnOrder(SAP_FILE, correctColumnOrder);
+        boolean fileIsOK = excelValidator.verifyExcelColumnOrder(SAP_FILE);
         //then
+        System.out.println("TE SAME PLIKI " + fileIsOK);
         assertThat(fileIsOK).isTrue();
     }
     @Test
@@ -136,10 +136,10 @@ class SAPInputTest {
     void shouldNOTMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
         //given
         ExcelValidator excelValidator = new ExcelValidator();
-        List<String> correctColumnOrder = excelValidator.correctColumnOrder();
         //when
-        boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE, correctColumnOrder);
+        boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE);
         //then
-        assertThat(fileIsNotOK).isTrue();
+        System.out.println("NIE TE SAME PLIKI " + fileIsNotOK);
+        assertThat(!fileIsNotOK).isTrue();
     }
 }
