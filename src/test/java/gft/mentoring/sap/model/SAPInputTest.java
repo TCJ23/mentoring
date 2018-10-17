@@ -14,9 +14,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.nio.file.OpenOption;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -60,7 +57,7 @@ class SAPInputTest {
     @Test
     @DisplayName("3.1 - test IOException, when Excel file is open while program runs ")
     void exceptionFileIsLocked() throws IOException {
-        FileChannel channel = FileChannel.open(Paths.get(SAP_FILE), StandardOpenOption.WRITE);
+        FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
 //        @Cleanup
         FileLock lock = channel.tryLock();
 
@@ -142,6 +139,6 @@ class SAPInputTest {
         //then
         System.out.println("NIE TE SAME PLIKI " + fileIsNotOK);
 
-        assertThat(!fileIsNotOK).isTrue();
+        assertThat(fileIsNotOK).isFalse();
     }
 }
