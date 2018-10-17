@@ -131,4 +131,15 @@ class SAPInputTest {
         //then
         assertThat(fileIsOK).isTrue();
     }
+    @Test
+    @DisplayName("3.1 - Verify that column names order DOES NOT match GOLDEN FILE ")
+    void shouldNOTMatchGoldenFileColumnOrder() throws IOException, InvalidFormatException {
+        //given
+        ExcelValidator excelValidator = new ExcelValidator();
+        List<String> correctColumnOrder = excelValidator.correctColumnOrder();
+        //when
+        boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE, correctColumnOrder);
+        //then
+        assertThat(fileIsNotOK).isTrue();
+    }
 }
