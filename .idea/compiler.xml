@@ -8,10 +8,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="devman-generator" />
+        <module name="devman-generator-v2" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="devman-generator" target="8" />
+      <module name="devman-generator-v2" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

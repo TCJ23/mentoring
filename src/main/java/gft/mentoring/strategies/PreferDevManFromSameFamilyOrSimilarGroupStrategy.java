@@ -21,7 +21,7 @@ import gft.mentoring.*;
 import org.jetbrains.annotations.NotNull;
 
 public class PreferDevManFromSameFamilyOrSimilarGroupStrategy implements VotingStrategy {
-    /* this method will calculate sympathy between mentee and corresponding mentor or mentors
+    /** this method will calculate sympathy between mentee and corresponding mentor or mentors
      * in Development Group
      * @return value should be Support @see VotingResult
      * IF
@@ -29,11 +29,14 @@ public class PreferDevManFromSameFamilyOrSimilarGroupStrategy implements VotingS
      * AND
      * @param mentor(s)is in one of 4 families considered as larger Development Group
      * ELSE
-     * @return value should be Neutral @see VotingResult*/
+     * @return value should be Neutral @see VotingResult
+     * in order to meet requirements we need to calibrate Support sympathy value so that equal Family gets higher rate
+     * than being part of Development group.*/
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
         if (mentee.getFamily().equals(mentor.getFamily())) return new Support(100);
 
+        /** Calibration -> new Support with Value 100 will break test 1.2*/
         if (isDevelopmentGroup(mentee.getFamily()) && isDevelopmentGroup(mentor.getFamily())) return new Support(50);
 
         if (isDevelopmentGroup(mentee.getFamily()) ^ isDevelopmentGroup(mentor.getFamily())) return Rejected.INSTANCE;
