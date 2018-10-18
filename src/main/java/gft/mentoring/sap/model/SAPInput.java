@@ -26,8 +26,22 @@ class SAPInput {
     private DataFormatter formatter = new DataFormatter();
     private Predicate<SAPmodel> validator = new Validator();
 
-    List<SAPmodel> readExcelSAPfile(String inputFile) throws ExcelException {
-        Workbook workbook = null;
+    /**
+     * We cannot avoid some of exceptions to be thrown, this might not be an issue when running application in production
+     * due to formal instructions provided to user
+     * we cannot replicate some of that behaviour, for details please check
+     * @link SAPInputTest
+     *
+     *  Change the contents of a text file in its entirety, overwriting any
+     *  existing text.
+     *  @param inputFile is an existing file (not a directory) which can be written.
+     *  @exception ExcelException if FileNotFoundException or IOException
+     *  @exception InvalidFormatException - we cannot replicate this behaviour, for details please check
+     *  @exception FileNotFoundException (The process cannot access the file because it is being used by another process)
+     *  if SAP file is open simultaneously with program being run this will cause above exception
+     **/
+    List<SAPmodel> readExcelSAPfile(String inputFile) throws ExcelException, InvalidFormatException {
+        Workbook workbook;
         try {
             workbook = WorkbookFactory.create(new File(inputFile));
             Sheet sheet = workbook.getSheetAt(0);
@@ -42,14 +56,11 @@ class SAPInput {
             throw new ExcelException("File not found or inaccessible", e);
         } catch (IOException e) {
             throw new ExcelException("Error reading file", e);
-            //throw new ExcelException("The process cannot access the file because it is being used by another process")
-        } catch (InvalidFormatException e) {
-            throw new ExcelException("Invalid format exception", e);
         }
     }
 
     List<SAPmodel> readRows(Iterator<Row> data) {
-        /** We don't expect that number of columns will change, if so this will not affect application */
+        /* We don't expect that number of columns will NOT change application mechanism*/
         List<BiConsumer<Cell, SAPmodel>> sapModels = new ArrayList<>(11);
         sapModels.add((cell, saper) -> saper.setFirstName(stringFromCell(cell)));
         sapModels.add((cell, saper) -> saper.setLastName(stringFromCell(cell)));

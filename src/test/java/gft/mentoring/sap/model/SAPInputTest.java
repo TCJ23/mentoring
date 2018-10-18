@@ -2,8 +2,10 @@ package gft.mentoring.sap.model;
 
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +16,10 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +56,11 @@ class SAPInputTest {
     @Test
     @Disabled
     @DisplayName("3.1.2 - test IOException, when Excel file is open while program runs ")
+    /* We had to disable test 3.1.2 broken build by IO exceptions
+        70311 [ERROR] exceptionFileIsLocked  Time elapsed: 1.066 s  <<< FAILURE!
+    org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
+ 	at gft.mentoring.sap.model.SAPInputTest.exceptionFileIsLocked(SAPInputTest.java:66)
+    this works fine in IDE and Maven on Windows, issue within locking file on UNIX*/
     void exceptionFileIsLocked() throws IOException {
         FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
         FileLock lock = channel.lock();
@@ -66,9 +70,32 @@ class SAPInputTest {
     }
 
     @Test
+    @DisplayName("3.1.2a - test EmptyFileException, when incorrect file is given ")
+    void incorrectFilegiven() throws IOException {
+        File tempFile = File.createTempFile("123", "");
+        FileChannel channel = new RandomAccessFile(tempFile.getName(), "rw").getChannel();
+        FileLock lock = channel.lock();
+        Throwable exception = assertThrows(EmptyFileException.class, () -> new SAPInput().readExcelSAPfile(tempFile.getName()));
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("The supplied file was empty (zero bytes long)");
+        System.out.println(exception.getMessage());
+        lock.close();
+    }
+
+    @Test
+    @DisplayName("3.1.2b - test EmptyFileException, when incorrect file is given ")
+        /* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat*/
+    void exceptionInvalidFormat() throws IOException {
+        File tempFile = File.createTempFile("123", "");
+        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(tempFile.getName()));
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
+        System.out.println(exception.getMessage());
+    }
+
+    @Test
     @DisplayName("3.1.3 - test FileNotFoundException when SAP file is not there")
     void fileNotFound() {
-        assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE + "empty place"));
+        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE + "empty place"));
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
     }
 
     @Test
@@ -134,5 +161,48 @@ class SAPInputTest {
         boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE);
         //then
         assertThat(fileIsNotOK).isFalse();
+    }
+
+    @Test
+    @DisplayName("3.1.5c - Verify that when validating column order also throws exception is thrown")
+    void shouldThrowException() throws ExcelException {
+        Throwable exception = assertThrows(ExcelException.class, () -> new ExcelValidator()
+                .verifyExcelColumnOrder(SAP_FILE + "empty place"));
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("Unable to check header row correctness");
+    }
+
+    @Test
+    @DisplayName("3.1.6 - create 1 SAP model from Row without excel file")
+    void shouldCreateSingleSAPmodelFromRow() {
+        //given
+        SAPInput createSAPModel = new SAPInput();
+        Workbook wb = new XSSFWorkbook();
+        CreationHelper createHelper = wb.getCreationHelper();
+        Sheet sheet = wb.createSheet("test sheet");
+        Row row = sheet.createRow(0);
+        List<Row> data = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue("SAP model");
+        }
+        data.add(row);
+        //when
+        List<SAPmodel> sapModels = createSAPModel.readRows(data.iterator());
+        SAPmodel model = sapModels.get(0);
+        //then
+        assertAll(
+                () -> assertEquals("SAP model", model.getFirstName()),
+                () -> assertEquals("SAP model", model.getLastName()),
+                () -> assertEquals("SAP model", model.getInitials()),
+                () -> assertEquals("SAP model", model.getPersonalNR()),
+                () -> assertEquals("SAP model", model.getCostCenter()),
+                () -> assertEquals("SAP model", model.getEmployeeSubGrp()),
+                () -> assertEquals("SAP model", model.getPosition()),
+                () -> assertEquals("SAP model", model.getJob()),
+                () -> assertEquals("SAP model", model.getCostCenter()),
+                () -> assertEquals("SAP model", model.getInitEntry()),
+                () -> assertEquals("SAP model", model.getPersNrSuperior()),
+                () -> assertEquals("SAP model", model.getPersNrMentor())
+        );
     }
 }
