@@ -54,6 +54,7 @@ class SAPInput {
             return result;
         } catch (FileNotFoundException e) {
             throw new ExcelException("File not found or inaccessible", e);
+            /**@link SAPInputTest code coverage decreased by disabling exceptionFileIsLocked test 3.1.2 */
         } catch (IOException e) {
             throw new ExcelException("Error reading file", e);
         }
