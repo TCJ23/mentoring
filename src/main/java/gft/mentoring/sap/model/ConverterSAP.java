@@ -12,11 +12,12 @@ class ConverterSAP {
         List<SAPMentoringModel> sapMMs = new ArrayList<>();
         List<SAPmodel> sapers = input.readExcelSAPfile(file);
         for (SAPmodel saper : sapers) {
-            SAPMentoringModel sapMM = new SAPMentoringModel();
-            sapMM.setLevel(saper.getJob());
-            sapMM.setContractor(saper.getEmployeeSubGrp());
-            sapMM.setFamily(saper.getPosition());
-            sapMMs.add(sapMM);
+            sapMMs.add(new SAPMentoringModelBuilder()
+                    .setlevel(saper.getJob())
+                    .setcontractor(saper.getEmployeeSubGrp())
+                    .setfamily(saper.getPosition())
+                    .build());
+            //.setfirstName(saper.getFirstName())
         }
         return sapMMs;
     }

@@ -21,36 +21,4 @@ class SAPMentoringModel {
     private int lineManagerID; //persNrSuperior ?
     private int menteeID; //persNrMentor
 
-    Family getFamily() {
-        return family;
-    }
-
-    void setFamily(String family) {
-        this.family = Family.fromString(family);
-    }
-
-
-    boolean isContractor() {
-        return contractor;
-    }
-
-    void setContractor(String s) {
-        this.contractor = s.trim().equalsIgnoreCase("Contractors");
-    }
-
-    int getLevel() {
-        return level;
-    }
-
-    void setLevel(String s) {
-        try {
-            if (s.equalsIgnoreCase("LD")) {
-                this.level = 8;
-            } else {
-                this.level = Integer.parseInt(s.trim().replaceAll("[\\D]", ""));
-            }
-        } catch (NumberFormatException e) {
-            this.level = 0;
-        }
-    }
 }
