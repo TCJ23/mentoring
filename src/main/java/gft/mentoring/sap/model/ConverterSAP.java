@@ -14,6 +14,7 @@ class ConverterSAP {
         for (SAPmodel saper : sapers) {
             SAPMentoringModel sapMM = new SAPMentoringModel();
             sapMM.setLevel(saper.getJob());
+            sapMM.setContractor(saper.getEmployeeSubGrp());
             sapMMs.add(sapMM);
         }
         return sapMMs;

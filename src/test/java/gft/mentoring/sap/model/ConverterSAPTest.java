@@ -43,6 +43,7 @@ class ConverterSAPTest {
         boolean contractor = model.isContractor();
         //then
         assertThat(contractor).isTrue();
+
     }
 
     @Test
