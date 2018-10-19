@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Main Class to test MatchingEngine")
+@DisplayName("1 - Main Class to test MatchingEngine")
 class MatchingSpec {
 
     /* This test if to meet requirement 1.1 in REQUIREMENTS.md

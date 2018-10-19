@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-@DisplayName("Main class to test SAP INPUT")
+@DisplayName("2- Main class to test SAP INPUT")
 class SAPInputTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";

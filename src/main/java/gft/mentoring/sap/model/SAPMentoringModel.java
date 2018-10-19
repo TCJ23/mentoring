@@ -20,11 +20,19 @@ class SAPMentoringModel {
     private int lineManagerID; //persNrSuperior ?
     private int menteeID; //persNrMentor
 
-    public int getLevel() {
+    public boolean isContractor() {
+        return contractor;
+    }
+
+    public void setContractor(boolean contractor) {
+        this.contractor = contractor;
+    }
+
+    int getLevel() {
         return level;
     }
 
-    public void setLevel(String s) {
+    void setLevel(String s) {
         try {
             if (s.equalsIgnoreCase("LD")) {
                 this.level = 8;
