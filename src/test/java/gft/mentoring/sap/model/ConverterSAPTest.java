@@ -1,5 +1,6 @@
 package gft.mentoring.sap.model;
 
+import gft.mentoring.Family;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class ConverterSAPTest {
     }
 
     @Test
-    @DisplayName("3.2.2a - Verify SAP Model Employee Subgroup column defines if person is a contractor")
+    @DisplayName("3.2.2a - Verify SAP Model Employee Subgroup column defines if person is a CONTRACTOR")
     void shouldConvertEmployeeSubgroupColumnToIsContractorTrue() throws ExcelException, InvalidFormatException {
         //given
         SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(1);
@@ -47,7 +48,7 @@ class ConverterSAPTest {
     }
 
     @Test
-    @DisplayName("3.2.2b - Verify SAP Model Employee Subgroup column defines if person is an employee")
+    @DisplayName("3.2.2b - Verify SAP Model Employee Subgroup column defines if person is an EMPLOYEE")
     void shouldConvertEmployeeSubgroupColumnToIsContractorFalse() throws ExcelException, InvalidFormatException {
         //given
         SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
@@ -55,5 +56,16 @@ class ConverterSAPTest {
         boolean employee = model.isContractor();
         //then
         assertThat(employee).isFalse();
+    }
+
+    @Test
+    @DisplayName("3.2.3 a - Position column should generate proper Family")
+    void shouldConvertPostionColumnToOneOf10Families() throws ExcelException, InvalidFormatException {
+        //given
+        SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(9);
+        //when
+        Family tester = model.getFamily();
+        //then
+        assertThat(tester).isEqualTo(Family.TESTING);
     }
 }

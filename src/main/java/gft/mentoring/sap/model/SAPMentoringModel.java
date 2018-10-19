@@ -1,5 +1,6 @@
 package gft.mentoring.sap.model;
 
+import gft.mentoring.Family;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,19 +14,28 @@ class SAPMentoringModel {
     private int federationID; //personalNR
     private long sapID;
     private boolean contractor; //employeeSubGrp
-    private String family; //position
+    private Family family; //position
     private int level; //job
     private String specialization; //costCenter ?
     private String seniority; //initEntry
     private int lineManagerID; //persNrSuperior ?
     private int menteeID; //persNrMentor
 
-     boolean isContractor() {
+    Family getFamily() {
+        return family;
+    }
+
+    void setFamily(String family) {
+        this.family = Family.fromString(family);
+    }
+
+
+    boolean isContractor() {
         return contractor;
     }
 
-     void setContractor(String s) {
-         this.contractor = s.trim().equalsIgnoreCase("Contractors");
+    void setContractor(String s) {
+        this.contractor = s.trim().equalsIgnoreCase("Contractors");
     }
 
     int getLevel() {
