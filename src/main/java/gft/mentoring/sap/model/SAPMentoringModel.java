@@ -26,7 +26,11 @@ class SAPMentoringModel {
 
     public void setLevel(String s) {
         try {
-            this.level = Integer.parseInt(s.trim().replaceAll("[\\D]", ""));
+            if (s.equalsIgnoreCase("LD")) {
+                this.level = 8;
+            } else {
+                this.level = Integer.parseInt(s.trim().replaceAll("[\\D]", ""));
+            }
         } catch (NumberFormatException e) {
             this.level = 0;
         }

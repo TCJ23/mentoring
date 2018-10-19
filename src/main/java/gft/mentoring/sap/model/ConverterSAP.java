@@ -18,5 +18,4 @@ class ConverterSAP {
         }
         return sapMMs;
     }
-
 }
