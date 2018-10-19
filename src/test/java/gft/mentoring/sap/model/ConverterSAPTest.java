@@ -9,7 +9,7 @@ class ConverterSAPTest {
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
 
     @Test
-    @DisplayName("Verify Model Level conversion")
+    @DisplayName("Verify SAP Model Job info to Ment.Model Level conversion")
     void shouldConvertLevelToInt() throws ExcelException, InvalidFormatException {
         //given
         SAPMentoringModel sapMMs = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);

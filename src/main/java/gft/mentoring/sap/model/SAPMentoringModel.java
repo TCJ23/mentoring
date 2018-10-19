@@ -6,13 +6,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
- class SAPMentoringModel {
-
+class SAPMentoringModel {
 
     private String firstName;
     private String lastName;
     private int federationID; //personalNR
-    private long SAPID;
+    private long sapID;
     private boolean contractor; //employeeSubGrp
     private String family; //position
     private int level; //job
@@ -21,4 +20,15 @@ import lombok.Setter;
     private int lineManagerID; //persNrSuperior ?
     private int menteeID; //persNrMentor
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(String s) {
+        try {
+            this.level = Integer.parseInt(s.trim().replaceAll("[\\D]", ""));
+        } catch (NumberFormatException e) {
+            this.level = 0;
+        }
+    }
 }
