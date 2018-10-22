@@ -54,13 +54,14 @@ class SAPInput {
             return result;
         } catch (FileNotFoundException e) {
             throw new ExcelException("File not found or inaccessible", e);
+            /**@link SAPInputTest code coverage decreased by disabling exceptionFileIsLocked test 3.1.2 */
         } catch (IOException e) {
             throw new ExcelException("Error reading file", e);
         }
     }
 
     List<SAPmodel> readRows(Iterator<Row> data) {
-        /* We don't expect that number of columns will NOT change application mechanism*/
+        /** We expect that number of columns will NOT change application mechanism*/
         List<BiConsumer<Cell, SAPmodel>> sapModels = new ArrayList<>(11);
         sapModels.add((cell, saper) -> saper.setFirstName(stringFromCell(cell)));
         sapModels.add((cell, saper) -> saper.setLastName(stringFromCell(cell)));

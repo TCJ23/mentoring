@@ -25,7 +25,7 @@ class ExcelValidator {
         }
     }
 
-     static List<String> readExcelFileForHeaderNames(@NotNull String fileName) throws IOException, InvalidFormatException {
+     private static List<String> readExcelFileForHeaderNames(@NotNull String fileName) throws IOException, InvalidFormatException {
         List<String> columnNames = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(new File(fileName));
         Sheet sheet = workbook.getSheetAt(0);

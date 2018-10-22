@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-
+/**
+ * @author tzje
+ * This is one to one model created while reading excel file delivered by SAP*/
 @NoArgsConstructor
 @Data
 class SAPmodel {
