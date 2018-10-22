@@ -2,7 +2,7 @@ package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
 
-public class SAPMentoringModelBuilder {
+class SAPMentoringModelBuilder {
     private SAPMentoringModel sapMM = new SAPMentoringModel();
 
     SAPMentoringModel build() {
@@ -29,41 +29,48 @@ public class SAPMentoringModelBuilder {
         return this;
     }
 
-    public SAPMentoringModelBuilder setfamily(String s) {
+    SAPMentoringModelBuilder setfamily(String s) {
         sapMM.setFamily(Family.fromString(s));
         return this;
     }
 
-    public SAPMentoringModelBuilder setfirstName() {
+    SAPMentoringModelBuilder setfirstName(String firstName) {
+        sapMM.setFirstName(firstName);
         return this;
     }
 
-    public SAPMentoringModelBuilder setlastName() {
+    SAPMentoringModelBuilder setlastName(String lastName) {
+        sapMM.setLastName(lastName);
         return this;
     }
 
-    public SAPMentoringModelBuilder setfederationID() {
+    SAPMentoringModelBuilder setfederationID(String initials) {
+        sapMM.setFederationID(initials);
         return this;
     }
 
-    public SAPMentoringModelBuilder setsapID() {
+    SAPMentoringModelBuilder setsapID(String personalNR) {
+        sapMM.setSapID(personalNR);
         return this;
     }
 
-
-    public SAPMentoringModelBuilder setspecialization() {
+    SAPMentoringModelBuilder setspecialization(String costCenter) {
+        sapMM.setSpecialization(costCenter);
         return this;
     }
 
-    public SAPMentoringModelBuilder setseniority() {
+    SAPMentoringModelBuilder setseniority(String initEntry) {
+        sapMM.setSeniority(initEntry);
         return this;
     }
 
-    public SAPMentoringModelBuilder setlineManagerID() {
+    SAPMentoringModelBuilder setlineManagerID(String persNrSuperior) {
+        sapMM.setLineManagerID(persNrSuperior);
         return this;
     }
 
-    public SAPMentoringModelBuilder setmenteeID() {
+    SAPMentoringModelBuilder setmenteeID(String persNrMentor) {
+        sapMM.setMenteeID(persNrMentor);
         return this;
     }
 

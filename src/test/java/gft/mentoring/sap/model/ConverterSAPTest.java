@@ -2,10 +2,19 @@ package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -64,8 +73,56 @@ class ConverterSAPTest {
         //given
         SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(9);
         //when
-        Family tester = model.getFamily();
+        Family testerFamily = model.getFamily();
         //then
-        assertThat(tester).isEqualTo(Family.TESTING);
+        assertThat(testerFamily).isEqualTo(Family.TESTING);
+    }
+
+    @Test
+    @DisplayName("3.2.4 - validate all logic without excel file, based on Row object")
+    void shouldValidateAllLogicWithoutExcelFile() {
+        //given
+        List<Row> data = createSAPMentoringModelHelper();
+        List<SAPMentoringModel> sapMentoringModels = new ConverterSAP().convertFromRows(data.iterator());
+        //when
+        SAPMentoringModel model = sapMentoringModels.get(0);
+        Family family = model.getFamily();
+        boolean employee = model.isContractor();
+        int level = model.getLevel();
+        //then
+        assertThat(family).isEqualTo(Family.AMS);
+        assertThat(employee).isFalse();
+        assertThat(level).isEqualTo(6);
+        assertAll(
+                () -> assertEquals("SAP model", model.getFirstName()),
+                () -> assertEquals("SAP model", model.getLastName()),
+                () -> assertEquals("SAP model", model.getSpecialization()),
+                () -> assertEquals("SAP model", model.getSeniority()),
+                () -> assertEquals("SAP model", model.getLineManagerID()),
+                () -> assertThat(model.getSapID().equalsIgnoreCase("sap model")).isTrue(),
+                () -> assertThat(model.getFederationID().equalsIgnoreCase("sap model")).isTrue(),
+                () -> assertThat(model.getMenteeID().equalsIgnoreCase("sap model")).isTrue()
+        );
+    }
+
+    private static List<Row> createSAPMentoringModelHelper() {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test sheet");
+        Row row = sheet.createRow(0);
+        List<Row> data = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            if (i < 4 || i > 6) {
+                Cell cell = row.createCell(i);
+                cell.setCellValue("SAP model");
+            }
+            Cell cellEmpOrContr = row.createCell(4);
+            cellEmpOrContr.setCellValue("Staff");
+            Cell cellFamily = row.createCell(5);
+            cellFamily.setCellValue("AMS");
+            Cell cellLevel = row.createCell(6);
+            cellLevel.setCellValue("L6 (Seasoned)");
+            data.add(row);
+        }
+        return data;
     }
 }

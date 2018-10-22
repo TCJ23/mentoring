@@ -56,7 +56,7 @@ class SAPInputTest {
     @Test
     @Disabled
     @DisplayName("3.1.2 - test IOException, when Excel file is open while program runs ")
-    /* We had to disable test 3.1.2 broken build by IO exceptions
+    /** We had to disable test 3.1.2 broken build by IO exceptions
         70311 [ERROR] exceptionFileIsLocked  Time elapsed: 1.066 s  <<< FAILURE!
     org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
  	at gft.mentoring.sap.model.SAPInputTest.exceptionFileIsLocked(SAPInputTest.java:66)
