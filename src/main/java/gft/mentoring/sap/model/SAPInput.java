@@ -40,7 +40,7 @@ class SAPInput {
      *  @exception FileNotFoundException (The process cannot access the file because it is being used by another process)
      *  if SAP file is open simultaneously with program being run this will cause above exception
      **/
-    List<SAPmodel> readExcelSAPfile(String inputFile) throws ExcelException, InvalidFormatException {
+    List<SAPmodel> readExcelSAPfile(@NotNull String inputFile) throws ExcelException, InvalidFormatException {
         Workbook workbook;
         try {
             workbook = WorkbookFactory.create(new File(inputFile));
@@ -59,7 +59,7 @@ class SAPInput {
         }
     }
 
-    List<SAPmodel> readRows(Iterator<Row> data) {
+    List<SAPmodel> readRows(@NotNull Iterator<Row> data) {
         /** We expect that number of columns will NOT change application mechanism*/
         List<BiConsumer<Cell, SAPmodel>> sapModels = new ArrayList<>(11);
         sapModels.add((cell, saper) -> saper.setFirstName(stringFromCell(cell)));
@@ -100,11 +100,11 @@ class SAPInput {
         return saper;
     }
 
-    private String dateFromCell(Cell cell) {
+    private String dateFromCell(@NotNull Cell cell) {
         return formatter.formatCellValue(cell);
     }
 
-    private String stringFromCell(Cell cell) {
+    private String stringFromCell(@NotNull Cell cell) {
         return cell.getStringCellValue();
     }
 

@@ -25,28 +25,38 @@ class TRSInput {
         Sheet sheet = workbook.getSheetAt(0);
         Iterator<Row> iterator = sheet.iterator();
         /* first row is simply names of columns*/
-        iterator.next();
-        val result = readRows(iterator);
+
+        List<String> headers = getHeaders(iterator.next());
+        val result = readRows(headers, iterator);
         workbook.close();
         return result;
     }
 
-    private List<TRSModel> readRows(Iterator<Row> data) {
-        /** We expect that number of columns will NOT change application mechanism*/
-        List<BiConsumer<Cell, TRSModel>> trsModels = new ArrayList<>(11);
-        trsModels.add((cell, trser) -> trser.setName(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setSurname(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setStatus(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setGrade(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setTechnology(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setJobFamily(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setStartDate(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setOfficeLocation(stringFromCell(cell)));
-        trsModels.add((cell, trser) -> trser.setContractType(dateFromCell(cell)));
+    private List<String> getHeaders(Row row) {
+        return StreamSupport.stream(row.spliterator(), false)
+                .map(cell -> cell.getStringCellValue().trim().toLowerCase())
+                .collect(Collectors.toList());
+    }
+
+    private List<TRSModel> readRows(List<String> headers, Iterator<Row> data) {
+        HashMap<Integer, BiConsumer<Cell, TRSModel>> trsModels = new HashMap<>();
+        trsModels.put(headerIndex(headers, "name"), (cell, treser) -> treser.setName(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "surname"), (cell, treser) -> treser.setSurname(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "status"), (cell, treser) -> treser.setStatus(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "grade"), (cell, treser) -> treser.setGrade(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "technology"), (cell, treser) -> treser.setTechnology(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "job family"), (cell, treser) -> treser.setJobFamily(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "start date"), (cell, treser) -> treser.setStartDate(dateFromCell(cell)));
+        trsModels.put(headerIndex(headers, "office location"), (cell, treser) -> treser.setOfficeLocation(stringFromCell(cell)));
+        trsModels.put(headerIndex(headers, "contract type"), (cell, treser) -> treser.setContractType(dateFromCell(cell)));
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createSAPmodelFromRow(row, trsModels))
                 .filter(validator)
                 .collect(Collectors.toList());
+    }
+
+    private int headerIndex(List<String> headers, String name) {
+        return headers.indexOf(name);
     }
 
     class Validator implements Predicate<TRSModel> {
@@ -56,20 +66,19 @@ class TRSInput {
         }
     }
 
-    private TRSModel createSAPmodelFromRow(@NotNull Row row, List<BiConsumer<Cell, TRSModel>> model) {
-        TRSModel trser = new TRSModel();
-        int i = 0;
-        for (BiConsumer<Cell, TRSModel> f : model) {
-            f.accept(getCell(row, i++), trser);
+    private TRSModel createSAPmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, TRSModel>> model) {
+        TRSModel treser = new TRSModel();
+        for (Map.Entry<Integer, BiConsumer<Cell, TRSModel>> entry : model.entrySet()) {
+            entry.getValue().accept(getCell(row, entry.getKey()), treser);
         }
-        return trser;
+        return treser;
     }
 
-    private String dateFromCell(Cell cell) {
+    private String dateFromCell(@NotNull Cell cell) {
         return formatter.formatCellValue(cell);
     }
 
-    private String stringFromCell(Cell cell) {
+    private String stringFromCell(@NotNull Cell cell) {
         return cell.getStringCellValue();
     }
 
