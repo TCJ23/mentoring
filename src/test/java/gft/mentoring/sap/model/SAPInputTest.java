@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-@DisplayName("2- Main class to test SAP INPUT")
+@DisplayName("2 - Main class to test SAP INPUT")
 class SAPInputTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
@@ -37,20 +37,15 @@ class SAPInputTest {
         //given
         SAPInput sapInput = new SAPInput();
         Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
-        /* we decrease by 1 because of 1st row is composed of column names*/
+        /** we decrease by 1 because of 1st row is composed of column names*/
         int headerColumns = 1;
         val notNullRows = sapInput.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
         //when
         val models = sapInput.readExcelSAPfile(SAP_FILE);
         //then
-        System.out.println("notNullRows " + notNullRows);
-        System.out.println("rowsSize " + rowsSize);
         assertThat(models).size().isEqualTo(rowsSize);
         assertThat(models).size().isEqualTo(25);
-        for (SAPmodel model : models) {
-            System.out.println(model);
-        }
     }
 
     @Test
@@ -123,7 +118,7 @@ class SAPInputTest {
         when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
         values[8] = String.valueOf((double) time.getTime());
         //when
-        List<Row> data = Collections.singletonList(mockRow);
+        val data = Collections.singletonList(mockRow);
         val models = new SAPInput().readRows(data.iterator());
         //then
         assertThat(models).isNotEmpty();
@@ -145,9 +140,9 @@ class SAPInputTest {
     @DisplayName("3.1.5a - Verify that column names order matches GOLDEN FILE ")
     void shouldMatchGoldenFileColumnOrder() throws ExcelException {
         //given
-        ExcelValidator excelValidator = new ExcelValidator();
+        val excelValidator = new ExcelValidator();
         //when
-        boolean fileIsOK = excelValidator.verifyExcelColumnOrder(SAP_FILE);
+        val fileIsOK = excelValidator.verifyExcelColumnOrder(SAP_FILE);
         //then
         assertThat(fileIsOK).isTrue();
     }
@@ -156,9 +151,9 @@ class SAPInputTest {
     @DisplayName("3.1.5b - Verify that column names order DOES NOT match GOLDEN FILE ")
     void shouldNOTMatchGoldenFileColumnOrder() throws ExcelException {
         //given
-        ExcelValidator excelValidator = new ExcelValidator();
+        val excelValidator = new ExcelValidator();
         //when
-        boolean fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE);
+        val fileIsNotOK = excelValidator.verifyExcelColumnOrder(BROKEN_FILE);
         //then
         assertThat(fileIsNotOK).isFalse();
     }

@@ -1,6 +1,7 @@
 package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
+import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,9 +27,9 @@ class ConverterSAPTest {
     @DisplayName("3.2.1a - Verify SAP Model Job info to Ment.Model Level conversion")
     void shouldConvertLevelToInt() throws ExcelException, InvalidFormatException {
         //given
-        SAPMentoringModel sapMMs = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
+        val sapMMs = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
         //when
-        int level3 = sapMMs.getLevel();
+        val level3 = sapMMs.getLevel();
         //then
         assertEquals(3, level3);
     }
@@ -37,9 +38,9 @@ class ConverterSAPTest {
     @DisplayName("3.2.1b - Verify SAP Model Job info for Directors converts to Level 7 or higher")
     void shouldConvertDirectorLevelToInt() throws ExcelException, InvalidFormatException {
         //given
-        SAPMentoringModel director = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(8);
+        val director = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(8);
         //when
-        int directorLevel = director.getLevel();
+        val directorLevel = director.getLevel();
         //then
         assertEquals(8, directorLevel);
     }
@@ -48,9 +49,9 @@ class ConverterSAPTest {
     @DisplayName("3.2.2a - Verify SAP Model Employee Subgroup column defines if person is a CONTRACTOR")
     void shouldConvertEmployeeSubgroupColumnToIsContractorTrue() throws ExcelException, InvalidFormatException {
         //given
-        SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(1);
+        val model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(1);
         //when
-        boolean contractor = model.isContractor();
+        val contractor = model.isContractor();
         //then
         assertThat(contractor).isTrue();
 
@@ -60,9 +61,9 @@ class ConverterSAPTest {
     @DisplayName("3.2.2b - Verify SAP Model Employee Subgroup column defines if person is an EMPLOYEE")
     void shouldConvertEmployeeSubgroupColumnToIsContractorFalse() throws ExcelException, InvalidFormatException {
         //given
-        SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
+        val model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
         //when
-        boolean employee = model.isContractor();
+        val employee = model.isContractor();
         //then
         assertThat(employee).isFalse();
     }
@@ -71,9 +72,9 @@ class ConverterSAPTest {
     @DisplayName("3.2.3 a - Position column should generate proper Family")
     void shouldConvertPostionColumnToOneOf10Families() throws ExcelException, InvalidFormatException {
         //given
-        SAPMentoringModel model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(9);
+        val model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(9);
         //when
-        Family testerFamily = model.getFamily();
+        val testerFamily = model.getFamily();
         //then
         assertThat(testerFamily).isEqualTo(Family.TESTING);
     }
@@ -82,13 +83,13 @@ class ConverterSAPTest {
     @DisplayName("3.2.4 - validate all logic without excel file, based on Row object")
     void shouldValidateAllLogicWithoutExcelFile() {
         //given
-        List<Row> data = createSAPMentoringModelHelper();
-        List<SAPMentoringModel> sapMentoringModels = new ConverterSAP().convertFromRows(data.iterator());
+        val data = createSAPMentoringModelHelper();
+        val sapMentoringModels = new ConverterSAP().convertFromRows(data.iterator());
         //when
-        SAPMentoringModel model = sapMentoringModels.get(0);
-        Family family = model.getFamily();
-        boolean employee = model.isContractor();
-        int level = model.getLevel();
+        val model = sapMentoringModels.get(0);
+        val family = model.getFamily();
+        val employee = model.isContractor();
+        val level = model.getLevel();
         //then
         assertThat(family).isEqualTo(Family.AMS);
         assertThat(employee).isFalse();
