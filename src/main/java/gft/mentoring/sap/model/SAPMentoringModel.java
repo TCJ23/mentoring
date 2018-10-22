@@ -8,7 +8,7 @@ import lombok.Setter;
  * This is a intermediate model we will use to convert infromation from SAP to create Mentoring Model*/
 @Getter
 @Setter
-class SAPMentoringModel {
+public class SAPMentoringModel {
     /** At the time of writing we only see potential in only 3 parameters that hold any business logic value
      * @param contractor - will help determine if person is an employee or contractor
      * @param family - this enum holds 10 values that represent 10 Families in GFT

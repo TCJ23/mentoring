@@ -50,7 +50,6 @@ class SAPInput {
             iterator.next();
             val result = readRows(iterator);
             workbook.close();
-
             return result;
         } catch (FileNotFoundException e) {
             throw new ExcelException("File not found or inaccessible", e);

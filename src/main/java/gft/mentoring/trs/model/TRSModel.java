@@ -18,7 +18,7 @@ class TRSModel {
      * @param surname - will be used for Merging TRS and SAP models into final MentoringModel
      * @param status - this field appears to hold intel about if GFT person is a leaver, only
      *               Employee can be considered as candidate in MentoringModel
-     *               Hired will be ignored
+     *               Hired will be ignored as these people will only be hired by GFT in future
      *               Notice Period - marks person as Leaver
      * @see MentoringModel#isLeaver()
      * @param grade - level
