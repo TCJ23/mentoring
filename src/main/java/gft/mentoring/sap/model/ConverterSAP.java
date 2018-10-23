@@ -1,5 +1,6 @@
 package gft.mentoring.sap.model;
 
+import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -17,9 +18,9 @@ class ConverterSAP {
 
     List<SAPMentoringModel> convertFromRows(Iterator<Row> data) {
         SAPInput input = new SAPInput();
-//        List<String> headers = input.getHeaders(data.next());
-//        List<SAPmodel> sapers = input.readRowsSAP(headers, data);
-        List<SAPmodel> sapers = input.readRowsSAP(data);
+        val headers = input.getHeaders(data.next());
+        val sapers = input.readRowsSAP(headers, data);
+//        List<SAPmodel> sapers = input.readRowsSAP(data);
         return getSapMentoringModels(sapers);
     }
 

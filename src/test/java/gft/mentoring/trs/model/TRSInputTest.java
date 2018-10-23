@@ -65,13 +65,13 @@ class TRSInputTest {
     }
 
     @Test
-    @DisplayName("4.1.6 - create 1 SAP model from Row without excel file")
+    @DisplayName("4.1.6 - create 1 TRS model from Row without excel file")
     void shouldCreateSingleTRSmodelFromRow() {
         //given
         TRSInput createTRSmodel = new TRSInput();
         Workbook wb = new XSSFWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
-        Sheet sheet = wb.createSheet("test sheet");
+        Sheet sheet = wb.createSheet("trs sheet");
 
         List<Row> columnNames = new ArrayList<>();
         Row row0 = sheet.createRow(0);
@@ -94,31 +94,31 @@ class TRSInputTest {
         Cell cell9 = row0.createCell(8);
         cell9.setCellValue("contract type");
         columnNames.add(row0);
+
         List<String> headers = createTRSmodel.getHeaders(columnNames.iterator().next());
 
         Row row1 = sheet.createRow(1);
         List<Row> data = new ArrayList<>();
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 9; i++) {
             Cell cell = row1.createCell(i);
-            cell.setCellValue("SAP model");
+            cell.setCellValue("TRS model");
         }
         data.add(row1);
         //when
 //        List<SAPmodel> trsModels = createSAPModel.readRowsSAP(headers, data.iterator());
-        List<TRSModel> trsModels = createTRSmodel.readRowsTRS(headers, data.iterator());
+        val trsModels = createTRSmodel.readRowsTRS(headers, data.iterator());
         val model = trsModels.get(0);
         //then
         assertAll(
-                () -> assertEquals("SAP model", model.getName()),
-                () -> assertEquals("SAP model", model.getSurname()),
-                () -> assertEquals("SAP model", model.getStatus()),
-                () -> assertEquals("SAP model", model.getGrade()),
-                () -> assertEquals("SAP model", model.getTechnology()),
-                () -> assertEquals("SAP model", model.getJobFamily()),
-                () -> assertEquals("SAP model", model.getStartDate()),
-                () -> assertEquals("SAP model", model.getOfficeLocation()),
-                () -> assertEquals("SAP model", model.getContractType())
+                () -> assertEquals("TRS model", model.getName()),
+                () -> assertEquals("TRS model", model.getSurname()),
+                () -> assertEquals("TRS model", model.getStatus()),
+                () -> assertEquals("TRS model", model.getGrade()),
+                () -> assertEquals("TRS model", model.getTechnology()),
+                () -> assertEquals("TRS model", model.getJobFamily()),
+                () -> assertEquals("TRS model", model.getStartDate()),
+                () -> assertEquals("TRS model", model.getOfficeLocation()),
+                () -> assertEquals("TRS model", model.getContractType())
         );
     }
-
 }

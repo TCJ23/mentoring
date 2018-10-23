@@ -58,7 +58,7 @@ class TRSInput {
         trsModels.put(headerIndex(headers, "office location"), (cell, treser) -> treser.setOfficeLocation(stringFromCell(cell)));
         trsModels.put(headerIndex(headers, "contract type"), (cell, treser) -> treser.setContractType(dateFromCell(cell)));
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
-                .map(row -> createSAPmodelFromRow(row, trsModels))
+                .map(row -> createTRSmodelFromRow(row, trsModels))
                 .filter(validator)
                 .collect(Collectors.toList());
     }
@@ -74,7 +74,7 @@ class TRSInput {
         }
     }
 
-    private TRSModel createSAPmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, TRSModel>> model) {
+    private TRSModel createTRSmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, TRSModel>> model) {
         TRSModel treser = new TRSModel();
         for (Map.Entry<Integer, BiConsumer<Cell, TRSModel>> entry : model.entrySet()) {
             entry.getValue().accept(getCell(row, entry.getKey()), treser);

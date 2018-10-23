@@ -49,8 +49,8 @@ class SAPInput {
             /* first row contains simply names of columns */
             Iterator<Row> iterator = sheet.iterator();
             List<String> headers = getHeaders(iterator.next());
-//            val result = readRowsSAP(headers, iterator);
-            val result = readRowsSAP(iterator);
+            val result = readRowsSAP(headers, iterator);
+//            val result = readRowsSAP(iterator);
             workbook.close();
             return result;
         } catch (FileNotFoundException e) {
@@ -67,31 +67,37 @@ class SAPInput {
                 .collect(Collectors.toList());
     }
 
-    /*List<SAPmodel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
-        *//** We expect that number of columns will NOT change application mechanism*//*
+    List<SAPmodel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
         HashMap<Integer, BiConsumer<Cell, SAPmodel>> sapModels = new HashMap<>();
-        sapModels.put(headerIndex(headers, "First name"), (cell, saper) -> saper.setFirstName(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Last name"), (cell, saper) -> saper.setLastName(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Initials"), (cell, saper) -> saper.setInitials(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Pers.No."), (cell, saper) -> saper.setPersonalNR(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Employee Subgroup"), (cell, saper) -> saper.setEmployeeSubGrp(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Position"), (cell, saper) -> saper.setPosition(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Job"), (cell, saper) -> saper.setJob(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Cost Center"), (cell, saper) -> saper.setCostCenter(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Init.Entry"), (cell, saper) -> saper.setInitEntry(dateFromCell(cell)));
-        sapModels.put(headerIndex(headers, "Pers.no. Superior"), (cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
-        sapModels.put((headerIndex(headers, "Pers.no. Mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "first name"), (cell, saper) -> saper.setFirstName(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "last name"), (cell, saper) -> saper.setLastName(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "initials"), (cell, saper) -> saper.setInitials(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "pers.no."), (cell, saper) -> saper.setPersonalNR(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "employee subgroup"), (cell, saper) -> saper.setEmployeeSubGrp(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "position"), (cell, saper) -> saper.setPosition(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "job"), (cell, saper) -> saper.setJob(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "cost center"), (cell, saper) -> saper.setCostCenter(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "init.entry"), (cell, saper) -> saper.setInitEntry(dateFromCell(cell)));
+        sapModels.put(headerIndex(headers, "pers.no. superior"), (cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
+        sapModels.put((headerIndex(headers, "pers.no. mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createSAPmodelFromRow(row, sapModels))
                 .filter(validator)
                 .collect(Collectors.toList());
-    }*/
-    private int headerIndex(@NotNull List<String> headers, @NotNull String name) {
-        return headers.indexOf(name);
     }
 
-    List<SAPmodel> readRowsSAP(Iterator<Row> data) {
-        /** We expect that number of columns will NOT change application mechanism*/
+    /* please remain consistent and keep header name in LOWERCASE*/
+    private int headerIndex(@NotNull List<String> headers, @NotNull String name) {
+        return headers.indexOf(name);
+
+    }
+
+    /* List<SAPmodel> readRowsSAP(Iterator<Row> data) {
+     */
+
+    /**
+     * We expect that number of columns will NOT change application mechanism
+     *//*
         List<BiConsumer<Cell, SAPmodel>> sapModels = new ArrayList<>(11);
         sapModels.add((cell, saper) -> saper.setFirstName(stringFromCell(cell)));
         sapModels.add((cell, saper) -> saper.setLastName(stringFromCell(cell)));
@@ -114,7 +120,7 @@ class SAPInput {
                 .filter(validator)
                 .collect(Collectors.toList());
     }
-
+*/
 
 
 
@@ -125,22 +131,23 @@ class SAPInput {
         }
     }
 
-   /* private SAPmodel createSAPmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, SAPmodel>> model) {
+    private SAPmodel createSAPmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, SAPmodel>> model) {
         SAPmodel saper = new SAPmodel();
         for (Map.Entry<Integer, BiConsumer<Cell, SAPmodel>> entry : model.entrySet()) {
             entry.getValue().accept(getCell(row, entry.getKey()), saper);
         }
         return saper;
-    }*/
-   private SAPmodel createSAPmodelFromRow(@NotNull Row row, List<BiConsumer<Cell, SAPmodel>> model) {
-       SAPmodel saper = new SAPmodel();
-       int i = 0;
-       for (BiConsumer<Cell, SAPmodel> f : model) {
-           f.accept(getCell(row, i++), saper);
-       }
-       return saper;
-   }
+    }
 
+    /* private SAPmodel createSAPmodelFromRow(@NotNull Row row, List<BiConsumer<Cell, SAPmodel>> model) {
+         SAPmodel saper = new SAPmodel();
+         int i = 0;
+         for (BiConsumer<Cell, SAPmodel> f : model) {
+             f.accept(getCell(row, i++), saper);
+         }
+         return saper;
+     }
+  */
     private String dateFromCell(@NotNull Cell cell) {
         return formatter.formatCellValue(cell);
     }

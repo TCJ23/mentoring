@@ -109,20 +109,45 @@ class ConverterSAPTest {
     private static List<Row> createSAPMentoringModelHelper() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
-        Row row = sheet.createRow(0);
         List<Row> data = new ArrayList<>();
+        Row row0 = sheet.createRow(0);
+        Cell cell1 = row0.createCell(0);
+        cell1.setCellValue("first name");
+        Cell cell2 = row0.createCell(1);
+        cell2.setCellValue("last name");
+        Cell cell3 = row0.createCell(2);
+        cell3.setCellValue("initials");
+        Cell cell4 = row0.createCell(3);
+        cell4.setCellValue("pers.no.");
+        Cell cell5 = row0.createCell(4);
+        cell5.setCellValue("employee subgroup");
+        Cell cell6 = row0.createCell(5);
+        cell6.setCellValue("position");
+        Cell cell7 = row0.createCell(6);
+        cell7.setCellValue("job");
+        Cell cell8 = row0.createCell(7);
+        cell8.setCellValue("cost center");
+        Cell cell9 = row0.createCell(8);
+        cell9.setCellValue("init.entry");
+        Cell cell10 = row0.createCell(9);
+        cell10.setCellValue("pers.no. superior");
+        Cell cell11 = row0.createCell(10);
+        cell11.setCellValue("pers.no. mentor");
+        data.add(row0);
+
+        Row row1 = sheet.createRow(1);
         for (int i = 0; i < 11; i++) {
             if (i < 4 || i > 6) {
-                Cell cell = row.createCell(i);
+                Cell cell = row1.createCell(i);
                 cell.setCellValue("SAP model");
             }
-            Cell cellEmpOrContr = row.createCell(4);
+            Cell cellEmpOrContr = row1.createCell(4);
             cellEmpOrContr.setCellValue("Staff");
-            Cell cellFamily = row.createCell(5);
+            Cell cellFamily = row1.createCell(5);
             cellFamily.setCellValue("AMS");
-            Cell cellLevel = row.createCell(6);
+            Cell cellLevel = row1.createCell(6);
             cellLevel.setCellValue("L6 (Seasoned)");
-            data.add(row);
+            data.add(row1);
         }
         return data;
     }

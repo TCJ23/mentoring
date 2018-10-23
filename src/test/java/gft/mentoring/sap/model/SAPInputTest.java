@@ -117,9 +117,42 @@ class SAPInputTest {
         when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
         when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
         values[8] = String.valueOf((double) time.getTime());
+
+        SAPInput createSAPModel = new SAPInput();
+        Workbook wb = new XSSFWorkbook();
+        CreationHelper createHelper = wb.getCreationHelper();
+        Sheet sheet = wb.createSheet("sap sheet");
+        List<Row> columnNames = new ArrayList<>();
+        Row row0 = sheet.createRow(0);
+        Cell cell1 = row0.createCell(0);
+        cell1.setCellValue("first name");
+        Cell cell2 = row0.createCell(1);
+        cell2.setCellValue("last name");
+        Cell cell3 = row0.createCell(2);
+        cell3.setCellValue("initials");
+        Cell cell4 = row0.createCell(3);
+        cell4.setCellValue("pers.no.");
+        Cell cell5 = row0.createCell(4);
+        cell5.setCellValue("employee subgroup");
+        Cell cell6 = row0.createCell(5);
+        cell6.setCellValue("position");
+        Cell cell7 = row0.createCell(6);
+        cell7.setCellValue("job");
+        Cell cell8 = row0.createCell(7);
+        cell8.setCellValue("cost center");
+        Cell cell9 = row0.createCell(8);
+        cell9.setCellValue("init.entry");
+        Cell cell10 = row0.createCell(9);
+        cell10.setCellValue("pers.no. superior");
+        Cell cell11 = row0.createCell(10);
+        cell11.setCellValue("pers.no. mentor");
+        columnNames.add(row0);
+
+        List<String> headers = createSAPModel.getHeaders(columnNames.iterator().next());
+
         //when
         val data = Collections.singletonList(mockRow);
-        val models = new SAPInput().readRowsSAP(data.iterator());
+        val models = new SAPInput().readRowsSAP(headers, data.iterator());
         //then
         assertThat(models).isNotEmpty();
         int i = 0;
@@ -173,18 +206,18 @@ class SAPInputTest {
         SAPInput createSAPModel = new SAPInput();
         Workbook wb = new XSSFWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
-        Sheet sheet = wb.createSheet("test sheet");
+        Sheet sheet = wb.createSheet("sap sheet");
 
         List<Row> columnNames = new ArrayList<>();
         Row row0 = sheet.createRow(0);
         Cell cell1 = row0.createCell(0);
         cell1.setCellValue("first name");
         Cell cell2 = row0.createCell(1);
-        cell2.setCellValue("lasr name");
+        cell2.setCellValue("last name");
         Cell cell3 = row0.createCell(2);
         cell3.setCellValue("initials");
         Cell cell4 = row0.createCell(3);
-        cell4.setCellValue("pers. no.");
+        cell4.setCellValue("pers.no.");
         Cell cell5 = row0.createCell(4);
         cell5.setCellValue("employee subgroup");
         Cell cell6 = row0.createCell(5);
@@ -196,10 +229,11 @@ class SAPInputTest {
         Cell cell9 = row0.createCell(8);
         cell9.setCellValue("init.entry");
         Cell cell10 = row0.createCell(9);
-        cell10.setCellValue("Pers.no. Superior");
+        cell10.setCellValue("pers.no. superior");
         Cell cell11 = row0.createCell(10);
-        cell11.setCellValue("Pers.no. Mentor");
+        cell11.setCellValue("pers.no. mentor");
         columnNames.add(row0);
+
         List<String> headers = createSAPModel.getHeaders(columnNames.iterator().next());
 
         Row row1 = sheet.createRow(1);
@@ -210,9 +244,8 @@ class SAPInputTest {
         }
         data.add(row1);
         //when
-//        List<SAPmodel> sapModels = createSAPModel.readRowsSAP(headers, data.iterator());
-        List<SAPmodel> sapModels = createSAPModel.readRowsSAP(data.iterator());
-        SAPmodel model = sapModels.get(0);
+        val sapModels = createSAPModel.readRowsSAP(headers, data.iterator());
+        val model = sapModels.get(0);
         //then
         assertAll(
                 () -> assertEquals("SAP model", model.getFirstName()),
