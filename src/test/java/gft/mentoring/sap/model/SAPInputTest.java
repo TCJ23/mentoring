@@ -52,10 +52,10 @@ class SAPInputTest {
     @Disabled
     @DisplayName("3.1.2 - test IOException, when Excel file is open while program runs ")
     /** We had to disable test 3.1.2 broken build by IO exceptions
-        70311 [ERROR] exceptionFileIsLocked  Time elapsed: 1.066 s  <<< FAILURE!
-    org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
- 	at gft.mentoring.sap.model.SAPInputTest.exceptionFileIsLocked(SAPInputTest.java:66)
-    this works fine in IDE and Maven on Windows, issue within locking file on UNIX*/
+     70311 [ERROR] exceptionFileIsLocked  Time elapsed: 1.066 s  <<< FAILURE!
+     org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
+     at gft.mentoring.sap.model.SAPInputTest.exceptionFileIsLocked(SAPInputTest.java:66)
+     this works fine in IDE and Maven on Windows, issue within locking file on UNIX*/
     void exceptionFileIsLocked() throws IOException {
         FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
         FileLock lock = channel.lock();
@@ -94,7 +94,7 @@ class SAPInputTest {
     }
 
     @Test
-    @DisplayName("3.1.4 - test readRows correctly without sample file")
+    @DisplayName("3.1.4 - test readRowsSAP correctly without sample file")
     void createModelFromRandomFile() {
         //given
         Row mockRow = mock(Row.class);
@@ -119,7 +119,7 @@ class SAPInputTest {
         values[8] = String.valueOf((double) time.getTime());
         //when
         val data = Collections.singletonList(mockRow);
-        val models = new SAPInput().readRows(data.iterator());
+        val models = new SAPInput().readRowsSAP(data.iterator());
         //then
         assertThat(models).isNotEmpty();
         int i = 0;
@@ -174,15 +174,44 @@ class SAPInputTest {
         Workbook wb = new XSSFWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet("test sheet");
-        Row row = sheet.createRow(0);
+
+        List<Row> columnNames = new ArrayList<>();
+        Row row0 = sheet.createRow(0);
+        Cell cell1 = row0.createCell(0);
+        cell1.setCellValue("first name");
+        Cell cell2 = row0.createCell(1);
+        cell2.setCellValue("lasr name");
+        Cell cell3 = row0.createCell(2);
+        cell3.setCellValue("initials");
+        Cell cell4 = row0.createCell(3);
+        cell4.setCellValue("pers. no.");
+        Cell cell5 = row0.createCell(4);
+        cell5.setCellValue("employee subgroup");
+        Cell cell6 = row0.createCell(5);
+        cell6.setCellValue("position");
+        Cell cell7 = row0.createCell(6);
+        cell7.setCellValue("job");
+        Cell cell8 = row0.createCell(7);
+        cell8.setCellValue("cost center");
+        Cell cell9 = row0.createCell(8);
+        cell9.setCellValue("init.entry");
+        Cell cell10 = row0.createCell(9);
+        cell10.setCellValue("Pers.no. Superior");
+        Cell cell11 = row0.createCell(10);
+        cell11.setCellValue("Pers.no. Mentor");
+        columnNames.add(row0);
+        List<String> headers = createSAPModel.getHeaders(columnNames.iterator().next());
+
+        Row row1 = sheet.createRow(1);
         List<Row> data = new ArrayList<>();
         for (int i = 0; i < 11; i++) {
-            Cell cell = row.createCell(i);
+            Cell cell = row1.createCell(i);
             cell.setCellValue("SAP model");
         }
-        data.add(row);
+        data.add(row1);
         //when
-        List<SAPmodel> sapModels = createSAPModel.readRows(data.iterator());
+//        List<SAPmodel> sapModels = createSAPModel.readRowsSAP(headers, data.iterator());
+        List<SAPmodel> sapModels = createSAPModel.readRowsSAP(data.iterator());
         SAPmodel model = sapModels.get(0);
         //then
         assertAll(

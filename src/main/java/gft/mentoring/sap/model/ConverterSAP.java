@@ -17,7 +17,9 @@ class ConverterSAP {
 
     List<SAPMentoringModel> convertFromRows(Iterator<Row> data) {
         SAPInput input = new SAPInput();
-        List<SAPmodel> sapers = input.readRows(data);
+//        List<String> headers = input.getHeaders(data.next());
+//        List<SAPmodel> sapers = input.readRowsSAP(headers, data);
+        List<SAPmodel> sapers = input.readRowsSAP(data);
         return getSapMentoringModels(sapers);
     }
 

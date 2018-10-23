@@ -1,8 +1,8 @@
 package gft.mentoring.sap.model;
 
-class ExcelException extends Exception {
+public class ExcelException extends Exception {
 
-    ExcelException(String reason, Throwable cause) {
+    public ExcelException(String reason, Throwable cause) {
         super(reason, cause);
     }
 

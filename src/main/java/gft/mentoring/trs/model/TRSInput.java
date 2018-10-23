@@ -1,5 +1,6 @@
 package gft.mentoring.trs.model;
 
+import gft.mentoring.sap.model.ExcelException;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.util.StringUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -19,26 +21,32 @@ class TRSInput {
     private DataFormatter formatter = new DataFormatter();
     private Predicate<TRSModel> validator = new Validator();
 
-    List<TRSModel> readExcelTRSfile(String trsFile) throws IOException, InvalidFormatException {
+    List<TRSModel> readExcelTRSfile(@NotNull String trsFile) throws ExcelException, InvalidFormatException {
         Workbook workbook;
-        workbook = WorkbookFactory.create(new File(trsFile));
-        Sheet sheet = workbook.getSheetAt(0);
-        Iterator<Row> iterator = sheet.iterator();
-        /* first row is simply names of columns*/
-
-        List<String> headers = getHeaders(iterator.next());
-        val result = readRows(headers, iterator);
-        workbook.close();
-        return result;
+        try {
+            workbook = WorkbookFactory.create(new File(trsFile));
+            Sheet sheet = workbook.getSheetAt(0);
+            /* first row is simply names of columns*/
+            Iterator<Row> iterator = sheet.iterator();
+            List<String> headers = getHeaders(iterator.next());
+            val result = readRowsTRS(headers, iterator);
+            workbook.close();
+            return result;
+        } catch (FileNotFoundException e) {
+            throw new ExcelException("File not found or inaccessible", e);
+            /**@link SAPInputTest code coverage decreased by disabling exceptionFileIsLocked test 3.1.2 */
+        } catch (IOException e) {
+            throw new ExcelException("Error reading file", e);
+        }
     }
 
-    private List<String> getHeaders(Row row) {
+     List<String> getHeaders(@NotNull Row row) {
         return StreamSupport.stream(row.spliterator(), false)
                 .map(cell -> cell.getStringCellValue().trim().toLowerCase())
                 .collect(Collectors.toList());
     }
 
-    private List<TRSModel> readRows(List<String> headers, Iterator<Row> data) {
+     List<TRSModel> readRowsTRS(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
         HashMap<Integer, BiConsumer<Cell, TRSModel>> trsModels = new HashMap<>();
         trsModels.put(headerIndex(headers, "name"), (cell, treser) -> treser.setName(stringFromCell(cell)));
         trsModels.put(headerIndex(headers, "surname"), (cell, treser) -> treser.setSurname(stringFromCell(cell)));
@@ -55,7 +63,7 @@ class TRSInput {
                 .collect(Collectors.toList());
     }
 
-    private int headerIndex(List<String> headers, String name) {
+    private int headerIndex(@NotNull List<String> headers, @NotNull String name) {
         return headers.indexOf(name);
     }
 
