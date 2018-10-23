@@ -50,7 +50,6 @@ class SAPInput {
             Iterator<Row> iterator = sheet.iterator();
             List<String> headers = getHeaders(iterator.next());
             val result = readRowsSAP(headers, iterator);
-//            val result = readRowsSAP(iterator);
             workbook.close();
             return result;
         } catch (FileNotFoundException e) {
@@ -92,38 +91,6 @@ class SAPInput {
 
     }
 
-    /* List<SAPmodel> readRowsSAP(Iterator<Row> data) {
-     */
-
-    /**
-     * We expect that number of columns will NOT change application mechanism
-     *//*
-        List<BiConsumer<Cell, SAPmodel>> sapModels = new ArrayList<>(11);
-        sapModels.add((cell, saper) -> saper.setFirstName(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setLastName(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setInitials(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setPersonalNR(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setEmployeeSubGrp(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setPosition(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setJob(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setCostCenter(stringFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setInitEntry(dateFromCell(cell)));
-        sapModels.add((cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
-        sapModels.add(new BiConsumer<Cell, SAPmodel>() {
-            @Override
-            public void accept(Cell cell, SAPmodel saper) {
-                saper.setPersNrMentor(stringFromCell(cell));
-            }
-        });
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
-                .map(row -> createSAPmodelFromRow(row, sapModels))
-                .filter(validator)
-                .collect(Collectors.toList());
-    }
-*/
-
-
-
     class Validator implements Predicate<SAPmodel> {
         @Override
         public boolean test(SAPmodel sapModel) {
@@ -139,15 +106,6 @@ class SAPInput {
         return saper;
     }
 
-    /* private SAPmodel createSAPmodelFromRow(@NotNull Row row, List<BiConsumer<Cell, SAPmodel>> model) {
-         SAPmodel saper = new SAPmodel();
-         int i = 0;
-         for (BiConsumer<Cell, SAPmodel> f : model) {
-             f.accept(getCell(row, i++), saper);
-         }
-         return saper;
-     }
-  */
     private String dateFromCell(@NotNull Cell cell) {
         return formatter.formatCellValue(cell);
     }

@@ -20,7 +20,6 @@ class ConverterSAP {
         SAPInput input = new SAPInput();
         val headers = input.getHeaders(data.next());
         val sapers = input.readRowsSAP(headers, data);
-//        List<SAPmodel> sapers = input.readRowsSAP(data);
         return getSapMentoringModels(sapers);
     }
 

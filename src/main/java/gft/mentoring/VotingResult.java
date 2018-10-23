@@ -1,4 +1,4 @@
 package gft.mentoring;
 
-public abstract class VotingResult {
+public interface VotingResult {
 }
