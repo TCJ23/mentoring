@@ -8,7 +8,8 @@ class TRSMentoringModelBuilder {
     }
 
     TRSMentoringModelBuilder setleaver(String s) {
-        trsMM.setLeaver(s.trim().equalsIgnoreCase("Notice Period"));
+        if (s.trim().equalsIgnoreCase("Notice Period") ||
+                s.trim().equalsIgnoreCase("Hired")) trsMM.setLeaver(true);
         return this;
     }
 }
