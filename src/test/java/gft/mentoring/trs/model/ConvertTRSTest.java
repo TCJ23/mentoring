@@ -12,8 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("5 - main class for validating TRS conversion to intermediate Mentoring Model ")
 class ConvertTRSTest {
@@ -31,9 +30,27 @@ class ConvertTRSTest {
         boolean hired = modelR1.isLeaver();
         boolean employee = modelR2.isLeaver();
         //then
-        assertEquals(leaver, true);
-        assertEquals(hired, true);
+        assertTrue(leaver);
+        assertTrue(hired);
         assertFalse(employee);
+    }
+
+    @Test
+    @DisplayName("5.1.2 - Should convert grade column to proper GFT Level")
+    void shoulConvertToProperLevel() {
+        //given
+        val data = createTRSMentoringModelHelper();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
+        val level3 = trsMentoringModels.get(0).getLevel();
+        val level4 = trsMentoringModels.get(1).getLevel();
+        val level7 = trsMentoringModels.get(2).getLevel();
+
+        //then
+        assertEquals(3, level3);
+        assertEquals(4, level4);
+        assertEquals(7, level7);
+
     }
 
     private static List<Row> createTRSMentoringModelHelper() {
@@ -63,32 +80,38 @@ class ConvertTRSTest {
         short lastColumn = headers.getLastCellNum();
         Row row1 = sheet.createRow(1);
         for (int i = 0; i < lastColumn; i++) {
-            if (i != 3) {
+            if (i < 2 || i > 3) {
                 Cell cell = row1.createCell(i);
                 cell.setCellValue("TRS model");
             }
             Cell statusCell = row1.createCell(2);
             statusCell.setCellValue("Notice Period");
+            Cell gradeCell = row1.createCell(3);
+            gradeCell.setCellValue("L3");
         }
         data.add(row1);
         Row row2 = sheet.createRow(2);
         for (int i = 0; i < lastColumn; i++) {
-            if (i != 3) {
+            if (i < 2 || i > 3) {
                 Cell cell = row2.createCell(i);
                 cell.setCellValue("TRS model");
             }
             Cell statusCell = row2.createCell(2);
             statusCell.setCellValue("Hired");
+            Cell gradeCell = row2.createCell(3);
+            gradeCell.setCellValue("L4");
         }
         data.add(row2);
         Row row3 = sheet.createRow(3);
         for (int i = 0; i < lastColumn; i++) {
-            if (i != 3) {
+            if (i < 2 || i > 3) {
                 Cell cell = row3.createCell(i);
                 cell.setCellValue("TRS model");
             }
             Cell statusCell = row3.createCell(2);
             statusCell.setCellValue("Employee");
+            Cell gradeCell = row3.createCell(3);
+            gradeCell.setCellValue("L7");
         }
         data.add(row3);
         return data;
