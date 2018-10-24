@@ -1,5 +1,7 @@
 package gft.mentoring.trs.model;
 
+import gft.mentoring.Family;
+
 class TRSMentoringModelBuilder {
     private TRSMentoringModel trsMM = new TRSMentoringModel();
 
@@ -29,6 +31,11 @@ class TRSMentoringModelBuilder {
 
     TRSMentoringModelBuilder setspecialization(String s) {
         trsMM.setSpecialization(s);
+        return this;
+    }
+
+    TRSMentoringModelBuilder setfamily(String s) {
+        trsMM.setFamily(Family.fromString(s));
         return this;
     }
 }

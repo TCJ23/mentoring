@@ -9,11 +9,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,9 +88,9 @@ class ConvertTRSTest {
         Cell cell4 = headers.createCell(3);
         cell4.setCellValue("grade");
         Cell cell5 = headers.createCell(4);
-        cell5.setCellValue("technology");
+        cell5.setCellValue("job family");
         Cell cell6 = headers.createCell(5);
-        cell6.setCellValue("job family");
+        cell6.setCellValue("technology");
         Cell cell7 = headers.createCell(6);
         cell7.setCellValue("start date");
         Cell cell8 = headers.createCell(7);
@@ -97,42 +99,53 @@ class ConvertTRSTest {
         cell9.setCellValue("contract type");
         data.add(headers);
         short lastColumn = headers.getLastCellNum();
-        Row row1 = sheet.createRow(1);
-        for (int i = 0; i < lastColumn; i++) {
-            if (i < 2 || i > 3) {
-                Cell cell = row1.createCell(i);
-                cell.setCellValue("TRS model");
+        Function<Integer, String> data1 = i -> {
+            switch (i) {
+                case 2: return "Notice Period";
+                case 3: return "L3";
+                case 4: return "Testing";
+                default: return null;
             }
-            Cell statusCell = row1.createCell(2);
-            statusCell.setCellValue("Notice Period");
-            Cell gradeCell = row1.createCell(3);
-            gradeCell.setCellValue("L3");
-        }
+        };
+        Row row1 = createRow(1, sheet, lastColumn, data1);
+        Function<Integer, String> data2 = i -> {
+            switch (i) {
+                case 2: return "Hired";
+                case 3: return "L4";
+                case 4: return "Project Development";
+                default: return null;
+            }
+        };
+        Row row2 = createRow(2, sheet, lastColumn, data2);
+        Function<Integer, String> data3 = i -> {
+            switch (i) {
+                case 2: return "Employee";
+                case 3: return "L7";
+                case 4: return "";
+                default: return null;
+            }
+        };
+        Row row3 = createRow(3, sheet, lastColumn, data3);
         data.add(row1);
-        Row row2 = sheet.createRow(2);
-        for (int i = 0; i < lastColumn; i++) {
-            if (i < 2 || i > 3) {
-                Cell cell = row2.createCell(i);
-                cell.setCellValue("TRS model");
-            }
-            Cell statusCell = row2.createCell(2);
-            statusCell.setCellValue("Hired");
-            Cell gradeCell = row2.createCell(3);
-            gradeCell.setCellValue("L4");
-        }
         data.add(row2);
-        Row row3 = sheet.createRow(3);
-        for (int i = 0; i < lastColumn; i++) {
-            if (i < 2 || i > 3) {
-                Cell cell = row3.createCell(i);
-                cell.setCellValue("TRS model");
-            }
-            Cell statusCell = row3.createCell(2);
-            statusCell.setCellValue("Employee");
-            Cell gradeCell = row3.createCell(3);
-            gradeCell.setCellValue("L7");
-        }
         data.add(row3);
         return data;
+    }
+
+
+
+    @NotNull
+    private static Row createRow(int rowNum, Sheet sheet, short dataLength, Function<Integer,String> dataProvider) {
+        Row row1 = sheet.createRow(rowNum);
+        for (int i = 0; i < dataLength; i++) {
+            String value = dataProvider.apply(i);
+                Cell cell = row1.createCell(i);
+            if (value == null) {
+                cell.setCellValue("TRS model");
+            } else {
+                cell.setCellValue(value);
+            }
+        }
+        return row1;
     }
 }
