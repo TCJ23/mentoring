@@ -1,6 +1,9 @@
 package gft.mentoring.trs.model;
 
+import gft.mentoring.Family;
+import gft.mentoring.sap.model.ExcelException;
 import lombok.val;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -51,6 +54,22 @@ class ConvertTRSTest {
         assertEquals(4, level4);
         assertEquals(7, level7);
 
+    }
+
+    @Test
+    @DisplayName("5.1.3 - get proper Family from Job Family column")
+    void shouldConvertPostionColumnToOneOf10Families() throws ExcelException, InvalidFormatException {
+        //given
+        val data = createTRSMentoringModelHelper();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
+        val testingFamily = trsMentoringModels.get(0).getFamily();
+        val developmentFamily = trsMentoringModels.get(1).getFamily();
+        val missingData = trsMentoringModels.get(2).getFamily();
+        //then
+        assertEquals(Family.TESTING, testingFamily);
+        assertEquals(Family.PROJECT_DEVELOPMENT, developmentFamily);
+        assertEquals(Family.UNDEFINED, missingData);
     }
 
     private static List<Row> createTRSMentoringModelHelper() {

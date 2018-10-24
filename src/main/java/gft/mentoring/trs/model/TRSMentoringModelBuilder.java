@@ -26,4 +26,9 @@ class TRSMentoringModelBuilder {
         }
         return this;
     }
+
+    TRSMentoringModelBuilder setspecialization(String s) {
+        trsMM.setSpecialization(s);
+        return this;
+    }
 }
