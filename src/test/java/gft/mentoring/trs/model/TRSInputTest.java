@@ -105,7 +105,6 @@ class TRSInputTest {
         }
         data.add(row1);
         //when
-//        List<SAPmodel> trsModels = createSAPModel.readRowsSAP(headers, data.iterator());
         val trsModels = createTRSmodel.readRowsTRS(headers, data.iterator());
         val model = trsModels.get(0);
         //then

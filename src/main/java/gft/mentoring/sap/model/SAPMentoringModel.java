@@ -16,10 +16,11 @@ public class SAPMentoringModel {
     private boolean contractor; //employeeSubGrp
     private Family family; //position
     private int level; //job
-    /** At the time of writing below values from SAP do not hold useful information
-     * it might occur in future that some of these will be used to match SAP information with TRS information*/
+    /** Below 2 params will help to Match data between TRS & SAP*/
     private String firstName;
     private String lastName;
+    /** At the time of writing below values from SAP do not hold useful information
+     * it might occur in future that some of these will be used to match SAP information with TRS information*/
     private String federationID; //Initials
     private String sapID; //Pers.No.
     private String specialization; //costCenter ?
