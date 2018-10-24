@@ -68,7 +68,7 @@ class SAPInput {
 
     List<SAPmodel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
         HashMap<Integer, BiConsumer<Cell, SAPmodel>> sapModels = new HashMap<>();
-        sapModels.put(headerIndex(headers, "first name"), (cell, saper) -> saper.setFirstName(stringFromCell(cell)));
+        sapModels.put(headerIndex(headers, "First name"), (cell, saper) -> saper.setFirstName(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "last name"), (cell, saper) -> saper.setLastName(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "initials"), (cell, saper) -> saper.setInitials(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "pers.no."), (cell, saper) -> saper.setPersonalNR(stringFromCell(cell)));
@@ -87,8 +87,12 @@ class SAPInput {
 
     /* please remain consistent and keep header name in LOWERCASE*/
     private int headerIndex(@NotNull List<String> headers, @NotNull String name) {
-        return headers.indexOf(name);
-
+        int headerIndex = headers.indexOf(name.trim().toLowerCase());
+        if (headerIndex >= 0) {
+            return headerIndex;
+        } else {
+            throw new IllegalArgumentException("Column name '" + name + "' not found in spreadsheet");
+        }
     }
 
     class Validator implements Predicate<SAPmodel> {

@@ -40,13 +40,13 @@ class TRSInput {
         }
     }
 
-     List<String> getHeaders(@NotNull Row row) {
+    List<String> getHeaders(@NotNull Row row) {
         return StreamSupport.stream(row.spliterator(), false)
                 .map(cell -> cell.getStringCellValue().trim().toLowerCase())
                 .collect(Collectors.toList());
     }
 
-     List<TRSModel> readRowsTRS(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
+    List<TRSModel> readRowsTRS(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
         HashMap<Integer, BiConsumer<Cell, TRSModel>> trsModels = new HashMap<>();
         trsModels.put(headerIndex(headers, "name"), (cell, treser) -> treser.setName(stringFromCell(cell)));
         trsModels.put(headerIndex(headers, "surname"), (cell, treser) -> treser.setSurname(stringFromCell(cell)));
@@ -63,8 +63,14 @@ class TRSInput {
                 .collect(Collectors.toList());
     }
 
+    /* please remain consistent and keep header name in LOWERCASE*/
     private int headerIndex(@NotNull List<String> headers, @NotNull String name) {
-        return headers.indexOf(name);
+        int headerIndex = headers.indexOf(name.trim().toLowerCase());
+        if (headerIndex >= 0) {
+            return headerIndex;
+        } else {
+            throw new IllegalArgumentException("Column name '" + name + "' not found in spreadsheet");
+        }
     }
 
     class Validator implements Predicate<TRSModel> {
