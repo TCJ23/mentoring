@@ -17,7 +17,8 @@ class ConvertTRS {
 
     private List<TRSMentoringModel> getTRSMentoringModel(List<TRSModel> tresers) {
         return tresers.stream().map(treser -> new TRSMentoringModelBuilder()
-                        .setleaver(treser.getStatus())
-                        .build()).collect(Collectors.toList());
+                .setleaver(treser.getStatus())
+                .setlevel(treser.getGrade())
+                .build()).collect(Collectors.toList());
     }
 }
