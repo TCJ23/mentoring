@@ -3,7 +3,7 @@ package gft.mentoring;
 /**
  * Represents sympathy level from 1 to 100
  */
-public class Support extends VotingResult {
+public class Support implements VotingResult {
 
     private int sympathy;
 
