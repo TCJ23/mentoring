@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@DisplayName("5 - main class for validating TRS conversion to intermediate Mentoring Model ")
 class ConvertTRSTest {
     @Test
-    @DisplayName("4.2.1 - Should detect if person is leaving GFT")
+    @DisplayName("5.1.1 - Should detect if person is leaving GFT")
     void shouldMarkTRSModelasLeaver() {
         //given
         val data = createTRSMentoringModelHelper();
@@ -59,7 +59,7 @@ class ConvertTRSTest {
                 Cell cell = row1.createCell(i);
                 cell.setCellValue("TRS model");
             }
-            Cell statusCell = row1.createCell(4);
+            Cell statusCell = row1.createCell(2);
             statusCell.setCellValue("Notice Period");
             data.add(row1);
         }
