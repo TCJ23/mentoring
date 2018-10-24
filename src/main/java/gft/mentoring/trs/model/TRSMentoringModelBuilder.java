@@ -8,7 +8,7 @@ class TRSMentoringModelBuilder {
     }
 
     TRSMentoringModelBuilder setleaver(String s) {
-        trsMM.setLeaver(false);
+        trsMM.setLeaver(s.trim().equalsIgnoreCase("Notice Period"));
         return this;
     }
 }

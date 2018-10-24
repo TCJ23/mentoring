@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-
+@DisplayName("4 - Main Class for validating TRS INPUT")
 class TRSInputTest {
     private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
 
