@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -106,7 +107,7 @@ class ConvertTRSTest {
         }
         return row;
     }
-  /*  @Test
+    @Test
      void oneYear() {
         LocalDate now = LocalDate.now();
         LocalDate oneYearAgo = now.minusDays(1).minusMonths(12).minusYears(1);
@@ -116,14 +117,14 @@ class ConvertTRSTest {
         int diff = period.getDays();
 
         assertEquals(365, diff);
-    }*/
+    }
 
     @Test
-     void givenTwoDatesInJava8_whenDifferentiating_thenWeGetSix() {
+    void givenTwoDatesInJava8_whenDifferentiating_thenWeGetSix() {
         LocalDate now = LocalDate.now();
         LocalDate sixDaysBehind = now.minusDays(6);
 
-        Period period = Period.between(sixDaysBehind, now );
+        Period period = Period.between(sixDaysBehind, now);
         int diff = period.getDays();
 
         assertEquals(6, diff);
@@ -163,7 +164,7 @@ class ConvertTRSTest {
                 case 4:
                     return "Testing";
                 case 6:
-                    return "25-09-2018";
+                    return dateCreatorFromNowMinusDays(30);
                 default:
                     return null;
             }
@@ -178,7 +179,7 @@ class ConvertTRSTest {
                 case 4:
                     return "Project Development";
                 case 6:
-                    return "25-10-2017";
+                    return dateCreatorFromNowMinusDays(365);
                 default:
                     return null;
             }
@@ -193,7 +194,7 @@ class ConvertTRSTest {
                 case 4:
                     return "";
                 case 6:
-                    return "25-10-2016";
+                    return dateCreatorFromNowMinusDays(730);
                 default:
                     return null;
             }
@@ -203,6 +204,12 @@ class ConvertTRSTest {
         data.add(row2);
         data.add(row3);
         return data;
+    }
+
+    private static String dateCreatorFromNowMinusDays(int days) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate date = LocalDate.now().minusDays(days);
+        return formatter.format(date);
     }
 /*    @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
