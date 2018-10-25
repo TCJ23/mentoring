@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 class TRSMentoringModelBuilder {
     private TRSMentoringModel trsMM = new TRSMentoringModel();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     TRSMentoringModel build() {
         return trsMM;
@@ -44,10 +45,9 @@ class TRSMentoringModelBuilder {
     }
 
     TRSMentoringModelBuilder setseniority(String s) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate dateFromExcel = LocalDate.parse(s, formatter);
+        LocalDate parsedDate = LocalDate.parse(s, formatter);
         LocalDate now = LocalDate.now();
-        long daysBetween = ChronoUnit.DAYS.between(dateFromExcel, now);
+        long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
         trsMM.setSeniority((int) daysBetween);
         return this;
 //        Exception in thread "main" java.time.format.DateTimeParseException: Text '18-10-2017' could not be parsed at index 0

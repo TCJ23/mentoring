@@ -107,28 +107,6 @@ class ConvertTRSTest {
         }
         return row;
     }
-    @Test
-     void oneYear() {
-        LocalDate now = LocalDate.now();
-        LocalDate oneYearAgo = now.minusDays(1).minusMonths(12).minusYears(1);
-//        LocalDate oneYearAgo = now.minusYears(1);
-        System.out.println(oneYearAgo);
-        Period period = Period.between(oneYearAgo, now);
-        int diff = period.getDays();
-
-        assertEquals(365, diff);
-    }
-
-    @Test
-    void givenTwoDatesInJava8_whenDifferentiating_thenWeGetSix() {
-        LocalDate now = LocalDate.now();
-        LocalDate sixDaysBehind = now.minusDays(6);
-
-        Period period = Period.between(sixDaysBehind, now);
-        int diff = period.getDays();
-
-        assertEquals(6, diff);
-    }
 
     private static List<Row> createTRSMentoringModelHelper() {
         List<Row> data = new ArrayList<>();
@@ -205,48 +183,9 @@ class ConvertTRSTest {
         data.add(row3);
         return data;
     }
-
     private static String dateCreatorFromNowMinusDays(int days) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate date = LocalDate.now().minusDays(days);
         return formatter.format(date);
     }
-/*    @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("rowByExamples")
-    @DisplayName("5.2 - various scenarios in parametrized test")
-    void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
-        //given
-        val data = newtrsMenModel();
-//                ("Notice period").build();
-        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
-        //when
-
-        //then
-    }
-
-    private static TRSMentoringModel newtrsMenModel() {
-        return new TRSMentoringModelBuilder().build();
-    }
-    *//*private static TRSMentoringModel newtrsMenModel() {
-        return new TRSMentoringModel();
-    }*//*
-    private static Stream<RowExample> rowByExamples() {
-        return Stream.of(
-                new RowExample("Should detect if person is leaving GFT", 3, Family.UNDEFINED, true, false)
-        );
-    }
-
-    @Value
-    static class RowExample {
-        private String scenario;
-        private int grade;
-        private Family family;
-        private boolean leaver;
-        private boolean accepted;
-
-        @Override
-        public String toString() {
-            return scenario;
-        }
-    }*/
 }
