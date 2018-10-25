@@ -21,6 +21,7 @@ class ConvertTRS {
                 .setlevel(treser.getGrade())
                 .setfamily(treser.getJobFamily())
                 .setspecialization(treser.getTechnology())
+                .setseniority(treser.getStartDate())
                 .build()).collect(Collectors.toList());
     }
 }

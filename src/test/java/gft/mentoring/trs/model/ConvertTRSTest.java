@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -104,6 +106,28 @@ class ConvertTRSTest {
         }
         return row;
     }
+  /*  @Test
+     void oneYear() {
+        LocalDate now = LocalDate.now();
+        LocalDate oneYearAgo = now.minusDays(1).minusMonths(12).minusYears(1);
+//        LocalDate oneYearAgo = now.minusYears(1);
+        System.out.println(oneYearAgo);
+        Period period = Period.between(oneYearAgo, now);
+        int diff = period.getDays();
+
+        assertEquals(365, diff);
+    }*/
+
+    @Test
+     void givenTwoDatesInJava8_whenDifferentiating_thenWeGetSix() {
+        LocalDate now = LocalDate.now();
+        LocalDate sixDaysBehind = now.minusDays(6);
+
+        Period period = Period.between(sixDaysBehind, now );
+        int diff = period.getDays();
+
+        assertEquals(6, diff);
+    }
 
     private static List<Row> createTRSMentoringModelHelper() {
         List<Row> data = new ArrayList<>();
@@ -138,6 +162,8 @@ class ConvertTRSTest {
                     return "L3";
                 case 4:
                     return "Testing";
+                case 6:
+                    return "25-09-2018";
                 default:
                     return null;
             }
@@ -151,6 +177,8 @@ class ConvertTRSTest {
                     return "L4";
                 case 4:
                     return "Project Development";
+                case 6:
+                    return "25-10-2017";
                 default:
                     return null;
             }
@@ -164,6 +192,8 @@ class ConvertTRSTest {
                     return "L7";
                 case 4:
                     return "";
+                case 6:
+                    return "25-10-2016";
                 default:
                     return null;
             }
