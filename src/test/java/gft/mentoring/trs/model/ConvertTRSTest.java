@@ -74,6 +74,37 @@ class ConvertTRSTest {
         assertEquals(Family.UNDEFINED, missingData);
     }
 
+    @Test
+    @DisplayName("5.1.4 - verify that start date column is converted to days")
+    void shouldConvertStartDateToDays() {
+        //given
+        val data = createTRSMentoringModelHelper();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
+        val worked30daysInGFT = trsMentoringModels.get(0).getSeniority();
+        val workedOneYearInGFT = trsMentoringModels.get(1).getSeniority();
+        val worked2YearsInGFT = trsMentoringModels.get(2).getSeniority();
+        //then
+        assertEquals(30, worked30daysInGFT);
+        assertEquals(365, workedOneYearInGFT);
+        assertEquals(730, worked2YearsInGFT);
+    }
+
+    @NotNull
+    private static Row createRow(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
+        Row row = sheet.createRow(rowNum);
+        for (int i = 0; i < dataLength; i++) {
+            String value = dataProvider.apply(i);
+            Cell cell = row.createCell(i);
+            if (value == null) {
+                cell.setCellValue("TRS model");
+            } else {
+                cell.setCellValue(value);
+            }
+        }
+        return row;
+    }
+
     private static List<Row> createTRSMentoringModelHelper() {
         List<Row> data = new ArrayList<>();
         Workbook wb = new XSSFWorkbook();
@@ -101,28 +132,40 @@ class ConvertTRSTest {
         short lastColumn = headers.getLastCellNum();
         Function<Integer, String> data1 = i -> {
             switch (i) {
-                case 2: return "Notice Period";
-                case 3: return "L3";
-                case 4: return "Testing";
-                default: return null;
+                case 2:
+                    return "Notice Period";
+                case 3:
+                    return "L3";
+                case 4:
+                    return "Testing";
+                default:
+                    return null;
             }
         };
         Row row1 = createRow(1, sheet, lastColumn, data1);
         Function<Integer, String> data2 = i -> {
             switch (i) {
-                case 2: return "Hired";
-                case 3: return "L4";
-                case 4: return "Project Development";
-                default: return null;
+                case 2:
+                    return "Hired";
+                case 3:
+                    return "L4";
+                case 4:
+                    return "Project Development";
+                default:
+                    return null;
             }
         };
         Row row2 = createRow(2, sheet, lastColumn, data2);
         Function<Integer, String> data3 = i -> {
             switch (i) {
-                case 2: return "Employee";
-                case 3: return "L7";
-                case 4: return "";
-                default: return null;
+                case 2:
+                    return "Employee";
+                case 3:
+                    return "L7";
+                case 4:
+                    return "";
+                default:
+                    return null;
             }
         };
         Row row3 = createRow(3, sheet, lastColumn, data3);
@@ -131,21 +174,42 @@ class ConvertTRSTest {
         data.add(row3);
         return data;
     }
+/*    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("rowByExamples")
+    @DisplayName("5.2 - various scenarios in parametrized test")
+    void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
+        //given
+        val data = newtrsMenModel();
+//                ("Notice period").build();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
 
-
-
-    @NotNull
-    private static Row createRow(int rowNum, Sheet sheet, short dataLength, Function<Integer,String> dataProvider) {
-        Row row1 = sheet.createRow(rowNum);
-        for (int i = 0; i < dataLength; i++) {
-            String value = dataProvider.apply(i);
-                Cell cell = row1.createCell(i);
-            if (value == null) {
-                cell.setCellValue("TRS model");
-            } else {
-                cell.setCellValue(value);
-            }
-        }
-        return row1;
+        //then
     }
+
+    private static TRSMentoringModel newtrsMenModel() {
+        return new TRSMentoringModelBuilder().build();
+    }
+    *//*private static TRSMentoringModel newtrsMenModel() {
+        return new TRSMentoringModel();
+    }*//*
+    private static Stream<RowExample> rowByExamples() {
+        return Stream.of(
+                new RowExample("Should detect if person is leaving GFT", 3, Family.UNDEFINED, true, false)
+        );
+    }
+
+    @Value
+    static class RowExample {
+        private String scenario;
+        private int grade;
+        private Family family;
+        private boolean leaver;
+        private boolean accepted;
+
+        @Override
+        public String toString() {
+            return scenario;
+        }
+    }*/
 }
