@@ -1,6 +1,7 @@
 package gft.mentoring.trs.model;
 
 import gft.mentoring.Family;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -13,18 +14,18 @@ class TRSMentoringModelBuilder {
         return trsMM;
     }
 
-    TRSMentoringModelBuilder setleaver(String s) {
-        if (s.trim().equalsIgnoreCase("Notice Period") ||
-                s.trim().equalsIgnoreCase("Hired")) trsMM.setLeaver(true);
+    TRSMentoringModelBuilder setleaver(String leave) {
+        if (leave.trim().equalsIgnoreCase("Notice Period") ||
+                leave.trim().equalsIgnoreCase("Hired")) trsMM.setLeaver(true);
         return this;
     }
 
-    TRSMentoringModelBuilder setlevel(String s) {
+    TRSMentoringModelBuilder setlevel(String level) {
         try {
-            if (s.equalsIgnoreCase("LD")) {
+            if (level.equalsIgnoreCase("LD")) {
                 trsMM.setLevel(8);
             } else {
-                String lvl = s.replaceAll("^L(\\d)+.*$", "$1");
+                String lvl = level.replaceAll("^L(\\d)+.*$", "$1");
                 trsMM.setLevel(Integer.parseInt(lvl));
             }
         } catch (NumberFormatException e) {
@@ -33,21 +34,26 @@ class TRSMentoringModelBuilder {
         return this;
     }
 
-    TRSMentoringModelBuilder setspecialization(String s) {
-        trsMM.setSpecialization(s);
+    TRSMentoringModelBuilder setspecialization(String spec) {
+        trsMM.setSpecialization(spec);
         return this;
     }
 
-    TRSMentoringModelBuilder setfamily(String s) {
-        trsMM.setFamily(Family.fromString(s));
+    TRSMentoringModelBuilder setfamily(String fam) {
+        trsMM.setFamily(Family.fromString(fam));
         return this;
     }
 
-    TRSMentoringModelBuilder setseniority(String s) {
-        LocalDate parsedDate = LocalDate.parse(s, formatter);
+    TRSMentoringModelBuilder setseniority(String days) {
+        LocalDate parsedDate = LocalDate.parse(days, formatter);
         LocalDate now = LocalDate.now();
         long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
         trsMM.setSeniority((int) daysBetween);
+        return this;
+    }
+
+    TRSMentoringModelBuilder setlocalization(String office) {
+        trsMM.setLocalization(office);
         return this;
     }
 }

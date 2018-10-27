@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("5 - main class for validating TRS conversion to intermediate Mentoring Model ")
@@ -92,6 +92,22 @@ class ConvertTRSTest {
         assertEquals(730, worked2YearsInGFT);
     }
 
+    @Test
+    @DisplayName("5.1.5 - assure that Locations properly")
+    void shouldConvertLocalization() {
+        //given
+        val data = createTRSMentoringModelHelper();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
+        val lodzOffice = trsMentoringModels.get(0).getLocalization();
+        val poznanOffice = trsMentoringModels.get(1).getLocalization();
+        val warsawOffice = trsMentoringModels.get(2).getLocalization();
+        //then
+        assertThat(lodzOffice).isEqualToIgnoringCase("Łódź");
+        assertThat(poznanOffice).isEqualToIgnoringCase("Poznań");
+        assertThat(warsawOffice).isEqualToIgnoringCase("Warszawa");
+    }
+
     @NotNull
     private static Row createRow(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
         Row row = sheet.createRow(rowNum);
@@ -142,6 +158,8 @@ class ConvertTRSTest {
                     return "Testing";
                 case 6:
                     return dateCreatorFromNowMinusDays(30);
+                case 7:
+                    return "Łódź";
                 default:
                     return null;
             }
@@ -157,6 +175,8 @@ class ConvertTRSTest {
                     return "Project Development";
                 case 6:
                     return dateCreatorFromNowMinusDays(365);
+                case 7:
+                    return "Poznań";
                 default:
                     return null;
             }
@@ -172,6 +192,8 @@ class ConvertTRSTest {
                     return "";
                 case 6:
                     return dateCreatorFromNowMinusDays(730);
+                case 7:
+                    return "Warszawa";
                 default:
                     return null;
             }
@@ -202,29 +224,29 @@ class ConvertTRSTest {
         LocalDate date = LocalDate.now().minusDays(days);
         return formatter.format(date);
     }
-}
-  /*    @ParameterizedTest(name = "{index} => {0}")
+
+    /*private static TRSMentoringModel newtrsMenModel() {
+        return new TRSMentoringModelBuilder().build();
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
     @DisplayName("5.2 - various scenarios in parametrized test")
     void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
         //given
-        val data = newtrsMenModel();
-//                ("Notice period").build();
-        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        newtrsMenModel().setLeaver(rowExample.leaver);
+        val trsMentoringModels = new ConvertTRS().getTRSMentoringModel(data);
         //when
         //then
     }
-    private static TRSMentoringModel newtrsMenModel() {
-        return new TRSMentoringModelBuilder().build();
-    }
-    *//*private static TRSMentoringModel newtrsMenModel() {
-        return new TRSMentoringModel();
-    }*//*
+
+
     private static Stream<RowExample> rowByExamples() {
         return Stream.of(
                 new RowExample("Should detect if person is leaving GFT", 3, Family.UNDEFINED, true, false)
         );
     }
+
     @Value
     static class RowExample {
         private String scenario;
@@ -232,8 +254,10 @@ class ConvertTRSTest {
         private Family family;
         private boolean leaver;
         private boolean accepted;
+
         @Override
         public String toString() {
             return scenario;
         }
     }*/
+}
