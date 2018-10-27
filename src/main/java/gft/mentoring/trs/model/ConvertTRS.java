@@ -1,5 +1,6 @@
 package gft.mentoring.trs.model;
 
+import gft.mentoring.sap.model.ExcelException;
 import lombok.val;
 import org.apache.poi.ss.usermodel.Row;
 

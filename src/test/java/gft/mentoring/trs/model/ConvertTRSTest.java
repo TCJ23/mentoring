@@ -14,8 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -58,7 +58,6 @@ class ConvertTRSTest {
         assertEquals(3, level3);
         assertEquals(4, level4);
         assertEquals(7, level7);
-
     }
 
     @Test
@@ -178,14 +177,63 @@ class ConvertTRSTest {
             }
         };
         Row row3 = createRow(3, sheet, lastColumn, data3);
+
+/*
+        Function<Integer, String> data4 = i -> {
+            switch (i) {
+                case 6:
+                    return "18/10/2018";
+                default:
+                    return null;
+            }
+        };
+        Row row4 = createRow(3, sheet, lastColumn, data4);
+        data.add(row4);
+*/
+
         data.add(row1);
         data.add(row2);
         data.add(row3);
         return data;
     }
+
     private static String dateCreatorFromNowMinusDays(int days) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate date = LocalDate.now().minusDays(days);
         return formatter.format(date);
     }
 }
+  /*    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("rowByExamples")
+    @DisplayName("5.2 - various scenarios in parametrized test")
+    void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
+        //given
+        val data = newtrsMenModel();
+//                ("Notice period").build();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
+        //then
+    }
+    private static TRSMentoringModel newtrsMenModel() {
+        return new TRSMentoringModelBuilder().build();
+    }
+    *//*private static TRSMentoringModel newtrsMenModel() {
+        return new TRSMentoringModel();
+    }*//*
+    private static Stream<RowExample> rowByExamples() {
+        return Stream.of(
+                new RowExample("Should detect if person is leaving GFT", 3, Family.UNDEFINED, true, false)
+        );
+    }
+    @Value
+    static class RowExample {
+        private String scenario;
+        private int grade;
+        private Family family;
+        private boolean leaver;
+        private boolean accepted;
+        @Override
+        public String toString() {
+            return scenario;
+        }
+    }*/

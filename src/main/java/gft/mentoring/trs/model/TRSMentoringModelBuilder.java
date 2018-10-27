@@ -1,7 +1,6 @@
 package gft.mentoring.trs.model;
 
 import gft.mentoring.Family;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -50,6 +49,5 @@ class TRSMentoringModelBuilder {
         long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
         trsMM.setSeniority((int) daysBetween);
         return this;
-//        Exception in thread "main" java.time.format.DateTimeParseException: Text '18-10-2017' could not be parsed at index 0
     }
 }
