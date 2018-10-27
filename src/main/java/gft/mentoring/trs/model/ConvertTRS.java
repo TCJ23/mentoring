@@ -31,6 +31,7 @@ class ConvertTRS {
                 .setspecialization(treser.getTechnology())
                 .setseniority(treser.getStartDate())
                 .setlocalization(treser.getOfficeLocation())
+                .setcontractor(treser.getContractType())
                 .build()).collect(Collectors.toList());
     }
 }

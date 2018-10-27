@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 class TRSMentoringModelBuilder {
     private TRSMentoringModel trsMM = new TRSMentoringModel();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     TRSMentoringModel build() {
         return trsMM;
@@ -54,6 +54,12 @@ class TRSMentoringModelBuilder {
 
     TRSMentoringModelBuilder setlocalization(String office) {
         trsMM.setLocalization(office);
+        return this;
+    }
+
+    TRSMentoringModelBuilder setcontractor(String contract) {
+        if (contract.trim().equalsIgnoreCase("Contract")) trsMM.setContractor(true);
+        else if (contract.trim().equalsIgnoreCase("Permanent")) trsMM.setContractor(false);
         return this;
     }
 }

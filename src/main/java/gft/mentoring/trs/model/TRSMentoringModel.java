@@ -25,5 +25,4 @@ class TRSMentoringModel {
      */
     private String firstName; //name
     private String lastName; //surname
-
 }

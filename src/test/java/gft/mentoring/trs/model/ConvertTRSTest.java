@@ -108,6 +108,20 @@ class ConvertTRSTest {
         assertThat(warsawOffice).isEqualToIgnoringCase("Warszawa");
     }
 
+    @Test
+    @DisplayName("5.1.6 - assure that Contract Type is verified properly")
+    void shouldConvertContractType() {
+        //given
+        val data = createTRSMentoringModelHelper();
+        val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
+        //when
+        val employee = trsMentoringModels.get(0).isContractor();
+        val contractor = trsMentoringModels.get(1).isContractor();
+        //then
+        assertFalse(employee);
+        assertTrue(contractor);
+    }
+
     @NotNull
     private static Row createRow(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
         Row row = sheet.createRow(rowNum);
@@ -160,6 +174,8 @@ class ConvertTRSTest {
                     return dateCreatorFromNowMinusDays(30);
                 case 7:
                     return "Łódź";
+                case 8:
+                    return "Permanent";
                 default:
                     return null;
             }
@@ -177,6 +193,8 @@ class ConvertTRSTest {
                     return dateCreatorFromNowMinusDays(365);
                 case 7:
                     return "Poznań";
+                case 8:
+                    return "Contract";
                 default:
                     return null;
             }
