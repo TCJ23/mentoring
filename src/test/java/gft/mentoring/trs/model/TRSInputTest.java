@@ -30,9 +30,14 @@ class TRSInputTest {
         //given
         TRSInput trsInput = new TRSInput();
         Workbook workbook = WorkbookFactory.create(new File(TRS_FILE));
+        /** we decrease by 1 because of 1st row is composed of column names*/
+        int headerColumns = 1;
+        val notNullRows = trsInput.notNullRows(workbook);
+        val rowsSize = notNullRows - headerColumns;
         //when
         val models = trsInput.readExcelTRSfile(TRS_FILE);
         //then
+        assertThat(models).size().isEqualTo(rowsSize);
         assertThat(models).size().isEqualTo(31);
     }
 
