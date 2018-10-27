@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("5 - main class for validating TRS conversion to intermediate Mentoring Model ")
 class ConvertTRSTest {
+    private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
+
     @Test
     @DisplayName("5.1.1 - Should detect if person is leaving GFT, just hired or permanent employee")
     void shouldMarkTRSModelasLeaver() {
@@ -120,6 +122,20 @@ class ConvertTRSTest {
         //then
         assertFalse(employee);
         assertTrue(contractor);
+    }
+
+    @Test
+    @DisplayName("5.1.7 - convert from file, first & lastname")
+    void shouldConvertGFTPersonFromFile() throws ExcelException, InvalidFormatException {
+        //given
+        val trsMentoringModels = new ConvertTRS().convertInputToTRSMentoringModel(TRS_FILE);
+        //when
+        val model = trsMentoringModels.get(0);
+        val firstName = model.getFirstName();
+        val lastName = model.getLastName();
+        //then
+        assertThat(firstName).containsIgnoringCase("Adam");
+        assertThat(lastName).containsIgnoringCase("Adamczewski");
     }
 
     @NotNull

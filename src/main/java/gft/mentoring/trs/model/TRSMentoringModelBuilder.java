@@ -62,4 +62,14 @@ class TRSMentoringModelBuilder {
         else if (contract.trim().equalsIgnoreCase("Permanent")) trsMM.setContractor(false);
         return this;
     }
+
+    TRSMentoringModelBuilder setfirstName(String firstName) {
+        trsMM.setFirstName(firstName);
+        return this;
+    }
+
+    TRSMentoringModelBuilder setlastName(String lastName) {
+        trsMM.setLastName(lastName);
+        return this;
+    }
 }
