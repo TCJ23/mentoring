@@ -4,6 +4,7 @@ import gft.mentoring.Family;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 class TRSMentoringModelBuilder {
@@ -35,7 +36,7 @@ class TRSMentoringModelBuilder {
     }
 
     TRSMentoringModelBuilder setspecialization(String spec) {
-        trsMM.setSpecialization(spec);
+        trsMM.setSpecialization(spec.trim().toLowerCase());
         return this;
     }
 
@@ -44,7 +45,7 @@ class TRSMentoringModelBuilder {
         return this;
     }
 
-    TRSMentoringModelBuilder setseniority(String days) {
+    TRSMentoringModelBuilder setseniority(String days) throws DateTimeParseException {
         LocalDate parsedDate = LocalDate.parse(days, formatter);
         LocalDate now = LocalDate.now();
         long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);

@@ -76,6 +76,9 @@ class ConvertTRSTest {
         assertEquals(Family.TESTING, testingFamily);
         assertEquals(Family.PROJECT_DEVELOPMENT, developmentFamily);
         assertEquals(Family.UNDEFINED, missingData);
+        assertThat(testingFamily).isIn(Family.values());
+        assertThat(developmentFamily).isIn(Family.values());
+        assertThat(missingData).isIn(Family.values());
     }
 
     @Test
@@ -136,6 +139,19 @@ class ConvertTRSTest {
         //then
         assertThat(firstName).containsIgnoringCase("Adam");
         assertThat(lastName).containsIgnoringCase("Adamczewski");
+    }
+
+    @Test
+    @DisplayName("5.1.8 - mappping of technology to specialization")
+    void shouldConvertGFTSpecializationBasedOnTechnologyColumn() throws ExcelException, InvalidFormatException {
+        //given
+        val trsMentoringModels = new ConvertTRS().convertInputToTRSMentoringModel(TRS_FILE);
+        //when
+        val dotNetSpecialized = trsMentoringModels.get(0).getSpecialization();
+        val amsSupporter = trsMentoringModels.get(1).getSpecialization();
+        //then
+        assertThat(dotNetSpecialized).containsIgnoringCase(".net");
+        assertThat(amsSupporter).containsIgnoringCase("ams");
     }
 
     @NotNull
@@ -258,8 +274,8 @@ class ConvertTRSTest {
         LocalDate date = LocalDate.now().minusDays(days);
         return formatter.format(date);
     }
-
-    /*private static TRSMentoringModel newtrsMenModel() {
+/*
+    private static TRSMentoringModel newtrsMenModel() {
         return new TRSMentoringModelBuilder().build();
     }
 
@@ -268,7 +284,10 @@ class ConvertTRSTest {
     @DisplayName("5.2 - various scenarios in parametrized test")
     void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
         //given
-        newtrsMenModel().setLeaver(rowExample.leaver);
+//        newtrsMenModel().setLeaver(rowExample.leaver);
+        List<TRSMentoringModel> data = new ArrayList<>();
+        TRSMentoringModel leaver = new TRSMentoringModelBuilder().setleaver(rowExample.leaver).build();
+        data.add(leaver);
         val trsMentoringModels = new ConvertTRS().getTRSMentoringModel(data);
         //when
         //then
@@ -277,16 +296,17 @@ class ConvertTRSTest {
 
     private static Stream<RowExample> rowByExamples() {
         return Stream.of(
-                new RowExample("Should detect if person is leaving GFT", 3, Family.UNDEFINED, true, false)
+                new RowExample("Should detect if person is leaving GFT", "L3", Family.UNDEFINED,
+                        "Notice Period", false)
         );
     }
 
     @Value
     static class RowExample {
         private String scenario;
-        private int grade;
+        private String grade; //int
         private Family family;
-        private boolean leaver;
+        private String leaver; //boolean
         private boolean accepted;
 
         @Override
