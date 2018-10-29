@@ -2,6 +2,7 @@ package gft.mentoring.trs.model;
 
 import gft.mentoring.Family;
 import gft.mentoring.sap.model.ExcelException;
+import lombok.Value;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,12 +13,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,6 +57,7 @@ class ConvertTRSTest {
         val data = createTRSMentoringModelHelper();
         val trsMentoringModels = new ConvertTRS().convertFromRows(data.iterator());
         //when
+//        assertThat(trsMentoringModels).hasSize(3);
         val level3 = trsMentoringModels.get(0).getLevel();
         val level4 = trsMentoringModels.get(1).getLevel();
         val level7 = trsMentoringModels.get(2).getLevel();
@@ -173,25 +179,7 @@ class ConvertTRSTest {
         List<Row> data = new ArrayList<>();
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("trs sheet");
-        Row headers = sheet.createRow(0);
-        Cell cell1 = headers.createCell(0);
-        cell1.setCellValue("name");
-        Cell cell2 = headers.createCell(1);
-        cell2.setCellValue("surname");
-        Cell cell3 = headers.createCell(2);
-        cell3.setCellValue("status");
-        Cell cell4 = headers.createCell(3);
-        cell4.setCellValue("grade");
-        Cell cell5 = headers.createCell(4);
-        cell5.setCellValue("job family");
-        Cell cell6 = headers.createCell(5);
-        cell6.setCellValue("technology");
-        Cell cell7 = headers.createCell(6);
-        cell7.setCellValue("start date");
-        Cell cell8 = headers.createCell(7);
-        cell8.setCellValue("office location");
-        Cell cell9 = headers.createCell(8);
-        cell9.setCellValue("contract type");
+        Row headers = createHeaders(sheet);
         data.add(headers);
         short lastColumn = headers.getLastCellNum();
         Function<Integer, String> data1 = i -> {
@@ -250,7 +238,6 @@ class ConvertTRSTest {
         };
         Row row3 = createRow(3, sheet, lastColumn, data3);
 
-/*
         Function<Integer, String> data4 = i -> {
             switch (i) {
                 case 6:
@@ -259,14 +246,37 @@ class ConvertTRSTest {
                     return null;
             }
         };
-        Row row4 = createRow(3, sheet, lastColumn, data4);
-        data.add(row4);
-*/
+        Row row4 = createRow(4, sheet, lastColumn, data4);
 
         data.add(row1);
         data.add(row2);
         data.add(row3);
+        data.add(row4);
         return data;
+    }
+
+    @NotNull
+    private static Row createHeaders(Sheet sheet) {
+        Row headers = sheet.createRow(0);
+        Cell cell0 = headers.createCell(0);
+        cell0.setCellValue("name");
+        Cell cell1 = headers.createCell(1);
+        cell1.setCellValue("surname");
+        Cell cell2 = headers.createCell(2);
+        cell2.setCellValue("status");
+        Cell cell3 = headers.createCell(3);
+        cell3.setCellValue("grade");
+        Cell cell4 = headers.createCell(4);
+        cell4.setCellValue("job family");
+        Cell cell5 = headers.createCell(5);
+        cell5.setCellValue("technology");
+        Cell cell6 = headers.createCell(6);
+        cell6.setCellValue("start date");
+        Cell cell7 = headers.createCell(7);
+        cell7.setCellValue("office location");
+        Cell cell8 = headers.createCell(8);
+        cell8.setCellValue("contract type");
+        return headers;
     }
 
     private static String dateCreatorFromNowMinusDays(int days) {
@@ -281,33 +291,50 @@ class ConvertTRSTest {
 
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
-    @DisplayName("5.2 - various scenarios in parametrized test")
-    void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
+    @DisplayName("5.2.1 - various scenarios in parametrized test")
+    void shouldMapTRSdataToIntermediateModelFields(MyRowExample rowExample) {
         //given
-//        newtrsMenModel().setLeaver(rowExample.leaver);
         List<TRSMentoringModel> data = new ArrayList<>();
-        TRSMentoringModel leaver = new TRSMentoringModelBuilder().setleaver(rowExample.leaver).build();
-        data.add(leaver);
-        val trsMentoringModels = new ConvertTRS().getTRSMentoringModel(data);
         //when
+        val trsMentoringModels = new ConvertTRS().convertFromRows(Arrays.asList(rowExample.headers, rowExample.input).iterator());
         //then
+        assertEquals(trsMentoringModels.get(0).getFamily(), rowExample.output.getFamily());
     }
 
 
-    private static Stream<RowExample> rowByExamples() {
+    private static Stream<MyRowExample> rowByExamples() {
+
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("trs sheet");
+        Row headers = createHeaders(sheet);
+        Row row1 = createRow(sheet);
+        row1.createCell(4).setCellValue("AMS");
+        row1.createCell(2).setCellValue("notice period");
+        TRSMentoringModel model = new TRSMentoringModel();
+        model.setFamily(Family.AMS);
+        model.setLeaver(true);
+//        Row row2 = sheet.createRow(2);
+//        Cell leaverCheck = row2.createCell(2);
+//        leaverCheck.setCellValue("notice period");
         return Stream.of(
-                new RowExample("Should detect if person is leaving GFT", "L3", Family.UNDEFINED,
-                        "Notice Period", false)
+                new MyRowExample("Should map Family correctly", row1, model, headers),
+                new MyRowExample("Should detect leaver", row1, model, headers)
         );
     }
 
+    private static Row createRow(Sheet sheet) {
+        val row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("My name is not null or empty");
+        row1.createCell(6).setCellValue("11-11-2017");
+        return row1;
+    }
+
     @Value
-    static class RowExample {
+    static class MyRowExample {
         private String scenario;
-        private String grade; //int
-        private Family family;
-        private String leaver; //boolean
-        private boolean accepted;
+        private Row input;
+        private TRSMentoringModel output;
+        public Row headers;
 
         @Override
         public String toString() {

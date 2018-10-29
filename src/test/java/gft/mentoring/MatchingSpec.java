@@ -71,10 +71,12 @@ class MatchingSpec {
 
     @Value
     static class SingleMatchingParam {
+        //input
         private String scenario;
         private Family menteeFamily;
         private Family mentorCandidateFamily;
         private boolean contractor;
+        //output
         private boolean accepted;
 
         @Override

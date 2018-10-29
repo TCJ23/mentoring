@@ -6,10 +6,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.logging.Logger;
 
 class TRSMentoringModelBuilder {
+    private static final Logger LOGGER = Logger.getLogger(TRSMentoringModelBuilder.class.getName());
+    private static final int DEFAULT_SENIORITY = 0;
+    private static final String DATE_PATTERN = "dd-MM-yyyy";
     private TRSMentoringModel trsMM = new TRSMentoringModel();
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
     TRSMentoringModel build() {
         return trsMM;
@@ -45,11 +49,17 @@ class TRSMentoringModelBuilder {
         return this;
     }
 
-    TRSMentoringModelBuilder setseniority(String days) throws DateTimeParseException {
-        LocalDate parsedDate = LocalDate.parse(days, formatter);
-        LocalDate now = LocalDate.now();
-        long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
-        trsMM.setSeniority((int) daysBetween);
+    TRSMentoringModelBuilder setseniority(String days) {
+        try {
+            LocalDate parsedDate = LocalDate.parse(days, formatter);
+            LocalDate now = LocalDate.now();
+            long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
+            trsMM.setSeniority((int) daysBetween);
+        } catch (DateTimeParseException e) {
+            LOGGER.warning("Couldn't read start date column due to wrong format. Format should be "
+                    + DATE_PATTERN + "\n Setting seniority to " + DEFAULT_SENIORITY);
+            trsMM.setSeniority(DEFAULT_SENIORITY);
+        }
         return this;
     }
 
