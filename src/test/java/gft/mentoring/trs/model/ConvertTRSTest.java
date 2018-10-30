@@ -285,7 +285,7 @@ class ConvertTRSTest {
         return formatter.format(date);
     }
 
-    @ParameterizedTest(name = "{index} => {0}")
+  /*  @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
     @DisplayName("5.2.1 - various scenarios in parametrized test")
     void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
@@ -305,7 +305,7 @@ class ConvertTRSTest {
         Sheet sheet = wb.createSheet("trs sheet");
         Row headers = createHeaders(sheet);
         Row row1 = createRow(sheet, 1);
-        /* works even with incorrect case and whitespace */
+        *//* works even with incorrect case and whitespace *//*
         row1.createCell(4).setCellValue(" ams");
         TRSMentoringModel model1 = new TRSMentoringModel();
         model1.setFamily(Family.AMS);
@@ -346,5 +346,5 @@ class ConvertTRSTest {
         public String toString() {
             return scenario;
         }
-    }
+    }*/
 }
