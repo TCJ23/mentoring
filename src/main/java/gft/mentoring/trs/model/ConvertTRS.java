@@ -27,7 +27,7 @@ class ConvertTRS {
         return tresers.stream().map(treser -> {
             return new TRSMentoringModelBuilder()
                     .setLeaver(treser.getStatus())
-                    .steLevel(treser.getGrade())
+                    .setLevel(treser.getGrade())
                     .setFamily(treser.getJobFamily())
                     .setSpecialization(treser.getTechnology())
                     .setSeniority(treser.getStartDate())

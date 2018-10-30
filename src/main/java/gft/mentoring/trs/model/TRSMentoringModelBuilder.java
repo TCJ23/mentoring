@@ -25,7 +25,7 @@ class TRSMentoringModelBuilder {
         return this;
     }
 
-    TRSMentoringModelBuilder steLevel(String level) {
+    TRSMentoringModelBuilder setLevel(String level) {
         try {
             if (level.equalsIgnoreCase("LD")) {
                 trsMM.setLevel(8);
