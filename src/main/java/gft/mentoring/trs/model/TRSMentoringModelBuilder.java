@@ -19,13 +19,13 @@ class TRSMentoringModelBuilder {
         return trsMM;
     }
 
-    TRSMentoringModelBuilder setleaver(String leave) {
+    TRSMentoringModelBuilder setLeaver(String leave) {
         if (leave.trim().equalsIgnoreCase("Notice Period") ||
                 leave.trim().equalsIgnoreCase("Hired")) trsMM.setLeaver(true);
         return this;
     }
 
-    TRSMentoringModelBuilder setlevel(String level) {
+    TRSMentoringModelBuilder steLevel(String level) {
         try {
             if (level.equalsIgnoreCase("LD")) {
                 trsMM.setLevel(8);
@@ -39,17 +39,17 @@ class TRSMentoringModelBuilder {
         return this;
     }
 
-    TRSMentoringModelBuilder setspecialization(String spec) {
+    TRSMentoringModelBuilder setSpecialization(String spec) {
         trsMM.setSpecialization(spec.trim().toLowerCase());
         return this;
     }
 
-    TRSMentoringModelBuilder setfamily(String fam) {
+    TRSMentoringModelBuilder setFamily(String fam) {
         trsMM.setFamily(Family.fromString(fam));
         return this;
     }
 
-    TRSMentoringModelBuilder setseniority(String days) {
+    TRSMentoringModelBuilder setSeniority(String days) {
         try {
             LocalDate parsedDate = LocalDate.parse(days, formatter);
             LocalDate now = LocalDate.now();
@@ -63,23 +63,23 @@ class TRSMentoringModelBuilder {
         return this;
     }
 
-    TRSMentoringModelBuilder setlocalization(String office) {
+    TRSMentoringModelBuilder setLocalization(String office) {
         trsMM.setLocalization(office);
         return this;
     }
 
-    TRSMentoringModelBuilder setcontractor(String contract) {
+    TRSMentoringModelBuilder setContractor(String contract) {
         if (contract.trim().equalsIgnoreCase("Contract")) trsMM.setContractor(true);
         else if (contract.trim().equalsIgnoreCase("Permanent")) trsMM.setContractor(false);
         return this;
     }
 
-    TRSMentoringModelBuilder setfirstName(String firstName) {
+    TRSMentoringModelBuilder setFirstName(String firstName) {
         trsMM.setFirstName(firstName);
         return this;
     }
 
-    TRSMentoringModelBuilder setlastName(String lastName) {
+    TRSMentoringModelBuilder setLastName(String lastName) {
         trsMM.setLastName(lastName);
         return this;
     }

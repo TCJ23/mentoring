@@ -25,23 +25,17 @@ class ConvertTRS {
 
     List<TRSMentoringModel> getTRSMentoringModel(List<TRSModel> tresers) {
         return tresers.stream().map(treser -> {
-//            try {
             return new TRSMentoringModelBuilder()
-                    .setleaver(treser.getStatus())
-                    .setlevel(treser.getGrade())
-                    .setfamily(treser.getJobFamily())
-                    .setspecialization(treser.getTechnology())
-                    .setseniority(treser.getStartDate())
-                    .setlocalization(treser.getOfficeLocation())
-                    .setcontractor(treser.getContractType())
-                    .setfirstName(treser.getName())
-                    .setlastName(treser.getSurname())
+                    .setLeaver(treser.getStatus())
+                    .steLevel(treser.getGrade())
+                    .setFamily(treser.getJobFamily())
+                    .setSpecialization(treser.getTechnology())
+                    .setSeniority(treser.getStartDate())
+                    .setLocalization(treser.getOfficeLocation())
+                    .setContractor(treser.getContractType())
+                    .setFirstName(treser.getName())
+                    .setLastName(treser.getSurname())
                     .build();
-            /*} catch (ExcelException e) {
-
-                return null;
-            }*/
-//        }).filter(Objects::nonNull).collect(Collectors.toList());
         }).collect(Collectors.toList());
     }
 }

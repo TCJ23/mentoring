@@ -284,61 +284,67 @@ class ConvertTRSTest {
         LocalDate date = LocalDate.now().minusDays(days);
         return formatter.format(date);
     }
-/*
-    private static TRSMentoringModel newtrsMenModel() {
-        return new TRSMentoringModelBuilder().build();
-    }
 
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
     @DisplayName("5.2.1 - various scenarios in parametrized test")
-    void shouldMapTRSdataToIntermediateModelFields(MyRowExample rowExample) {
-        //given
-        List<TRSMentoringModel> data = new ArrayList<>();
-        //when
+    void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
+        //given & when
         val trsMentoringModels = new ConvertTRS().convertFromRows(Arrays.asList(rowExample.headers, rowExample.input).iterator());
         //then
-        assertEquals(trsMentoringModels.get(0).getFamily(), rowExample.output.getFamily());
+        assertThat(trsMentoringModels.size() == 1).isEqualTo(rowExample.accepted);
+        val model = trsMentoringModels.get(0);
+        val output = rowExample.output;
+//        assertEquals(model.getFamily(), output.getFamily());
+        assertThat(model.getFamily().equals(output.getFamily())).isEqualTo(rowExample.accepted);
+//        assertThat(model.isLeaver() && output.isLeaver()).isEqualTo(rowExample.accepted);
     }
 
-
-    private static Stream<MyRowExample> rowByExamples() {
-
+    private static Stream<RowExample> rowByExamples() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("trs sheet");
         Row headers = createHeaders(sheet);
-        Row row1 = createRow(sheet);
-        row1.createCell(4).setCellValue("AMS");
-        row1.createCell(2).setCellValue("notice period");
-        TRSMentoringModel model = new TRSMentoringModel();
-        model.setFamily(Family.AMS);
-        model.setLeaver(true);
-//        Row row2 = sheet.createRow(2);
-//        Cell leaverCheck = row2.createCell(2);
-//        leaverCheck.setCellValue("notice period");
+        Row row1 = createRow(sheet, 1);
+        /* works even with incorrect case and whitespace */
+        row1.createCell(4).setCellValue(" ams");
+        TRSMentoringModel model1 = new TRSMentoringModel();
+        model1.setFamily(Family.AMS);
+        model1.setLeaver(true);
+        Row row2 = createRow(sheet, 2);
+        TRSMentoringModel model2 = new TRSMentoringModel();
+        row2.createCell(4).setCellValue("wrong data");
+        row2.createCell(2).setCellValue("hired");
+        model2.setFamily(Family.UNDEFINED);
+        TRSMentoringModel model3 = new TRSMentoringModel();
+        Row row3 = createRow(sheet, 3);
+        row3.createCell(2).setCellValue("notice period");
+        model3.setLeaver(true);
+
         return Stream.of(
-                new MyRowExample("Should map Family correctly", row1, model, headers),
-                new MyRowExample("Should detect leaver", row1, model, headers)
+                new RowExample("Should map Family even with lowercase and whitespace ", row1, model1, headers, true),
+                new RowExample("Should map wrong data to UNDEFINED Family ", row2, model2, headers, true)
+//                new RowExample("Should detect leaver ", row3, model3, headers, true)
         );
     }
 
-    private static Row createRow(Sheet sheet) {
-        val row1 = sheet.createRow(1);
-        row1.createCell(0).setCellValue("My name is not null or empty");
-        row1.createCell(6).setCellValue("11-11-2017");
-        return row1;
+    private static Row createRow(Sheet sheet, int rowNum) {
+        val row = sheet.createRow(rowNum);
+        row.createCell(0).setCellValue("My name is not null or empty");
+        row.createCell(6).setCellValue("11-11-2017");
+        return row;
     }
 
     @Value
-    static class MyRowExample {
+    static class RowExample {
         private String scenario;
         private Row input;
         private TRSMentoringModel output;
-        public Row headers;
+        private Row headers;
+        private boolean accepted;
 
         @Override
         public String toString() {
             return scenario;
         }
-    }*/
+    }
 }

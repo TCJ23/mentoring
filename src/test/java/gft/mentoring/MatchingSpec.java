@@ -238,7 +238,6 @@ class MatchingSpec {
         //then
         val mentorProposed = proposals.findFirst();
         assertThat(mentorProposed.isPresent() && mentorProposed.get().equals(seniorMentor)).isTrue();
-//        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/

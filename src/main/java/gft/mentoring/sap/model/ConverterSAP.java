@@ -27,19 +27,19 @@ class ConverterSAP {
         return sapers.stream().map(saper -> new SAPMentoringModelBuilder()
                 /** meaningful logic
                  * @see SAPMentoringModel*/
-                .setlevel(saper.getJob())
-                .setcontractor(saper.getEmployeeSubGrp())
-                .setfamily(saper.getPosition())
+                .setLevel(saper.getJob())
+                .setContractor(saper.getEmployeeSubGrp())
+                .setFamily(saper.getPosition())
                 /** redundant fields
                  * @see SAPMentoringModel*/
-                .setfirstName(saper.getFirstName())
-                .setlastName(saper.getLastName())
-                .setfederationID(saper.getInitials())
-                .setsapID(saper.getPersonalNR())
-                .setspecialization(saper.getCostCenter())
-                .setseniority(saper.getInitEntry())
-                .setlineManagerID(saper.getPersNrSuperior())
-                .setmenteeID(saper.getPersNrMentor())
+                .setFirstName(saper.getFirstName())
+                .setLastName(saper.getLastName())
+                .setFederationID(saper.getInitials())
+                .setSapID(saper.getPersonalNR())
+                .setSpecialization(saper.getCostCenter())
+                .setSeniority(saper.getInitEntry())
+                .setLineManagerID(saper.getPersNrSuperior())
+                .setMenteeID(saper.getPersNrMentor())
                 .build()).collect(Collectors.toList());
     }
 }

@@ -9,7 +9,7 @@ class SAPMentoringModelBuilder {
         return sapMM;
     }
 
-    SAPMentoringModelBuilder setlevel(String s) {
+    SAPMentoringModelBuilder setLevel(String s) {
         try {
             if (s.equalsIgnoreCase("LD")) {
                 sapMM.setLevel(8);
@@ -24,52 +24,52 @@ class SAPMentoringModelBuilder {
         return this;
     }
 
-    SAPMentoringModelBuilder setcontractor(String s) {
+    SAPMentoringModelBuilder setContractor(String s) {
         sapMM.setContractor(s.trim().equalsIgnoreCase("Contractors"));
         return this;
     }
 
-    SAPMentoringModelBuilder setfamily(String s) {
+    SAPMentoringModelBuilder setFamily(String s) {
         sapMM.setFamily(Family.fromString(s));
         return this;
     }
 
-    SAPMentoringModelBuilder setfirstName(String firstName) {
+    SAPMentoringModelBuilder setFirstName(String firstName) {
         sapMM.setFirstName(firstName);
         return this;
     }
 
-    SAPMentoringModelBuilder setlastName(String lastName) {
+    SAPMentoringModelBuilder setLastName(String lastName) {
         sapMM.setLastName(lastName);
         return this;
     }
 
-    SAPMentoringModelBuilder setfederationID(String initials) {
+    SAPMentoringModelBuilder setFederationID(String initials) {
         sapMM.setFederationID(initials);
         return this;
     }
 
-    SAPMentoringModelBuilder setsapID(String personalNR) {
+    SAPMentoringModelBuilder setSapID(String personalNR) {
         sapMM.setSapID(personalNR);
         return this;
     }
 
-    SAPMentoringModelBuilder setspecialization(String costCenter) {
+    SAPMentoringModelBuilder setSpecialization(String costCenter) {
         sapMM.setSpecialization(costCenter);
         return this;
     }
 
-    SAPMentoringModelBuilder setseniority(String initEntry) {
+    SAPMentoringModelBuilder setSeniority(String initEntry) {
         sapMM.setSeniority(initEntry);
         return this;
     }
 
-    SAPMentoringModelBuilder setlineManagerID(String persNrSuperior) {
+    SAPMentoringModelBuilder setLineManagerID(String persNrSuperior) {
         sapMM.setLineManagerID(persNrSuperior);
         return this;
     }
 
-    SAPMentoringModelBuilder setmenteeID(String persNrMentor) {
+    SAPMentoringModelBuilder setMenteeID(String persNrMentor) {
         sapMM.setMenteeID(persNrMentor);
         return this;
     }
