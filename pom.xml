@@ -118,7 +118,7 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
-                                <sleep seconds="360"/>
+                                <sleep seconds="66666"/>
                             </target>
                         </configuration>
                         <goals>
