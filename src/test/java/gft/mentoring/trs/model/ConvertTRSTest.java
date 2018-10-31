@@ -1,3 +1,4 @@
+/*
 package gft.mentoring.trs.model;
 
 import gft.mentoring.Family;
@@ -305,7 +306,9 @@ class ConvertTRSTest {
         Sheet sheet = wb.createSheet("trs sheet");
         Row headers = createHeaders(sheet);
         Row row1 = createRow(sheet, 1);
-        /* works even with incorrect case and whitespace */
+        */
+/* works even with incorrect case and whitespace *//*
+
         row1.createCell(4).setCellValue(" ams");
         TRSMentoringModel model1 = new TRSMentoringModel();
         model1.setFamily(Family.AMS);
@@ -347,4 +350,4 @@ class ConvertTRSTest {
             return scenario;
         }
     }
-}
+}*/
