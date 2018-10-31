@@ -14,30 +14,28 @@ class ConvertTRS {
         TRSInput input = new TRSInput();
         val tresers = input.readExcelTRSfile(file);
         val filteredSapers = input.filterInvalid(tresers);
-        return getTRSMentoringModel(filteredSapers);
+        return createTRSIntermediateMentoringModel(filteredSapers);
     }
 
-    List<TRSMentoringModel> convertFromRows(Iterator<Row> data) {
+    List<TRSMentoringModel> convertFilteredRows(Iterator<Row> data) {
         TRSInput input = new TRSInput();
-        val headers = input.getHeaders(data.next());
-        val tresers = input.readRowsTRS(headers, data);
-        val filteredTresers = input.filterInvalid(tresers);
-        return getTRSMentoringModel(filteredTresers);
+        List<String> headers = input.getHeaders(data.next());
+        List<TRSModel> tresers = input.readRowsTRS(headers, data);
+        List<TRSModel> filteredTresers = input.filterInvalid(tresers);
+        return createTRSIntermediateMentoringModel(filteredTresers);
     }
 
-    List<TRSMentoringModel> getTRSMentoringModel(List<TRSModel> tresers) {
-        return tresers.stream().map(treser -> {
-            return new TRSMentoringModelBuilder()
-                    .setLeaver(treser.getStatus())
-                    .setLevel(treser.getGrade())
-                    .setFamily(treser.getJobFamily())
-                    .setSpecialization(treser.getTechnology())
-                    .setSeniority(treser.getStartDate())
-                    .setLocalization(treser.getOfficeLocation())
-                    .setContractor(treser.getContractType())
-                    .setFirstName(treser.getName())
-                    .setLastName(treser.getSurname())
-                    .build();
-        }).collect(Collectors.toList());
+    List<TRSMentoringModel> createTRSIntermediateMentoringModel(List<TRSModel> tresers) {
+        return tresers.stream().map(treser -> new TRSMentoringModelBuilder()
+                .setLeaver(treser.getStatus())
+                .setLevel(treser.getGrade())
+                .setFamily(treser.getJobFamily())
+                .setSpecialization(treser.getTechnology())
+                .setSeniority(treser.getStartDate())
+                .setLocalization(treser.getOfficeLocation())
+                .setContractor(treser.getContractType())
+                .setFirstName(treser.getName())
+                .setLastName(treser.getSurname())
+                .build()).collect(Collectors.toList());
     }
 }
