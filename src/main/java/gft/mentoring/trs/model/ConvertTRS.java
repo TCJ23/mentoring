@@ -12,15 +12,17 @@ import java.util.stream.Collectors;
 class ConvertTRS {
     List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
         TRSInput input = new TRSInput();
-        List<TRSModel> sapers = input.readExcelTRSfile(file);
-        return getTRSMentoringModel(sapers);
+        val tresers = input.readExcelTRSfile(file);
+        val filteredSapers = input.filterInvalid(tresers);
+        return getTRSMentoringModel(filteredSapers);
     }
 
     List<TRSMentoringModel> convertFromRows(Iterator<Row> data) {
         TRSInput input = new TRSInput();
         val headers = input.getHeaders(data.next());
         val tresers = input.readRowsTRS(headers, data);
-        return getTRSMentoringModel(tresers);
+        val filteredTresers = input.filterInvalid(tresers);
+        return getTRSMentoringModel(filteredTresers);
     }
 
     List<TRSMentoringModel> getTRSMentoringModel(List<TRSModel> tresers) {

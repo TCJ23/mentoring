@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,6 +31,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("5 - main class for validating TRS conversion to intermediate Mentoring Model ")
 class ConvertTRSTest {
     private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
+    private static final int firstRow = 0;
+    private static final int nameCol = 0;
+    private static final int surnameCol = 1;
+    private static final int statsCol = 2;
+    private static final int jobFamilyCol = 4;
+    private static final int gradeCol = 3;
+    private static final int technologyCol = 5;
+    private static final int startDateCol = 6;
+    private static final int officeLocationCol = 7;
+    private static final int contractTypeCol = 8;
+    private static final String validatorCheck = "Validator ensures this column cannot be empty";
+
 
     @Test
     @DisplayName("5.1.1 - Should detect if person is leaving GFT, just hired or permanent employee")
@@ -161,7 +174,7 @@ class ConvertTRSTest {
     }
 
     @NotNull
-    private static Row createRow(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
+    private static Row applyDataToRowsInSheet(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
         Row row = sheet.createRow(rowNum);
         for (int i = 0; i < dataLength; i++) {
             String value = dataProvider.apply(i);
@@ -179,7 +192,7 @@ class ConvertTRSTest {
         List<Row> data = new ArrayList<>();
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("trs sheet");
-        Row headers = createHeaders(sheet);
+        Row headers = applyColumnNamesToSpreadSheet(sheet);
         data.add(headers);
         short lastColumn = headers.getLastCellNum();
         Function<Integer, String> data1 = i -> {
@@ -200,7 +213,7 @@ class ConvertTRSTest {
                     return null;
             }
         };
-        Row row1 = createRow(1, sheet, lastColumn, data1);
+        Row row1 = applyDataToRowsInSheet(1, sheet, lastColumn, data1);
         Function<Integer, String> data2 = i -> {
             switch (i) {
                 case 2:
@@ -219,7 +232,7 @@ class ConvertTRSTest {
                     return null;
             }
         };
-        Row row2 = createRow(2, sheet, lastColumn, data2);
+        Row row2 = applyDataToRowsInSheet(2, sheet, lastColumn, data2);
         Function<Integer, String> data3 = i -> {
             switch (i) {
                 case 2:
@@ -236,7 +249,7 @@ class ConvertTRSTest {
                     return null;
             }
         };
-        Row row3 = createRow(3, sheet, lastColumn, data3);
+        Row row3 = applyDataToRowsInSheet(3, sheet, lastColumn, data3);
 
         Function<Integer, String> data4 = i -> {
             switch (i) {
@@ -246,7 +259,7 @@ class ConvertTRSTest {
                     return null;
             }
         };
-        Row row4 = createRow(4, sheet, lastColumn, data4);
+        Row row4 = applyDataToRowsInSheet(4, sheet, lastColumn, data4);
 
         data.add(row1);
         data.add(row2);
@@ -255,27 +268,40 @@ class ConvertTRSTest {
         return data;
     }
 
-    @NotNull
-    private static Row createHeaders(Sheet sheet) {
-        Row headers = sheet.createRow(0);
-        Cell cell0 = headers.createCell(0);
+    /*@NotNull
+    private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
+        Row headers = sheet.createRow(firstRow);
+        Cell cell0 = headers.createCell(nameCol);
         cell0.setCellValue("name");
-        Cell cell1 = headers.createCell(1);
+        Cell cell1 = headers.createCell(surnameCol);
         cell1.setCellValue("surname");
-        Cell cell2 = headers.createCell(2);
+        Cell cell2 = headers.createCell(statsCol);
         cell2.setCellValue("status");
-        Cell cell3 = headers.createCell(3);
+        Cell cell3 = headers.createCell(gradeCol);
         cell3.setCellValue("grade");
-        Cell cell4 = headers.createCell(4);
+        Cell cell4 = headers.createCell(jobFamilyCol);
         cell4.setCellValue("job family");
-        Cell cell5 = headers.createCell(5);
+        Cell cell5 = headers.createCell(technologyCol);
         cell5.setCellValue("technology");
-        Cell cell6 = headers.createCell(6);
+        Cell cell6 = headers.createCell(startDateCol);
         cell6.setCellValue("start date");
-        Cell cell7 = headers.createCell(7);
+        Cell cell7 = headers.createCell(officeLocationCol);
         cell7.setCellValue("office location");
-        Cell cell8 = headers.createCell(8);
+        Cell cell8 = headers.createCell(contractTypeCol);
         cell8.setCellValue("contract type");
+        return headers;
+    }*/
+    @NotNull
+    private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
+        String[] columnNames = new String[]{"name", "surname", "status", "grade", "job family", "technology",
+                "start date", "office location", "contract type"};
+        Row headers = sheet.createRow(firstRow);
+        int columnAmount = 0;
+        for (String columnName : columnNames) {
+            Cell cell = headers.createCell(columnAmount);
+            cell.setCellValue(columnName);
+            columnAmount++;
+        }
         return headers;
     }
 
@@ -290,56 +316,62 @@ class ConvertTRSTest {
     @DisplayName("5.2.1 - various scenarios in parametrized test")
     void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
         //given & when
-        val trsMentoringModels = new ConvertTRS().convertFromRows(Arrays.asList(rowExample.headers, rowExample.input).iterator());
+        val trsMentoringModels = new ConvertTRS().convertFromRows(Arrays.asList(rowExample.headers, rowExample.testData)
+                .iterator());
         //then
-        assertThat(trsMentoringModels.size() == 1).isEqualTo(rowExample.accepted);
-        val model = trsMentoringModels.get(0);
-        val output = rowExample.output;
-//        assertEquals(model.getFamily(), output.getFamily());
-        assertThat(model.getFamily().equals(output.getFamily())).isEqualTo(rowExample.accepted);
-//        assertThat(model.isLeaver() && output.isLeaver()).isEqualTo(rowExample.accepted);
+        val actual = trsMentoringModels.get(0);
+//        assertEquals(rowExample.expected, actual);
+        Assertions.assertEquals(rowExample.expected, actual);
     }
 
     private static Stream<RowExample> rowByExamples() {
         Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("trs sheet");
-        Row headers = createHeaders(sheet);
-        Row row1 = createRow(sheet, 1);
-        /* works even with incorrect case and whitespace */
-        row1.createCell(4).setCellValue(" ams");
-        TRSMentoringModel model1 = new TRSMentoringModel();
-        model1.setFamily(Family.AMS);
-        model1.setLeaver(true);
-        Row row2 = createRow(sheet, 2);
-        TRSMentoringModel model2 = new TRSMentoringModel();
-        row2.createCell(4).setCellValue("wrong data");
-        row2.createCell(2).setCellValue("hired");
-        model2.setFamily(Family.UNDEFINED);
-        TRSMentoringModel model3 = new TRSMentoringModel();
-        Row row3 = createRow(sheet, 3);
-        row3.createCell(2).setCellValue("notice period");
-        model3.setLeaver(true);
+        Sheet sheet = wb.createSheet("trs testing sheet");
+        Row headers = applyColumnNamesToSpreadSheet(sheet);
+
+        val emptyRow = addRowToSheet(sheet, 1);
+//        Row emptyRow = sheet.createRow(1);
+//        emptyRow.createCell(nameCol).setCellValue("X");
+        emptyRow.createCell(surnameCol).setCellValue("");
+        emptyRow.createCell(statsCol).setCellValue("");
+        emptyRow.createCell(jobFamilyCol).setCellValue("");
+        emptyRow.createCell(gradeCol).setCellValue("");
+        emptyRow.createCell(technologyCol).setCellValue("");
+        emptyRow.createCell(startDateCol).setCellValue("");
+        emptyRow.createCell(officeLocationCol).setCellValue("");
+        emptyRow.createCell(contractTypeCol).setCellValue("");
+
+        TRSMentoringModel emptyModel = new TRSMentoringModel();
+        emptyModel.setFirstName(validatorCheck);
+        emptyModel.setLastName("");
+        emptyModel.setSpecialization("");
+        emptyModel.setLocalization("");
+        emptyModel.setContractor(false);
+        emptyModel.setSeniority(0);
+        emptyModel.setLevel(0);
+        emptyModel.setFamily(Family.UNDEFINED);
+        emptyModel.setLeaver(false);
 
         return Stream.of(
-                new RowExample("Should map Family even with lowercase and whitespace ", row1, model1, headers, true),
-                new RowExample("Should map wrong data to UNDEFINED Family ", row2, model2, headers, true)
-//                new RowExample("Should detect leaver ", row3, model3, headers, true)
+                new RowExample("Empty row should create empty model with default values if they exists ", emptyRow, emptyModel, headers)
+//                new RowExample("Should map wrong data to UNDEFINED Family ", row2, model2, headers)
         );
     }
-    private static Row createRow(Sheet sheet, int rowNum) {
+
+    /* parameters are being modified, not produced hence naming convention */
+    private static Row addRowToSheet(Sheet sheet, int rowNum) {
         val row = sheet.createRow(rowNum);
-        row.createCell(0).setCellValue("My name is not null or empty");
-        row.createCell(6).setCellValue("11-11-2017");
+        row.createCell(nameCol).setCellValue(validatorCheck);
+//        row.createCell(6).setCellValue("11-11-2017");
         return row;
     }
 
     @Value
     static class RowExample {
         private String scenario;
-        private Row input;
-        private TRSMentoringModel output;
+        private Row testData;
+        private TRSMentoringModel expected;
         private Row headers;
-        private boolean accepted;
 
         @Override
         public String toString() {

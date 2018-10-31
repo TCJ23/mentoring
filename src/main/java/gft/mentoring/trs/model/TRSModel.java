@@ -5,6 +5,7 @@ import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.SAPMentoringModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
 /**
  * @author tzje
