@@ -100,8 +100,10 @@
                 <version>2.22.1</version>
                 <configuration>
                     <!--this parameter helped to fix build failure-->
-                    <!--<forkCount>0</forkCount>-->
-                    <forkMode>never</forkMode>
+                    <!--<forkCount>0</forkCount>--> <!-- this line breaks JaCoCo Agent -->
+                    <!--<forkMode>never</forkMode>--> <!-- this line breaks JaCoCo Agent -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Spec.java</include>
