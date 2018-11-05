@@ -25,7 +25,7 @@ public enum Family {
 
     public static Family fromString(String name) {
         for (Family family : Family.values()) {
-            if (family.getName().equals(name)) {
+            if (family.getName().equalsIgnoreCase(name.trim().toLowerCase())) {
                 return family;
             }
         }

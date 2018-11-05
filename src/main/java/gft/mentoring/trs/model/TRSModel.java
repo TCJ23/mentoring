@@ -3,8 +3,10 @@ package gft.mentoring.trs.model;
 import gft.mentoring.Family;
 import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.SAPMentoringModel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
 /**
  * @author tzje

@@ -20,6 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("4 - Main Class for validating TRS INPUT")
 class TRSInputTest {
     private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
 
@@ -29,9 +30,14 @@ class TRSInputTest {
         //given
         TRSInput trsInput = new TRSInput();
         Workbook workbook = WorkbookFactory.create(new File(TRS_FILE));
+        /** we decrease by 1 because of 1st row is composed of column names*/
+        int headerColumns = 1;
+        val notNullRows = trsInput.notNullRows(workbook);
+        val rowsSize = notNullRows - headerColumns;
         //when
         val models = trsInput.readExcelTRSfile(TRS_FILE);
         //then
+        assertThat(models).size().isEqualTo(rowsSize);
         assertThat(models).size().isEqualTo(31);
     }
 
@@ -62,6 +68,22 @@ class TRSInputTest {
     void fileNotFound() {
         Throwable exception = assertThrows(ExcelException.class, () -> new TRSInput().readExcelTRSfile(TRS_FILE + "empty place"));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
+    }
+
+    @Test
+    @DisplayName("4.1.1d -IllegalArgumentException(Column name not found in spreadsheet")
+    void IllegalArgumentException() {
+        TRSInput trsInput = new TRSInput();
+        Row columns = createWRONGHeadersTRS();
+        List<String> headers = trsInput.getHeaders(columns);
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("trs sheet");
+        Row emptyRow = sheet.createRow(1);
+        List<Row> emptyData = new ArrayList<>();
+        emptyData.add(emptyRow);
+        Throwable exception = assertThrows(IllegalArgumentException.class,
+                () -> new TRSInput().readRowsTRS(headers, emptyData.iterator()));
+        assertThat(exception.getMessage()).contains("not found in spreadsheet");
     }
 
     @Test
@@ -105,7 +127,6 @@ class TRSInputTest {
         }
         data.add(row1);
         //when
-//        List<SAPmodel> trsModels = createSAPModel.readRowsSAP(headers, data.iterator());
         val trsModels = createTRSmodel.readRowsTRS(headers, data.iterator());
         val model = trsModels.get(0);
         //then
@@ -120,5 +141,33 @@ class TRSInputTest {
                 () -> assertEquals("TRS model", model.getOfficeLocation()),
                 () -> assertEquals("TRS model", model.getContractType())
         );
+    }
+
+    private static Row createWRONGHeadersTRS() {
+        Workbook wb = new XSSFWorkbook();
+        CreationHelper createHelper = wb.getCreationHelper();
+        Sheet sheet = wb.createSheet("trs sheet");
+        List<Row> columnNames = new ArrayList<>();
+        Row row0 = sheet.createRow(0);
+        Cell cell1 = row0.createCell(0);
+        cell1.setCellValue("THIS HEADER IS WRONG");
+        Cell cell2 = row0.createCell(1);
+        cell2.setCellValue("surname");
+        Cell cell3 = row0.createCell(2);
+        cell3.setCellValue("status");
+        Cell cell4 = row0.createCell(3);
+        cell4.setCellValue("grade");
+        Cell cell5 = row0.createCell(4);
+        cell5.setCellValue("technology");
+        Cell cell6 = row0.createCell(5);
+        cell6.setCellValue("job family");
+        Cell cell7 = row0.createCell(6);
+        cell7.setCellValue("start date");
+        Cell cell8 = row0.createCell(7);
+        cell8.setCellValue("office location");
+        Cell cell9 = row0.createCell(8);
+        cell9.setCellValue("contract type");
+        columnNames.add(row0);
+        return row0;
     }
 }

@@ -59,7 +59,6 @@ class TRSInput {
         trsModels.put(headerIndex(headers, "contract type"), (cell, treser) -> treser.setContractType(dateFromCell(cell)));
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createTRSmodelFromRow(row, trsModels))
-                .filter(validator)
                 .collect(Collectors.toList());
     }
 
@@ -71,6 +70,10 @@ class TRSInput {
         } else {
             throw new IllegalArgumentException("Column name '" + name + "' not found in spreadsheet");
         }
+    }
+
+    List<TRSModel> filterInvalid(List<TRSModel> list) {
+        return list.stream().filter(validator).collect(Collectors.toList());
     }
 
     class Validator implements Predicate<TRSModel> {

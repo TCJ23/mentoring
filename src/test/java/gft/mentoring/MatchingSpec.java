@@ -25,6 +25,18 @@ class MatchingSpec {
      Architecture Digital
      Data
      we can assign Mentors from above Families treated as one*/
+
+    /*Base models for testing*/
+    private static MentoringModel.MentoringModelBuilder newMentor() {
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
+                "Lodz", false, false, 0, 23).toBuilder();
+    }
+
+    private static MentoringModel.MentoringModelBuilder newMentee() {
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
+                "Lodz", false, true, 0, 23).toBuilder();
+    }
+
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("singleMatchingParam")
     @DisplayName("1.1 - Check if MatchingEngine proposes mentors correctly per Family")
@@ -59,10 +71,12 @@ class MatchingSpec {
 
     @Value
     static class SingleMatchingParam {
+        //input
         private String scenario;
         private Family menteeFamily;
         private Family mentorCandidateFamily;
         private boolean contractor;
+        //output
         private boolean accepted;
 
         @Override
@@ -224,7 +238,6 @@ class MatchingSpec {
         //then
         val mentorProposed = proposals.findFirst();
         assertThat(mentorProposed.isPresent() && mentorProposed.get().equals(seniorMentor)).isTrue();
-//        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
@@ -503,16 +516,5 @@ class MatchingSpec {
         val proposals = matchingEngine.findProposals(mentee, mentor);
 
         Assertions.assertThat(proposals).containsExactly(mentor);
-    }
-
-
-    private static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", false, false, 0, 23).toBuilder();
-    }
-
-    private static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, true, 0, 23).toBuilder();
     }
 }
