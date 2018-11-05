@@ -15,7 +15,10 @@ public class PreferDevManFromSameSpecializationStrategy implements VotingStrateg
     @Override
     public VotingResult calculateSympathy(@NotNull MentoringModel mentee, @NotNull MentoringModel mentor) {
 
-        if (Objects.equals(mentee.getSpecialization(), mentor.getSpecialization())) return new Support(25);
+
+//        if (Objects.equals(mentee.getSpecialization(), mentor.getSpecialization())) return new Support(25);
+        /** Calibration -> new Support with Value 25 will NOT BRAKE any tests that's why we returned to original value 100*/
+        if (Objects.equals(mentee.getSpecialization(), mentor.getSpecialization())) return new Support(100);
 
         return Neutral.INSTANCE;
     }

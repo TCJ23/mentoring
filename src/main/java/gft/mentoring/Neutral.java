@@ -1,6 +1,6 @@
 package gft.mentoring;
 
-public class Neutral extends VotingResult{
+public class Neutral implements VotingResult{
 
     public static final Neutral INSTANCE = new Neutral();
 

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Main Class to test MatchingEngine")
+@DisplayName("1 - Main Class to test MatchingEngine")
 class MatchingSpec {
 
     /* This test if to meet requirement 1.1 in REQUIREMENTS.md
@@ -25,6 +25,18 @@ class MatchingSpec {
      Architecture Digital
      Data
      we can assign Mentors from above Families treated as one*/
+
+    /*Base models for testing*/
+    private static MentoringModel.MentoringModelBuilder newMentor() {
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
+                "Lodz", false, false, 0, 23).toBuilder();
+    }
+
+    private static MentoringModel.MentoringModelBuilder newMentee() {
+        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
+                "Lodz", false, true, 0, 23).toBuilder();
+    }
+
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("singleMatchingParam")
     @DisplayName("1.1 - Check if MatchingEngine proposes mentors correctly per Family")
@@ -59,10 +71,12 @@ class MatchingSpec {
 
     @Value
     static class SingleMatchingParam {
+        //input
         private String scenario;
         private Family menteeFamily;
         private Family mentorCandidateFamily;
         private boolean contractor;
+        //output
         private boolean accepted;
 
         @Override
@@ -224,7 +238,6 @@ class MatchingSpec {
         //then
         val mentorProposed = proposals.findFirst();
         assertThat(mentorProposed.isPresent() && mentorProposed.get().equals(seniorMentor)).isTrue();
-//        assertThat(mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
     /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
@@ -389,7 +402,8 @@ class MatchingSpec {
         val lowerSeniorityMentor = newMentor().seniority(1 * 365).level(6).build();
         val higherSeniorityMentor = newMentor().seniority(4 * 365).level(5).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, lowerSeniorityMentor, higherSeniorityMentor).collect(Collectors.toList());
+        val proposals = new MatchingEngine().findProposals(mentee, lowerSeniorityMentor, higherSeniorityMentor)
+                .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(higherSeniorityMentor)).isTrue();
@@ -406,7 +420,8 @@ class MatchingSpec {
         val mentorAt30YearsOld = newMentor().age(30).build();
         val mentorAt40YearsOld = newMentor().age(40).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld).collect(Collectors.toList());
+        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld)
+                .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
@@ -501,16 +516,5 @@ class MatchingSpec {
         val proposals = matchingEngine.findProposals(mentee, mentor);
 
         Assertions.assertThat(proposals).containsExactly(mentor);
-    }
-
-
-    private static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", false, false, 0, 23).toBuilder();
-    }
-
-    private static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, true, 0, 23).toBuilder();
     }
 }
