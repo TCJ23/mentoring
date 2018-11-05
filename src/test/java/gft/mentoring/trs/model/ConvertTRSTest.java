@@ -338,7 +338,7 @@ class ConvertTRSTest {
 //        TRSModel actualBasicModel = baseModels.get(0);
         val actualIntermediateModel = dataConversion.createTRSIntermediateMentoringModel(baseModels);
         //then
-
+/*comment*/
 //        assertEquals(rowExample.expected, actualBasicModel);
 //        Assertions.assertEquals(rowExample.expected, actualBasicModel);
 /*        assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
