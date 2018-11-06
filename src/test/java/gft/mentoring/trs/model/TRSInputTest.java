@@ -28,7 +28,7 @@ class TRSInputTest {
     @DisplayName("4.1.1 - should create 31 TRS models from sample excel file")
     void shouldCreate31TRSmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
         //given
-        TRSInput trsInput = new TRSInput();
+        TRSInputReader trsInput = new TRSInputReader();
         Workbook workbook = WorkbookFactory.create(new File(TRS_FILE));
     //* we decrease by 1 because of 1st row is composed of column names
         int headerColumns = 1;
@@ -47,7 +47,7 @@ class TRSInputTest {
         File tempFile = File.createTempFile("123", "");
         FileChannel channel = new RandomAccessFile(tempFile.getName(), "rw").getChannel();
         FileLock lock = channel.lock();
-        Throwable exception = assertThrows(EmptyFileException.class, () -> new TRSInput().readExcelTRSfile(tempFile.getName()));
+        Throwable exception = assertThrows(EmptyFileException.class, () -> new TRSInputReader().readExcelTRSfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("The supplied file was empty (zero bytes long)");
         System.out.println(exception.getMessage());
         lock.close();
@@ -61,7 +61,7 @@ class TRSInputTest {
 
     void exceptionInvalidFormat() throws IOException {
         File tempFile = File.createTempFile("123", "");
-        Throwable exception = assertThrows(ExcelException.class, () -> new TRSInput().readExcelTRSfile(tempFile.getName()));
+        Throwable exception = assertThrows(ExcelException.class, () -> new TRSInputReader().readExcelTRSfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
     }
@@ -69,14 +69,14 @@ class TRSInputTest {
     @Test
     @DisplayName("4.1.1c - test FileNotFoundException when SAP file is not there")
     void fileNotFound() {
-        Throwable exception = assertThrows(ExcelException.class, () -> new TRSInput().readExcelTRSfile(TRS_FILE + "empty place"));
+        Throwable exception = assertThrows(ExcelException.class, () -> new TRSInputReader().readExcelTRSfile(TRS_FILE + "empty place"));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
     }
 
     @Test
     @DisplayName("4.1.1d -IllegalArgumentException(Column name not found in spreadsheet")
     void IllegalArgumentException() {
-        TRSInput trsInput = new TRSInput();
+        TRSInputReader trsInput = new TRSInputReader();
         Row columns = createWRONGHeadersTRS();
         List<String> headers = trsInput.getHeaders(columns);
         Workbook wb = new XSSFWorkbook();
@@ -85,7 +85,7 @@ class TRSInputTest {
         List<Row> emptyData = new ArrayList<>();
         emptyData.add(emptyRow);
         Throwable exception = assertThrows(IllegalArgumentException.class,
-                () -> new TRSInput().readRowsTRS(headers, emptyData.iterator()));
+                () -> new TRSInputReader().readRowsTRS(headers, emptyData.iterator()));
         assertThat(exception.getMessage()).contains("not found in spreadsheet");
     }
 
@@ -93,7 +93,7 @@ class TRSInputTest {
     @DisplayName("4.1.6 - create 1 TRS model from Row without excel file")
     void shouldCreateSingleTRSmodelFromRow() {
         //given
-        TRSInput createTRSmodel = new TRSInput();
+        TRSInputReader createTRSmodel = new TRSInputReader();
         Workbook wb = new XSSFWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet("trs sheet");

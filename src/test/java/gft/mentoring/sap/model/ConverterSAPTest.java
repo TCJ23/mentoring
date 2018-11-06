@@ -1,4 +1,3 @@
-/*
 package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
@@ -153,4 +152,3 @@ class ConverterSAPTest {
         return data;
     }
 }
-*/

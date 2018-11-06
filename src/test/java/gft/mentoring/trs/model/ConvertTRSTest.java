@@ -1,4 +1,3 @@
-/*
 package gft.mentoring.trs.model;
 
 import gft.mentoring.Family;
@@ -20,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -270,8 +270,7 @@ class ConvertTRSTest {
         return data;
     }
 
-    */
-/*@NotNull
+    /*@NotNull
     private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
         Row headers = sheet.createRow(firstRow);
         Cell cell0 = headers.createCell(nameCol);
@@ -293,8 +292,7 @@ class ConvertTRSTest {
         Cell cell8 = headers.createCell(contractTypeCol);
         cell8.setCellValue("contract type");
         return headers;
-    }*//*
-
+    }*/
     @NotNull
     private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
         Row headers = sheet.createRow(firstRow);
@@ -326,43 +324,29 @@ class ConvertTRSTest {
         return formatter.format(date);
     }
 
-*/
-/*    @ParameterizedTest(name = "{index} => {0}")
+    @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
     @DisplayName("5.2.1 - various scenarios in parametrized test")
-    void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
+    void shouldMapTRSinputToIntermediateModelFields(RowExample rowExample) {
         //given
-        TRSInput dataInput = new TRSInput();
         ConvertTRS dataConversion = new ConvertTRS();
-       *//*
-*/
-/* val trsMentoringModels = new ConvertTRS().convertFilteredRows(Arrays.asList(rowExample.headers, rowExample.testData)
-                .iterator());*//*
-*/
-/*
+        val trsMentoringModels = new ConvertTRS().convertFilteredRows(Arrays.asList(rowExample.headers, rowExample.testData)
+                .iterator());
+
+        val dataInput = new TRSInputReader();
         val headers = dataInput.getHeaders(applyColNamesToSingleRow());
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
-        val baseModels = dataInput.readRowsTRS(headers, singleRowData);
-//        TRSModel actualBasicModel = baseModels.get(0);
-        val actualIntermediateModel = dataConversion.createTRSIntermediateMentoringModel(baseModels);
+        val rawData = dataInput.readRowsTRS(headers, singleRowData);
+        val actualBasicModel = rawData.get(0);
+        val actualIntermediateModel = dataConversion.createTRSMentoringModel(rawData);
         //then
-*//*
-*/
-/*comment*//*
-*/
-/*
 //        assertEquals(rowExample.expected, actualBasicModel);
 //        Assertions.assertEquals(rowExample.expected, actualBasicModel);
-*//*
-*/
-/*        assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
+        assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
         assertThat(actualBasicModel.getName()).isEqualTo(rowExample.expected.getFirstName());
         assertThat(actualBasicModel.getJobFamily()).isEqualTo(rowExample.expected.getFamily());
-        assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());*//*
-*/
-/*
-    }*//*
-
+        assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());
+    }
 
     private static Stream<RowExample> rowByExamples() {
         Workbook wb = new XSSFWorkbook();
@@ -372,26 +356,22 @@ class ConvertTRSTest {
         val emptyRow = addRowToSheet(sheet, 1);
 //        Row emptyRow = sheet.createRow(1);
 //        emptyRow.createCell(nameCol).setCellValue("X");
-     */
-/*   emptyRow.createCell(surnameCol).setCellValue("");
+     /*   emptyRow.createCell(surnameCol).setCellValue("");
         emptyRow.createCell(statsCol).setCellValue("");
         emptyRow.createCell(jobFamilyCol).setCellValue("");
         emptyRow.createCell(gradeCol).setCellValue("");
         emptyRow.createCell(technologyCol).setCellValue("");
         emptyRow.createCell(startDateCol).setCellValue("");
         emptyRow.createCell(officeLocationCol).setCellValue("");
-        emptyRow.createCell(contractTypeCol).setCellValue("");*//*
-
+        emptyRow.createCell(contractTypeCol).setCellValue("");*/
 
         TRSMentoringModel emptyModel = new TRSMentoringModel();
         emptyModel.setFirstName(validatorCheck);
 
-        */
-/*emptyModel.setLastName("");
+        /*emptyModel.setLastName("");
         emptyModel.setSpecialization("");
         emptyModel.setLocalization("");
-*//*
-
+*/
         emptyModel.setContractor(false);
         emptyModel.setSeniority(0);
         emptyModel.setLevel(0);
@@ -405,9 +385,7 @@ class ConvertTRSTest {
         );
     }
 
-    */
-/* parameters are being modified, not produced hence naming convention *//*
-
+    /* parameters are being modified, not produced hence naming convention */
     private static Row addRowToSheet(Sheet sheet, int rowNum) {
         val row = sheet.createRow(rowNum);
         row.createCell(nameCol).setCellValue(validatorCheck);
@@ -427,4 +405,4 @@ class ConvertTRSTest {
             return scenario;
         }
     }
-}*/
+}
