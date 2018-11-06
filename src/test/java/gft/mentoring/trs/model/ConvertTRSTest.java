@@ -324,7 +324,7 @@ class ConvertTRSTest {
         return formatter.format(date);
     }
 
-    @ParameterizedTest(name = "{index} => {0}")
+   /* @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
     @DisplayName("5.2.1 - various scenarios in parametrized test")
     void shouldMapTRSinputToIntermediateModelFields(RowExample rowExample) {
@@ -346,7 +346,7 @@ class ConvertTRSTest {
         assertThat(actualBasicModel.getName()).isEqualTo(rowExample.expected.getFirstName());
         assertThat(actualBasicModel.getJobFamily()).isEqualTo(rowExample.expected.getFamily());
         assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());
-    }
+    }*/
 
     private static Stream<RowExample> rowByExamples() {
         Workbook wb = new XSSFWorkbook();
