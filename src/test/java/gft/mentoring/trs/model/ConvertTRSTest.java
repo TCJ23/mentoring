@@ -323,29 +323,29 @@ class ConvertTRSTest {
         return formatter.format(date);
     }
 
-    @ParameterizedTest(name = "{index} => {0}")
+/*    @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
     @DisplayName("5.2.1 - various scenarios in parametrized test")
     void shouldMapTRSdataToIntermediateModelFields(RowExample rowExample) {
         //given
         TRSInput dataInput = new TRSInput();
         ConvertTRS dataConversion = new ConvertTRS();
-       /* val trsMentoringModels = new ConvertTRS().convertFilteredRows(Arrays.asList(rowExample.headers, rowExample.testData)
-                .iterator());*/
+       *//* val trsMentoringModels = new ConvertTRS().convertFilteredRows(Arrays.asList(rowExample.headers, rowExample.testData)
+                .iterator());*//*
         val headers = dataInput.getHeaders(applyColNamesToSingleRow());
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
         val baseModels = dataInput.readRowsTRS(headers, singleRowData);
 //        TRSModel actualBasicModel = baseModels.get(0);
         val actualIntermediateModel = dataConversion.createTRSIntermediateMentoringModel(baseModels);
         //then
-/*comment*/
+*//*comment*//*
 //        assertEquals(rowExample.expected, actualBasicModel);
 //        Assertions.assertEquals(rowExample.expected, actualBasicModel);
-/*        assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
+*//*        assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
         assertThat(actualBasicModel.getName()).isEqualTo(rowExample.expected.getFirstName());
         assertThat(actualBasicModel.getJobFamily()).isEqualTo(rowExample.expected.getFamily());
-        assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());*/
-    }
+        assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());*//*
+    }*/
 
     private static Stream<RowExample> rowByExamples() {
         Workbook wb = new XSSFWorkbook();
