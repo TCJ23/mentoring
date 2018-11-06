@@ -1,3 +1,4 @@
+/*
 package gft.mentoring;
 
 import lombok.Value;
@@ -16,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("1 - Main Class to test MatchingEngine")
 class MatchingSpec {
 
-    /* This test if to meet requirement 1.1 in REQUIREMENTS.md
+    */
+/* This test if to meet requirement 1.1 in REQUIREMENTS.md
      in @ParameterizedTest you either keep
      your testmethod name and method source name the same or use parameters as below
      This class should test MatchingEngine().findProposals
@@ -24,9 +26,12 @@ class MatchingSpec {
      Project Development
      Architecture Digital
      Data
-     we can assign Mentors from above Families treated as one*/
+     we can assign Mentors from above Families treated as one*//*
 
-    /*Base models for testing*/
+
+    */
+/*Base models for testing*//*
+
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
                 "Lodz", false, false, 0, 23).toBuilder();
@@ -85,7 +90,9 @@ class MatchingSpec {
         }
     }
 
-    /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.2 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.2 - From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {
@@ -118,7 +125,9 @@ class MatchingSpec {
     }
 
 
-    /*This test if to meet requirement 1.3 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.3 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.3 - Validate that in Corporate Services MatchingEngine prefers same specialization")
     void shouldFindMatchingSpecializationInCorporateServices() {
@@ -132,7 +141,9 @@ class MatchingSpec {
         Assertions.assertThat(proposals).containsExactly(mentor2);
     }
 
-    /*This test if to meet requirement 1.4 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.4 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.4 - Validate SENIORITY for mentor")
     void shouldValidateThatMentorHasAtLeastOneYearOfSeniority() {
@@ -145,7 +156,9 @@ class MatchingSpec {
         Assertions.assertThat(proposals).containsExactly(justSeniorMentor);
     }
 
-    /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.5 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.5 - Validate same LOCALIZATION preference")
     void shouldPreferSameLocalizationBetweenMenteeAndMentor() {
@@ -161,7 +174,9 @@ class MatchingSpec {
         assertThat(proposals.limit(1)).containsExactly(sameLocalizationMentor);
     }
 
-    /*This test if to meet requirement 1.5 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.5 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.5 - Validate that DIFFERENT LOCALIZATION doesn't REJECT candidate")
     void shouldNotRejectDifferentLocalizationBetweenMenteeAndMentor() {
@@ -177,7 +192,9 @@ class MatchingSpec {
         assertThat(proposals.count()).isEqualTo(2);
     }
 
-    /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.6 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.6 - Validate that same from same Family Matching Engine prefers the exact same specialization")
     void shouldFindMatchingSpecialization() {
@@ -193,7 +210,9 @@ class MatchingSpec {
         assertThat(mentorProposed.getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
-    /*This test if to meet requirement 1.6 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.6 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.6 - Validate similar Dev Group Matching Engine prefers the exact SAME SPECIALIZATION")
     void shouldFindMatchingSpecializationInSimilarDevGroup() {
@@ -209,7 +228,9 @@ class MatchingSpec {
         assertThat(mentorProposed.getSpecialization()).isEqualTo(mentee.getSpecialization());
     }
 
-    /*This test if to meet requirement 1.7 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.7 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.7 - Validate that Matching Engine ignores CONTRACTORS")
     void shouldIgnoreContractors() {
@@ -224,7 +245,9 @@ class MatchingSpec {
         assertThat(proposals.size()).isEqualTo(1);
     }
 
-    /*This test if to meet requirement 1.8 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.8 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.8 - Validate that Matching Engine prefers proposed Mentor with higher SENIORITY")
     void shouldPreferHigherSeniority() {
@@ -240,7 +263,9 @@ class MatchingSpec {
         assertThat(mentorProposed.isPresent() && mentorProposed.get().equals(seniorMentor)).isTrue();
     }
 
-    /*This test if to meet requirement 1.9 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.9 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.9 - Validate that Matching Engine ignores Mentor that will LEAVE GFT soon")
     void shouldIgnoreLeavers() {
@@ -255,7 +280,9 @@ class MatchingSpec {
 
     }
 
-    /*This test if to meet requirement 1.10 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.10 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.10 - Mentee prefers Mentor with higher LEVEL")
     void shouldProposeMentorWithHighestGrade() {
@@ -270,7 +297,9 @@ class MatchingSpec {
         assertThat(proposedMentor.isPresent() && proposedMentor.get().equals(higherLevelMentor)).isTrue();
     }
 
-    /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.11 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.11 - Mentee is always at LOWER LEVEL than Mentor")
     void shouldRejectProposedMentorWithLowerGradeThanMentee() {
@@ -287,7 +316,9 @@ class MatchingSpec {
         assertThat(proposedMentor.equals(higherLevelMentor)).isTrue();
     }
 
-    /*This test if to meet requirement 1.11 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.11 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.11 - Mentee is always at LOWER LEVEL than Mentor group test")
     void shouldReject1outOf4ProposedMentorWithLowerGradeThanMentee() {
@@ -304,7 +335,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 3).isTrue();
     }
 
-    /*This test if to meet requirement 1.12 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.12 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.12 - Mentee prefers Mentor with lower number of Mentees assigned")
     void shouldPreferMentorWithLessMenteesAssigned() {
@@ -325,7 +358,9 @@ class MatchingSpec {
         assertThat(proposedMentorStrm.isPresent() && proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
     }
 
-    /*This test if to meet requirement 1.13 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.13 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.13 - Mentors are only on level 4 and above")
     void shouldRejectAllBelowLevel4asMentor() {
@@ -341,7 +376,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
-    /*This test if to meet requirement 1.14 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.14 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.14 - Seniority is preferred over Level")
     void shouldPreferDevManWithHigherSeniorityInsteadofMentorWithHigherGrade() {
@@ -374,7 +411,9 @@ class MatchingSpec {
         assertThat(proposedMentor).isEqualTo(olderSeniorityMentor);
     }
 
-    /*This test if to meet requirement 1.14 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.14 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.14 - Equal Seniority then prefer Level")
     void shouldPreferDevManWithHigherLevelWhenSeniorityIsEqual() {
@@ -393,7 +432,9 @@ class MatchingSpec {
     }
 
 
-    /*This test if to meet requirement 1.15 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.15 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.15 - Mentor needs to have longer Seniority than Mentee")
     void shouldRejectMentorWithLowerSeniorityThanMentee() {
@@ -410,7 +451,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
-    /*This test if to meet requirement 1.16 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.16 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.16 - Mentor needs to have longer Seniority than Mentee")
     void shouldPreferMentorBetweenAgeOf30to40() {
@@ -428,7 +471,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 3).isTrue();
     }
 
-    /*This test if to meet requirement 1.17 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 1.17 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("1.17 - there's limit of Mentees Assigned to Mentor per Level")
     void shouldRejectMentorWithMenteesAssignedOverLimit() {
@@ -449,7 +494,9 @@ class MatchingSpec {
         assertThat(proposedMentor.equals(mentorWithFreeSlotL4)).isTrue();
     }
 
-    /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 2.1 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromLodz() {
@@ -467,7 +514,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
-    /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 2.1 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromPoznan() {
@@ -485,7 +534,9 @@ class MatchingSpec {
         assertThat(proposals.size() == 1).isTrue();
     }
 
-    /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
+    */
+/*This test if to meet requirement 2.1 in REQUIREMENTS.md*//*
+
     @Test
     @DisplayName("2.1 - When mentee is from Warsaw his/her mentor can't be from Poznan")
     void shouldRejectMentorFromPoznanWhenMenteeIsFromWarsaw() {
@@ -518,3 +569,4 @@ class MatchingSpec {
         Assertions.assertThat(proposals).containsExactly(mentor);
     }
 }
+*/
