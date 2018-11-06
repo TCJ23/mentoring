@@ -1,3 +1,4 @@
+/*
 package gft.mentoring.trs.model;
 
 import gft.mentoring.sap.model.ExcelException;
@@ -30,7 +31,9 @@ class TRSInputTest {
         //given
         TRSInput trsInput = new TRSInput();
         Workbook workbook = WorkbookFactory.create(new File(TRS_FILE));
-        /** we decrease by 1 because of 1st row is composed of column names*/
+        */
+/** we decrease by 1 because of 1st row is composed of column names*//*
+
         int headerColumns = 1;
         val notNullRows = trsInput.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
@@ -55,7 +58,9 @@ class TRSInputTest {
 
     @Test
     @DisplayName("4.1.1b - test EmptyFileException, when incorrect file is given ")
-        /* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat*/
+        */
+/* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat*//*
+
     void exceptionInvalidFormat() throws IOException {
         File tempFile = File.createTempFile("123", "");
         Throwable exception = assertThrows(ExcelException.class, () -> new TRSInput().readExcelTRSfile(tempFile.getName()));
@@ -170,4 +175,4 @@ class TRSInputTest {
         columnNames.add(row0);
         return row0;
     }
-}
+}*/
