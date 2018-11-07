@@ -16,7 +16,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-class TRSInput {
+/**
+ * Allows to read expected data from TRS model.
+ */
+class TRSInputReader {
 
     private DataFormatter formatter = new DataFormatter();
     private Predicate<TRSModel> validator = new Validator();

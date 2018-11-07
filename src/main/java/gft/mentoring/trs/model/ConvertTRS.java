@@ -11,21 +11,21 @@ import java.util.stream.Collectors;
 
 class ConvertTRS {
     List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
-        TRSInput input = new TRSInput();
+        TRSInputReader input = new TRSInputReader();
         val tresers = input.readExcelTRSfile(file);
         val filteredSapers = input.filterInvalid(tresers);
-        return createTRSIntermediateMentoringModel(filteredSapers);
+        return createTRSMentoringModel(filteredSapers);
     }
 
     List<TRSMentoringModel> convertFilteredRows(Iterator<Row> data) {
-        TRSInput input = new TRSInput();
+        TRSInputReader input = new TRSInputReader();
         List<String> headers = input.getHeaders(data.next());
         List<TRSModel> tresers = input.readRowsTRS(headers, data);
         List<TRSModel> filteredTresers = input.filterInvalid(tresers);
-        return createTRSIntermediateMentoringModel(filteredTresers);
+        return createTRSMentoringModel(filteredTresers);
     }
 
-    List<TRSMentoringModel> createTRSIntermediateMentoringModel(List<TRSModel> tresers) {
+    List<TRSMentoringModel> createTRSMentoringModel(List<TRSModel> tresers) {
         return tresers.stream().map(treser -> new TRSMentoringModelBuilder()
                 .setLeaver(treser.getStatus())
                 .setLevel(treser.getGrade())
