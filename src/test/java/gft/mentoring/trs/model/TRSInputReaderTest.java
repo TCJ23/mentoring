@@ -50,10 +50,10 @@ class TRSInputReaderTest {
     @DisplayName("4.1.1 - should create 31 TRS models from sample excel file")
     void shouldCreate31TRSmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
         //given
-        TRSInputReader trsInput = new TRSInputReader();
-        Workbook workbook = WorkbookFactory.create(new File(TRS_FILE));
+        val trsInput = new TRSInputReader();
+        val workbook = WorkbookFactory.create(new File(TRS_FILE));
         //* we decrease by 1 because of 1st row is composed of column names
-        int headerColumns = 1;
+        val headerColumns = 1;
         val notNullRows = trsInput.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
         //when
@@ -115,10 +115,10 @@ class TRSInputReaderTest {
     @DisplayName("4.1.6 - create 1 TRS model from Row without excel file")
     void shouldCreateSingleTRSmodelFromRow() {
         //given
-        TRSInputReader createTRSmodel = new TRSInputReader();
-        Workbook wb = new XSSFWorkbook();
-        CreationHelper createHelper = wb.getCreationHelper();
-        Sheet sheet = wb.createSheet("trs sheet");
+        val createTRSmodel = new TRSInputReader();
+        val xssfWorkbook = new XSSFWorkbook();
+        val createHelper = xssfWorkbook.getCreationHelper();
+        val sheet = xssfWorkbook.createSheet("trs sheet");
 
         List<Row> columnNames = new ArrayList<>();
         Row row0 = sheet.createRow(0);
@@ -144,7 +144,7 @@ class TRSInputReaderTest {
 
         val headers = createTRSmodel.getHeaders(columnNames.iterator().next());
 
-        Row row1 = sheet.createRow(1);
+        val row1 = sheet.createRow(1);
         List<Row> data = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
             Cell cell = row1.createCell(i);
@@ -189,41 +189,61 @@ class TRSInputReaderTest {
         val headers = applyColumnNamesToSpreadSheet(sheet);
 
         val emptyRow = addRowToSheet(sheet, 1);
+        val fullDataRow = addRowToSheet(sheet, 1);
+        fillRowWithData(fullDataRow);
         /**
          * We are setting this as empty Strings as
          * @see TRSInputReader#stringFromCell(Cell)
          * uses apache poin implementation
          * @see Cell#getStringCellValue()
          */
-        val emptyModel = new TRSModel();
-        emptyModel.setName(EMPTY_STRING);
-        emptyModel.setSurname(EMPTY_STRING);
-        emptyModel.setStatus(EMPTY_STRING);
-        emptyModel.setGrade(EMPTY_STRING);
-        emptyModel.setTechnology(EMPTY_STRING);
-        emptyModel.setJobFamily(EMPTY_STRING);
-        emptyModel.setStartDate(EMPTY_STRING);
-        emptyModel.setOfficeLocation(EMPTY_STRING);
-        emptyModel.setContractType(EMPTY_STRING);
+        val emptyModel = createTRSModel(EMPTY_STRING);
+        val fullModel = createTRSModel("data");
 
         return Stream.of(
                 new TRSInputReaderTest.RowExample("Empty row should create TRS model with empty strings",
-                        emptyRow, emptyModel, headers)
+                        emptyRow, emptyModel, headers),
+                new TRSInputReaderTest.RowExample("Row with data should create TRS model with strings only",
+                        fullDataRow, fullModel, headers)
         );
+    }
+
+    @NotNull
+    private static TRSModel createTRSModel(String cellValue) {
+        val trsModel = new TRSModel();
+        trsModel.setName(cellValue);
+        trsModel.setSurname(cellValue);
+        trsModel.setStatus(cellValue);
+        trsModel.setGrade(cellValue);
+        trsModel.setTechnology(cellValue);
+        trsModel.setJobFamily(cellValue);
+        trsModel.setStartDate(cellValue);
+        trsModel.setOfficeLocation(cellValue);
+        trsModel.setContractType(cellValue);
+        return trsModel;
     }
 
     @NotNull
     private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
         Row headers = sheet.createRow(firstRow);
-        iterateOverColumnsAndSetValues(headers);
+        iterateOverColumnNamesAndSetValues(headers);
         return headers;
     }
 
-    private static void iterateOverColumnsAndSetValues(Row headers) {
+    private static void iterateOverColumnNamesAndSetValues(Row headers) {
         int columnAmount = 0;
         for (String columnName : COLUMN_NAMES) {
             Cell cell = headers.createCell(columnAmount);
             cell.setCellValue(columnName);
+            columnAmount++;
+        }
+    }
+
+    private static void fillRowWithData(Row rowWithData) {
+        int columnAmount = 0;
+        for (String columnName : COLUMN_NAMES) {
+            Cell cell = rowWithData.createCell(columnAmount);
+            cell.setCellValue("data");
             columnAmount++;
         }
     }
@@ -233,7 +253,7 @@ class TRSInputReaderTest {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
         Row headers = sheet.createRow(firstRow);
-        iterateOverColumnsAndSetValues(headers);
+        iterateOverColumnNamesAndSetValues(headers);
         return headers;
     }
 
