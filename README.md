@@ -10,4 +10,4 @@
 [![Quality Gate](http://sonar.gft.com/api/badges/measure?key=devman-generator:devman-generator&metric=duplicated_blocks)](http://sonar.gft.com/dashboard/index/devman-generator)
 [![Quality Gate](http://sonar.gft.com/api/badges/measure?key=devman-generator:devman-generator&metric=sqale_debt_ratio)](http://sonar.gft.com/dashboard/index/devman-generator)
 
-[![build status](https://git.gft.com/bench-poland/hr-tools/incubator/devman-generator/badges/master/build.svg)](https://git.gft.com/bench-poland/hr-tools/incubator/devman-generator/commits/master)](https://git.gft.com/bench-poland/hr-tools/incubator/devman-generator/commits/master)
+[![build status](https://git.gft.com/bench-poland/hr-tools/incubator/devman-generator/badges/master/build.svg)](https://git.gft.com/bench-poland/hr-tools/incubator/devman-generator/commits/master)
