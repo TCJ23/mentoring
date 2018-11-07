@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 class ConvertTRS {
     List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
-        TRSInputReader input = new TRSInputReader();
+        val input = new TRSInputReader();
         val tresers = input.readExcelTRSfile(file);
         val filteredSapers = input.filterInvalid(tresers);
         return createTRSMentoringModel(filteredSapers);

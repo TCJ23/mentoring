@@ -11,6 +11,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +44,7 @@ class ConvertTRSTest {
     private static final int officeLocationCol = 7;
     private static final int contractTypeCol = 8;
     private static final String validatorCheck = "Validator ensures this column cannot be empty";
-    public static final String[] COLUMN_NAMES = new String[]{"name", "surname", "status", "grade", "job family", "technology",
+    private static final String[] COLUMN_NAMES = new String[]{"name", "surname", "status", "grade", "job family", "technology",
             "start date", "office location", "contract type"};
 
 
@@ -324,29 +326,30 @@ class ConvertTRSTest {
         return formatter.format(date);
     }
 
-   /* @ParameterizedTest(name = "{index} => {0}")
+    @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("rowByExamples")
+    @Disabled
     @DisplayName("5.2.1 - various scenarios in parametrized test")
     void shouldMapTRSinputToIntermediateModelFields(RowExample rowExample) {
         //given
-        ConvertTRS dataConversion = new ConvertTRS();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(Arrays.asList(rowExample.headers, rowExample.testData)
-                .iterator());
+//        val dataConversion = new ConvertTRS();
+        /*val trsMentoringModels = new ConvertTRS().convertFilteredRows(Arrays.asList
+                (rowExample.headers, rowExample.testData).iterator());*/
 
         val dataInput = new TRSInputReader();
         val headers = dataInput.getHeaders(applyColNamesToSingleRow());
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
         val rawData = dataInput.readRowsTRS(headers, singleRowData);
         val actualBasicModel = rawData.get(0);
-        val actualIntermediateModel = dataConversion.createTRSMentoringModel(rawData);
+//        val actualIntermediateModel = dataConversion.createTRSMentoringModel(rawData);
         //then
 //        assertEquals(rowExample.expected, actualBasicModel);
-//        Assertions.assertEquals(rowExample.expected, actualBasicModel);
-        assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
+        Assertions.assertEquals(rowExample.expected, actualBasicModel);
+        /*assertThat(actualBasicModel.getStartDate()).isEqualTo(rowExample.expected.getSeniority());
         assertThat(actualBasicModel.getName()).isEqualTo(rowExample.expected.getFirstName());
         assertThat(actualBasicModel.getJobFamily()).isEqualTo(rowExample.expected.getFamily());
-        assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());
-    }*/
+        assertThat(actualBasicModel.getSurname()).isEqualTo(rowExample.expected.getLevel());*/
+    }
 
     private static Stream<RowExample> rowByExamples() {
         Workbook wb = new XSSFWorkbook();
@@ -365,18 +368,18 @@ class ConvertTRSTest {
         emptyRow.createCell(officeLocationCol).setCellValue("");
         emptyRow.createCell(contractTypeCol).setCellValue("");*/
 
-        TRSMentoringModel emptyModel = new TRSMentoringModel();
-        emptyModel.setFirstName(validatorCheck);
+        val emptyModel = new TRSMentoringModel();
+//        emptyModel.setFirstName(validatorCheck);
 
         /*emptyModel.setLastName("");
         emptyModel.setSpecialization("");
         emptyModel.setLocalization("");
 */
-        emptyModel.setContractor(false);
-        emptyModel.setSeniority(0);
-        emptyModel.setLevel(0);
-        emptyModel.setFamily(Family.UNDEFINED);
-        emptyModel.setLeaver(false);
+//        emptyModel.setContractor(false);
+//        emptyModel.setSeniority(0);
+//        emptyModel.setLevel(0);
+//        emptyModel.setFamily(Family.UNDEFINED);
+//        emptyModel.setLeaver(false);
 
         return Stream.of(
                 new RowExample("Empty row should create empty model with default values if they exists ",

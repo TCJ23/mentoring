@@ -1,13 +1,18 @@
 package gft.mentoring.trs.model;
 
 import gft.mentoring.sap.model.ExcelException;
+import lombok.Value;
 import lombok.val;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +20,31 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("4 - Main Class for validating TRS INPUT")
-class TRSInputTest {
+class TRSInputReaderTest {
     private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
+    private static final int firstRow = 0;
+    private static final int nameCol = 0;
+    private static final int surnameCol = 1;
+    private static final int statsCol = 2;
+    private static final int jobFamilyCol = 4;
+    private static final int gradeCol = 3;
+    private static final int technologyCol = 5;
+    private static final int startDateCol = 6;
+    private static final int officeLocationCol = 7;
+    private static final int contractTypeCol = 8;
+    private static final String validatorCheck = "Validator ensures this column cannot be empty";
+    private static final String[] COLUMN_NAMES = new String[]{"name", "surname", "status", "grade", "job family", "technology",
+            "start date", "office location", "contract type"};
+    private static final String EMPTY_STRING = "";
+
 
     @Test
     @DisplayName("4.1.1 - should create 31 TRS models from sample excel file")
@@ -30,7 +52,7 @@ class TRSInputTest {
         //given
         TRSInputReader trsInput = new TRSInputReader();
         Workbook workbook = WorkbookFactory.create(new File(TRS_FILE));
-    //* we decrease by 1 because of 1st row is composed of column names
+        //* we decrease by 1 because of 1st row is composed of column names
         int headerColumns = 1;
         val notNullRows = trsInput.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
@@ -120,7 +142,7 @@ class TRSInputTest {
         cell9.setCellValue("contract type");
         columnNames.add(row0);
 
-        List<String> headers = createTRSmodel.getHeaders(columnNames.iterator().next());
+        val headers = createTRSmodel.getHeaders(columnNames.iterator().next());
 
         Row row1 = sheet.createRow(1);
         List<Row> data = new ArrayList<>();
@@ -144,6 +166,96 @@ class TRSInputTest {
                 () -> assertEquals("TRS model", model.getOfficeLocation()),
                 () -> assertEquals("TRS model", model.getContractType())
         );
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("rowByExamples")
+    @DisplayName("4.2.1 - various scenarios in parametrized test")
+    void shouldMapTRSinputToTRSBaseModelOnlyStringFields(RowExample rowExample) {
+        //given
+        val dataInput = new TRSInputReader();
+        val headers = dataInput.getHeaders(applyColNamesToSingleRow());
+        val singleRowData = Collections.singletonList(rowExample.testData).iterator();
+        val rawData = dataInput.readRowsTRS(headers, singleRowData);
+        //when
+        val actualBasicModel = rawData.get(0);
+        //then
+        Assertions.assertEquals(rowExample.expected, actualBasicModel);
+    }
+
+    private static Stream<TRSInputReaderTest.RowExample> rowByExamples() {
+        val wb = new XSSFWorkbook();
+        val sheet = wb.createSheet("trs testing sheet");
+        val headers = applyColumnNamesToSpreadSheet(sheet);
+
+        val emptyRow = addRowToSheet(sheet, 1);
+        /**
+         * We are setting this as empty Strings as
+         * @see TRSInputReader#stringFromCell(Cell)
+         * uses apache poin implementation
+         * @see Cell#getStringCellValue()
+         */
+        val emptyModel = new TRSModel();
+        emptyModel.setName(EMPTY_STRING);
+        emptyModel.setSurname(EMPTY_STRING);
+        emptyModel.setStatus(EMPTY_STRING);
+        emptyModel.setGrade(EMPTY_STRING);
+        emptyModel.setTechnology(EMPTY_STRING);
+        emptyModel.setJobFamily(EMPTY_STRING);
+        emptyModel.setStartDate(EMPTY_STRING);
+        emptyModel.setOfficeLocation(EMPTY_STRING);
+        emptyModel.setContractType(EMPTY_STRING);
+
+        return Stream.of(
+                new TRSInputReaderTest.RowExample("Empty row should create TRS model with empty strings",
+                        emptyRow, emptyModel, headers)
+        );
+    }
+
+    @NotNull
+    private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
+        Row headers = sheet.createRow(firstRow);
+        iterateOverColumnsAndSetValues(headers);
+        return headers;
+    }
+
+    private static void iterateOverColumnsAndSetValues(Row headers) {
+        int columnAmount = 0;
+        for (String columnName : COLUMN_NAMES) {
+            Cell cell = headers.createCell(columnAmount);
+            cell.setCellValue(columnName);
+            columnAmount++;
+        }
+    }
+
+    @NotNull
+    private static Row applyColNamesToSingleRow() {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test sheet");
+        Row headers = sheet.createRow(firstRow);
+        iterateOverColumnsAndSetValues(headers);
+        return headers;
+    }
+
+    /* parameters are being modified, not produced hence naming convention */
+    private static Row addRowToSheet(Sheet sheet, int rowNum) {
+        val row = sheet.createRow(rowNum);
+//        row.createCell(nameCol).setCellValue(validatorCheck);
+//        row.createCell(6).setCellValue("11-11-2017");
+        return row;
+    }
+
+    @Value
+    static class RowExample {
+        private String scenario;
+        private Row testData;
+        private TRSModel expected;
+        private Row headers;
+
+        @Override
+        public String toString() {
+            return scenario;
+        }
     }
 
     private static Row createWRONGHeadersTRS() {

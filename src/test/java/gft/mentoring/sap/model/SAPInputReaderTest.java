@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 
 @DisplayName("2 - Main class to test SAP INPUT")
-class SAPInputTest {
+class SAPInputReaderTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final String BROKEN_FILE = "./broken-file.xlsx";
@@ -35,14 +35,14 @@ class SAPInputTest {
     @DisplayName("3.1.1 - should create 25 SAP models from sample excel file")
     void shouldCreate25SAPmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
         //given
-        SAPInput sapInput = new SAPInput();
+        SAPInputReader sapInputReader = new SAPInputReader();
         Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
         /** we decrease by 1 because of 1st row is composed of column names*/
         int headerColumns = 1;
-        val notNullRows = sapInput.notNullRows(workbook);
+        val notNullRows = sapInputReader.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
         //when
-        val models = sapInput.readExcelSAPfile(SAP_FILE);
+        val models = sapInputReader.readExcelSAPfile(SAP_FILE);
         //then
         assertThat(models).size().isEqualTo(rowsSize);
         assertThat(models).size().isEqualTo(25);
@@ -54,12 +54,12 @@ class SAPInputTest {
     /** We had to disable test 3.1.2 broken build by IO exceptions
      70311 [ERROR] exceptionFileIsLocked  Time elapsed: 1.066 s  <<< FAILURE!
      org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
-     at gft.mentoring.sap.model.SAPInputTest.exceptionFileIsLocked(SAPInputTest.java:66)
+     at gft.mentoring.sap.model.SAPInputReaderTest.exceptionFileIsLocked(SAPInputReaderTest.java:66)
      this works fine in IDE and Maven on Windows, issue within locking file on UNIX*/
     void exceptionFileIsLocked() throws IOException {
         FileChannel channel = new RandomAccessFile(SAP_FILE, "rw").getChannel();
         FileLock lock = channel.lock();
-        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE));
+        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(SAP_FILE));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("Error reading file");
         lock.close();
     }
@@ -70,7 +70,7 @@ class SAPInputTest {
         File tempFile = File.createTempFile("123", "");
         FileChannel channel = new RandomAccessFile(tempFile.getName(), "rw").getChannel();
         FileLock lock = channel.lock();
-        Throwable exception = assertThrows(EmptyFileException.class, () -> new SAPInput().readExcelSAPfile(tempFile.getName()));
+        Throwable exception = assertThrows(EmptyFileException.class, () -> new SAPInputReader().readExcelSAPfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("The supplied file was empty (zero bytes long)");
         System.out.println(exception.getMessage());
         lock.close();
@@ -78,10 +78,10 @@ class SAPInputTest {
 
     @Test
     @DisplayName("3.1.2b - test EmptyFileException, when incorrect file is given ")
-        /* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat*/
+        /* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputReaderTest.exceptionInvalidFormat*/
     void exceptionInvalidFormat() throws IOException {
         File tempFile = File.createTempFile("123", "");
-        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(tempFile.getName()));
+        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
     }
@@ -89,7 +89,7 @@ class SAPInputTest {
     @Test
     @DisplayName("3.1.3 - test FileNotFoundException when SAP file is not there")
     void fileNotFound() {
-        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInput().readExcelSAPfile(SAP_FILE + "empty place"));
+        Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(SAP_FILE + "empty place"));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
     }
 
@@ -118,12 +118,12 @@ class SAPInputTest {
         when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
         values[8] = String.valueOf((double) time.getTime());
 
-        val createSAPModel = new SAPInput();
+        val createSAPModel = new SAPInputReader();
         val columnNames = createHeaders();
         val headers = createSAPModel.getHeaders(columnNames);
         //when
         val data = Collections.singletonList(mockRow);
-        val models = new SAPInput().readRowsSAP(headers, data.iterator());
+        val models = new SAPInputReader().readRowsSAP(headers, data.iterator());
         //then
         assertThat(models).isNotEmpty();
         int i = 0;
@@ -174,7 +174,7 @@ class SAPInputTest {
     @DisplayName("3.1.6 - create 1 SAP model from Row without excel file")
     void shouldCreateSingleSAPmodelFromRow() {
         //given
-        SAPInput createSAPModel = new SAPInput();
+        SAPInputReader createSAPModel = new SAPInputReader();
         Workbook wb = new XSSFWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet("sap sheet");
