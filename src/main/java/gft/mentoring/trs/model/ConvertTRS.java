@@ -13,8 +13,8 @@ class ConvertTRS {
     List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new TRSInputReader();
         val tresers = input.readExcelTRSfile(file);
-        val filteredSapers = input.filterInvalid(tresers);
-        return createTRSMentoringModel(filteredSapers);
+        val filteredTresers = input.filterInvalid(tresers);
+        return createTRSMentoringModel(filteredTresers);
     }
 
     List<TRSMentoringModel> convertFilteredRows(Iterator<Row> data) {

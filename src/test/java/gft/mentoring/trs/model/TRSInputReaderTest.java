@@ -60,7 +60,6 @@ class TRSInputReaderTest {
         val models = trsInput.readExcelTRSfile(TRS_FILE);
         //then
         assertThat(models).size().isEqualTo(rowsSize);
-        assertThat(models).size().isEqualTo(31);
     }
 
     @Test
@@ -77,10 +76,9 @@ class TRSInputReaderTest {
 
     @Test
     @DisplayName("4.1.1b - test EmptyFileException, when incorrect file is given ")
-/*
- with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat
-*/
-
+    /*
+     with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat
+    */
     void exceptionInvalidFormat() throws IOException {
         File tempFile = File.createTempFile("123", "");
         Throwable exception = assertThrows(ExcelException.class, () -> new TRSInputReader().readExcelTRSfile(tempFile.getName()));
@@ -89,7 +87,7 @@ class TRSInputReaderTest {
     }
 
     @Test
-    @DisplayName("4.1.1c - test FileNotFoundException when SAP file is not there")
+    @DisplayName("4.1.1c - test FileNotFoundException when TRS file is not there")
     void fileNotFound() {
         Throwable exception = assertThrows(ExcelException.class, () -> new TRSInputReader().readExcelTRSfile(TRS_FILE + "empty place"));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
@@ -115,9 +113,8 @@ class TRSInputReaderTest {
     @DisplayName("4.1.6 - create 1 TRS model from Row without excel file")
     void shouldCreateSingleTRSmodelFromRow() {
         //given
-        val createTRSmodel = new TRSInputReader();
+        val readTRSdata = new TRSInputReader();
         val xssfWorkbook = new XSSFWorkbook();
-        val createHelper = xssfWorkbook.getCreationHelper();
         val sheet = xssfWorkbook.createSheet("trs sheet");
 
         List<Row> columnNames = new ArrayList<>();
@@ -142,7 +139,7 @@ class TRSInputReaderTest {
         cell9.setCellValue("contract type");
         columnNames.add(row0);
 
-        val headers = createTRSmodel.getHeaders(columnNames.iterator().next());
+        val headers = readTRSdata.getHeaders(columnNames.iterator().next());
 
         val row1 = sheet.createRow(1);
         List<Row> data = new ArrayList<>();
@@ -152,7 +149,7 @@ class TRSInputReaderTest {
         }
         data.add(row1);
         //when
-        val trsModels = createTRSmodel.readRowsTRS(headers, data.iterator());
+        val trsModels = readTRSdata.readRowsTRS(headers, data.iterator());
         val model = trsModels.get(0);
         //then
         assertAll(
@@ -188,8 +185,8 @@ class TRSInputReaderTest {
         val sheet = wb.createSheet("trs testing sheet");
         val headers = applyColumnNamesToSpreadSheet(sheet);
 
-        val emptyRow = addRowToSheet(sheet, 1);
-        val fullDataRow = addRowToSheet(sheet, 1);
+        val emptyRow = addRowToSheet(sheet);
+        val fullDataRow = addRowToSheet(sheet);
         fillRowWithData(fullDataRow);
         /**
          * We are setting this as empty Strings as
@@ -230,6 +227,7 @@ class TRSInputReaderTest {
         return headers;
     }
 
+    @NotNull
     private static void iterateOverColumnNamesAndSetValues(Row headers) {
         int columnAmount = 0;
         for (String columnName : COLUMN_NAMES) {
@@ -239,6 +237,7 @@ class TRSInputReaderTest {
         }
     }
 
+    @NotNull
     private static void fillRowWithData(Row rowWithData) {
         int columnAmount = 0;
         for (String columnName : COLUMN_NAMES) {
@@ -258,10 +257,8 @@ class TRSInputReaderTest {
     }
 
     /* parameters are being modified, not produced hence naming convention */
-    private static Row addRowToSheet(Sheet sheet, int rowNum) {
-        val row = sheet.createRow(rowNum);
-//        row.createCell(nameCol).setCellValue(validatorCheck);
-//        row.createCell(6).setCellValue("11-11-2017");
+    private static Row addRowToSheet(Sheet sheet) {
+        val row = sheet.createRow(1);
         return row;
     }
 
