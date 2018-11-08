@@ -327,15 +327,21 @@ class ConvertTRSTest {
         val intModelWithDefaultValues = createTrsMentoringModel(EMPTY_STRING, 0, 0,
                 false, false, Family.UNDEFINED);
 
-        val correctDataRow = addValidRowToSheet(sheet);
+        val correctDataRow = addValidRowToSheet(sheet, 2);
         val correctModel = createTrsMentoringModel("data", 365, 5,
                 false, false, Family.AMS);
 
+        val edgeCasesRow = addEdgeCasesRowToSheet(sheet, 3);
+        val edgeCasesModel = createTrsMentoringModel("Edge cases", 1, 8,
+                true, true, Family.PROJECT_DEVELOPMENT);
 
         return Stream.of(
                 new RowExample("Empty row should create empty model with default values if they exists ",
                         emptyRow, intModelWithDefaultValues, headers),
-                new RowExample("Correct Row Sample should generate valid data", correctDataRow, correctModel, headers)
+                new RowExample("Correct Row Sample should generate valid data",
+                        correctDataRow, correctModel, headers),
+                new RowExample("Edge cases row, true contractor, leaver, director, lowercasing & spacing ",
+                        edgeCasesRow, edgeCasesModel, headers)
         );
     }
 
@@ -357,8 +363,8 @@ class ConvertTRSTest {
 
 
     /* parameters are being modified, not produced hence naming convention */
-    private static Row addValidRowToSheet(Sheet sheet) {
-        val row = sheet.createRow(1);
+    private static Row addValidRowToSheet(Sheet sheet, int rownum) {
+        val row = sheet.createRow(rownum);
         row.createCell(nameCol).setCellValue("data");
         row.createCell(startDateCol).setCellValue(dateCreatorFromNowMinusDays(365));
         row.createCell(surnameCol).setCellValue("data");
@@ -368,6 +374,20 @@ class ConvertTRSTest {
         row.createCell(technologyCol).setCellValue("data");
         row.createCell(officeLocationCol).setCellValue("data");
         row.createCell(contractTypeCol).setCellValue("data");
+        return row;
+    }
+
+    private static Row addEdgeCasesRowToSheet(Sheet sheet, int rownum) {
+        val row = sheet.createRow(rownum);
+        row.createCell(nameCol).setCellValue("Edge cases");
+        row.createCell(surnameCol).setCellValue("Edge cases");
+        row.createCell(startDateCol).setCellValue(dateCreatorFromNowMinusDays(1));
+        row.createCell(statsCol).setCellValue("hired");
+        row.createCell(jobFamilyCol).setCellValue("project development");
+        row.createCell(gradeCol).setCellValue("ld");
+        row.createCell(technologyCol).setCellValue("Edge cases");
+        row.createCell(officeLocationCol).setCellValue("Edge cases");
+        row.createCell(contractTypeCol).setCellValue("contract");
         return row;
     }
 
