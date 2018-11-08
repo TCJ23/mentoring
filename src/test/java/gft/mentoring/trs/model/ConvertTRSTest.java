@@ -313,22 +313,9 @@ class ConvertTRSTest {
         val data = dataReader.readRowsTRS(headers, singleRowData);
 
         val dataConversion = new ConvertTRS();
-/*
-        val trsMentoringModels = dataConversion.convertFilteredRows(Arrays.asList
-                (rowExample.headers, rowExample.testData).iterator());
-*/
         val intermediateModel = dataConversion.createTRSMentoringModel(data).get(0);
         //then
         Assertions.assertEquals(rowExample.expected, intermediateModel);
-      /*  assertThat(intermediateModel.getSeniority()).isEqualTo(rowExample.expected.getSeniority());
-        assertThat(intermediateModel.getLevel()).isEqualTo(rowExample.expected.getLevel());
-        assertThat(intermediateModel.isLeaver()).isEqualTo(rowExample.expected.isLeaver());
-        assertThat(intermediateModel.isContractor()).isEqualTo(rowExample.expected.isContractor());
-        assertThat(intermediateModel.getFamily()).isEqualTo(rowExample.expected.getFamily());
-        assertThat(intermediateModel.getFamily()).isEqualTo(rowExample.expected.getFamily());
-        assertThat(intermediateModel.getSpecialization()).isEqualTo(rowExample.expected.getSpecialization());
-        assertThat(intermediateModel.getFirstName()).isEqualTo(rowExample.expected.getFirstName());
-        assertThat(intermediateModel.getLastName()).isEqualTo(rowExample.expected.getLastName());*/
     }
 
     private static Stream<RowExample> rowByExamples() {
@@ -340,15 +327,15 @@ class ConvertTRSTest {
         val intModelWithDefaultValues = createTrsMentoringModel(EMPTY_STRING, 0, 0,
                 false, false, Family.UNDEFINED);
 
-        val correctDataRow = addRowToSheet(sheet);
-        val correctModel = createTrsMentoringModel("data", 1, 5,
-                true, false, Family.AMS);
+        val correctDataRow = addValidRowToSheet(sheet);
+        val correctModel = createTrsMentoringModel("data", 365, 5,
+                false, false, Family.AMS);
 
 
         return Stream.of(
                 new RowExample("Empty row should create empty model with default values if they exists ",
                         emptyRow, intModelWithDefaultValues, headers),
-                new RowExample("Should map wrong data to UNDEFINED Family ", correctDataRow, correctModel, headers)
+                new RowExample("Correct Row Sample should generate valid data", correctDataRow, correctModel, headers)
         );
     }
 
@@ -370,10 +357,17 @@ class ConvertTRSTest {
 
 
     /* parameters are being modified, not produced hence naming convention */
-    private static Row addRowToSheet(Sheet sheet) {
+    private static Row addValidRowToSheet(Sheet sheet) {
         val row = sheet.createRow(1);
-//        row.createCell(nameCol).setCellValue(validatorCheck);
-//        row.createCell(startDateCol).setCellValue("11-11-2017");
+        row.createCell(nameCol).setCellValue("data");
+        row.createCell(startDateCol).setCellValue(dateCreatorFromNowMinusDays(365));
+        row.createCell(surnameCol).setCellValue("data");
+        row.createCell(statsCol).setCellValue("data");
+        row.createCell(jobFamilyCol).setCellValue("AMS");
+        row.createCell(gradeCol).setCellValue("L5");
+        row.createCell(technologyCol).setCellValue("data");
+        row.createCell(officeLocationCol).setCellValue("data");
+        row.createCell(contractTypeCol).setCellValue("data");
         return row;
     }
 
