@@ -185,8 +185,8 @@ class TRSInputReaderTest {
         val sheet = wb.createSheet("trs testing sheet");
         val headers = applyColumnNamesToSpreadSheet(sheet);
 
-        val emptyRow = addRowToSheet(sheet);
-        val fullDataRow = addRowToSheet(sheet);
+        val emptyRow = addRowToSheet(sheet,1);
+        val fullDataRow = addRowToSheet(sheet,2);
         fillRowWithData(fullDataRow);
         /**
          * We are setting this as empty Strings as
@@ -257,8 +257,8 @@ class TRSInputReaderTest {
     }
 
     /* parameters are being modified, not produced hence naming convention */
-    private static Row addRowToSheet(Sheet sheet) {
-        val row = sheet.createRow(1);
+    private static Row addRowToSheet(Sheet sheet, int rownum) {
+        val row = sheet.createRow(rownum);
         return row;
     }
 
