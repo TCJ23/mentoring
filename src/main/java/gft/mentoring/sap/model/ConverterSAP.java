@@ -25,7 +25,7 @@ class ConverterSAP {
         return getSapMentoringModels(filteredSapers);
     }
 
-    private List<SAPMentoringModel> getSapMentoringModels(List<SAPmodel> sapers) {
+    List<SAPMentoringModel> getSapMentoringModels(List<SAPmodel> sapers) {
         return sapers.stream().map(saper -> new SAPMentoringModelBuilder()
                 /** meaningful logic
                  * @see SAPMentoringModel*/

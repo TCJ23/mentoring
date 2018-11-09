@@ -1,6 +1,7 @@
 package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
+import lombok.Value;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -9,14 +10,19 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -30,6 +36,7 @@ class ConverterSAPTest {
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials", "pers.no.",
             "employee subgroup", "job family", "job", "cost center", "init.entry", "pers.no. superior", "pers.no. mentor"};
     public static final int INIT_ENTRY_COL = 8;
+    private static final String EMPTY_STRING = "";
 
     @Test
     @DisplayName("3.2.1a - Verify SAP Model Job info to Ment.Model Level conversion")
@@ -115,6 +122,54 @@ class ConverterSAPTest {
         );
     }
 
+    private static List<Row> createSAPMentoringModelHelper() {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test sheet");
+        List<Row> data = new ArrayList<>();
+        Row row0 = sheet.createRow(0);
+        Cell cell1 = row0.createCell(0);
+        cell1.setCellValue("first name");
+        Cell cell2 = row0.createCell(1);
+        cell2.setCellValue("last name");
+        Cell cell3 = row0.createCell(2);
+        cell3.setCellValue("initials");
+        Cell cell4 = row0.createCell(3);
+        cell4.setCellValue("pers.no.");
+        Cell cell5 = row0.createCell(4);
+        cell5.setCellValue("employee subgroup");
+        Cell cell6 = row0.createCell(5);
+        cell6.setCellValue("job family");
+        Cell cell7 = row0.createCell(6);
+        cell7.setCellValue("job");
+        Cell cell9 = row0.createCell(7);
+        cell9.setCellValue("init.entry");
+        Cell cell8 = row0.createCell(8);
+        cell8.setCellValue("cost center");
+        Cell cell10 = row0.createCell(9);
+        cell10.setCellValue("pers.no. superior");
+        Cell cell11 = row0.createCell(10);
+        cell11.setCellValue("pers.no. mentor");
+        data.add(row0);
+
+        Row row1 = sheet.createRow(1);
+        for (int i = 0; i < 11; i++) {
+            if (i < 4 || i > 7) {
+                Cell cell = row1.createCell(i);
+                cell.setCellValue("SAP model");
+            }
+            Cell cellEmpOrContr = row1.createCell(4);
+            cellEmpOrContr.setCellValue("Staff");
+            Cell cellFamily = row1.createCell(5);
+            cellFamily.setCellValue("AMS");
+            Cell cellLevel = row1.createCell(6);
+            cellLevel.setCellValue("L6 (Seasoned)");
+            data.add(row1);
+            Cell cellSeniority = row1.createCell(7);
+            cellSeniority.setCellValue("wrong data format");
+        }
+        return data;
+    }
+
     @Test
     @DisplayName("3.2.5 - verify that init entry column is converted to days")
     void shouldConvertInitEntryDateToDays() {
@@ -186,6 +241,7 @@ class ConverterSAPTest {
         }
         return row;
     }
+
     private static void iterateOverColumnsAndSetValues(Row headers) {
         int columnAmount = 0;
         for (String columnName : COLUMN_NAMES) {
@@ -194,6 +250,7 @@ class ConverterSAPTest {
             columnAmount++;
         }
     }
+
     @NotNull
     private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
         Row headers = sheet.createRow(firstRow);
@@ -208,52 +265,89 @@ class ConverterSAPTest {
         return formatter.format(date);
     }
 
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("rowByExamples")
+    @DisplayName("3.2.6 - verify that init entry column is converted to days")
+    void shouldConvertInitEntryDateToDaysParam(RowExample rowExample) {
+        //given
+        val dataReader = new SAPInputReader();
+        val headers = dataReader.getHeaders(applyColNamesToSingleRow());
+        val singleRowData = Collections.singletonList(rowExample.testData).iterator();
+        val data = dataReader.readRowsSAP(headers, singleRowData);
 
-    private static List<Row> createSAPMentoringModelHelper() {
+        val dataConversion = new ConverterSAP();
+        val actualSeniority = dataConversion.getSapMentoringModels(data).get(0).getSeniority();
+        //then
+        Assertions.assertEquals(rowExample.expected.getSeniority(), actualSeniority);
+    }
+
+    @NotNull
+    private static Row applyColNamesToSingleRow() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
-        List<Row> data = new ArrayList<>();
-        Row row0 = sheet.createRow(0);
-        Cell cell1 = row0.createCell(0);
-        cell1.setCellValue("first name");
-        Cell cell2 = row0.createCell(1);
-        cell2.setCellValue("last name");
-        Cell cell3 = row0.createCell(2);
-        cell3.setCellValue("initials");
-        Cell cell4 = row0.createCell(3);
-        cell4.setCellValue("pers.no.");
-        Cell cell5 = row0.createCell(4);
-        cell5.setCellValue("employee subgroup");
-        Cell cell6 = row0.createCell(5);
-        cell6.setCellValue("job family");
-        Cell cell7 = row0.createCell(6);
-        cell7.setCellValue("job");
-        Cell cell9 = row0.createCell(7);
-        cell9.setCellValue("init.entry");
-        Cell cell8 = row0.createCell(8);
-        cell8.setCellValue("cost center");
-        Cell cell10 = row0.createCell(9);
-        cell10.setCellValue("pers.no. superior");
-        Cell cell11 = row0.createCell(10);
-        cell11.setCellValue("pers.no. mentor");
-        data.add(row0);
+        Row headers = sheet.createRow(firstRow);
+        iterateOverColumnsAndSetValues(headers);
+        return headers;
+    }
 
-        Row row1 = sheet.createRow(1);
-        for (int i = 0; i < 11; i++) {
-            if (i < 4 || i > 7) {
-                Cell cell = row1.createCell(i);
-                cell.setCellValue("SAP model");
-            }
-            Cell cellEmpOrContr = row1.createCell(4);
-            cellEmpOrContr.setCellValue("Staff");
-            Cell cellFamily = row1.createCell(5);
-            cellFamily.setCellValue("AMS");
-            Cell cellLevel = row1.createCell(6);
-            cellLevel.setCellValue("L6 (Seasoned)");
-            data.add(row1);
-            Cell cellSeniority = row1.createCell(7);
-            cellSeniority.setCellValue("wrong data format");
+    private static Stream<RowExample> rowByExamples() {
+        val xssfWorkbook = new XSSFWorkbook();
+        val sheet = xssfWorkbook.createSheet("trs testing sheet");
+        val headers = applyColumnNamesToSpreadSheet(sheet);
+
+        val worked30daysInGFT = addDateCellToRowToSheet(sheet, 1, 30, "data");
+        val intModel30 = createSAPMentoringModel(EMPTY_STRING, 30, 5, false, Family.UNDEFINED);
+
+        val workedOneYearInGFT = addDateCellToRowToSheet(sheet, 2, 365, "data");
+        val intModel365 = createSAPMentoringModel(EMPTY_STRING, 365, 5, false, Family.UNDEFINED);
+
+        val workedTwoYearsInGFT = addDateCellToRowToSheet(sheet, 3, 730, "data");
+        val intModel730 = createSAPMentoringModel(EMPTY_STRING, 730, 5, false, Family.UNDEFINED);
+
+        return Stream.of(
+                new RowExample("Working one month(30 days) in GFT ",
+                        worked30daysInGFT, intModel30, headers),
+                new RowExample("Working one year(365 days) in GFT ",
+                        workedOneYearInGFT, intModel365, headers),
+                new RowExample("Working one year(730 days) in GFT ",
+                        workedTwoYearsInGFT, intModel730, headers)
+        );
+    }
+
+    private static Row addDateCellToRowToSheet(Sheet sheet, int rownum, int days, String stringCell) {
+        val row = sheet.createRow(rownum);
+        row.createCell(INIT_ENTRY_COL).setCellValue(dateCreatorFromNowMinusDays(days));
+        return row;
+    }
+
+    @Value
+    static class RowExample {
+        private String scenario;
+        private Row testData;
+        private SAPMentoringModel expected;
+        private Row headers;
+
+        @Override
+        public String toString() {
+            return scenario;
         }
-        return data;
+    }
+
+    @NotNull
+    private static SAPMentoringModel createSAPMentoringModel(String datasample, int seniority, int level,
+                                                             boolean contractor, Family fam) {
+        val model = new SAPMentoringModel();
+        model.setFirstName(datasample);
+        model.setLastName(datasample);
+        model.setSpecialization(datasample);
+        model.setSapID(datasample);
+        model.setLineManagerID(datasample);
+        model.setMenteeID(datasample);
+        /*meaningful settings*/
+        model.setSeniority(seniority);
+        model.setLevel(level);
+        model.setFamily(fam);
+        model.setContractor(contractor);
+        return model;
     }
 }
