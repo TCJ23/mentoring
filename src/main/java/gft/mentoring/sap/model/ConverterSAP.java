@@ -11,16 +11,18 @@ import java.util.stream.Collectors;
 class ConverterSAP {
 
     List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
-        SAPInputReader input = new SAPInputReader();
-        List<SAPmodel> sapers = input.readExcelSAPfile(file);
-        return getSapMentoringModels(sapers);
+        val input = new SAPInputReader();
+        val sapers = input.readExcelSAPfile(file);
+        val filteredSapers = input.filterInvalid(sapers);
+        return getSapMentoringModels(filteredSapers);
     }
 
-    List<SAPMentoringModel> convertFromRows(Iterator<Row> data) {
-        SAPInputReader input = new SAPInputReader();
+    List<SAPMentoringModel> convertFilteredRowsSAP(Iterator<Row> data) {
+        val input = new SAPInputReader();
         val headers = input.getHeaders(data.next());
         val sapers = input.readRowsSAP(headers, data);
-        return getSapMentoringModels(sapers);
+        val filteredSapers = input.filterInvalid(sapers);
+        return getSapMentoringModels(filteredSapers);
     }
 
     private List<SAPMentoringModel> getSapMentoringModels(List<SAPmodel> sapers) {

@@ -81,7 +81,6 @@ class SAPInputReader {
         sapModels.put((headerIndex(headers, "pers.no. mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createSAPmodelFromRow(row, sapModels))
-                .filter(validator)
                 .collect(Collectors.toList());
     }
 
@@ -95,6 +94,9 @@ class SAPInputReader {
         }
     }
 
+    List<SAPmodel> filterInvalid(List<SAPmodel> sapers) {
+        return sapers.stream().filter(validator).collect(Collectors.toList());
+    }
     class Validator implements Predicate<SAPmodel> {
         @Override
         public boolean test(SAPmodel sapModel) {

@@ -84,7 +84,7 @@ class ConverterSAPTest {
     void shouldValidateAllLogicWithoutExcelFile() {
         //given
         val data = createSAPMentoringModelHelper();
-        val sapMentoringModels = new ConverterSAP().convertFromRows(data.iterator());
+        val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
         //when
         val model = sapMentoringModels.get(0);
         val family = model.getFamily();

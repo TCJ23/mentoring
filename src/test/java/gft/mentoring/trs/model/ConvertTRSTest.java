@@ -52,7 +52,7 @@ class ConvertTRSTest {
     void shouldMarkTRSModelasLeaver() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(data.iterator());
+        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
         //when
         val modelR0 = trsMentoringModels.get(0);
         val modelR1 = trsMentoringModels.get(1);
@@ -71,7 +71,7 @@ class ConvertTRSTest {
     void shoulConvertToProperLevel() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(data.iterator());
+        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
         //when
         val level3 = trsMentoringModels.get(0).getLevel();
         val level4 = trsMentoringModels.get(1).getLevel();
@@ -88,7 +88,7 @@ class ConvertTRSTest {
     void shouldConvertPostionColumnToOneOf10Families() throws ExcelException, InvalidFormatException {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(data.iterator());
+        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
         //when
         val testingFamily = trsMentoringModels.get(0).getFamily();
         val developmentFamily = trsMentoringModels.get(1).getFamily();
@@ -107,7 +107,7 @@ class ConvertTRSTest {
     void shouldConvertStartDateToDays() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(data.iterator());
+        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
         //when
         val worked30daysInGFT = trsMentoringModels.get(0).getSeniority();
         val workedOneYearInGFT = trsMentoringModels.get(1).getSeniority();
@@ -123,7 +123,7 @@ class ConvertTRSTest {
     void shouldConvertLocalization() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(data.iterator());
+        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
         //when
         val lodzOffice = trsMentoringModels.get(0).getLocalization();
         val poznanOffice = trsMentoringModels.get(1).getLocalization();
@@ -139,7 +139,7 @@ class ConvertTRSTest {
     void shouldConvertContractType() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRows(data.iterator());
+        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
         //when
         val employee = trsMentoringModels.get(0).isContractor();
         val contractor = trsMentoringModels.get(1).isContractor();

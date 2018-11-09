@@ -48,18 +48,19 @@ class TRSInputReaderTest {
 
     @Test
     @DisplayName("4.1.1 - should create 31 TRS models from sample excel file")
-    void shouldCreate31TRSmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
+    void shouldCreate31TRSmodelsFromSampleFileIgnoringNullRow() throws IOException, InvalidFormatException, ExcelException {
         //given
         val trsInput = new TRSInputReader();
         val workbook = WorkbookFactory.create(new File(TRS_FILE));
+        val convertTRS = new ConvertTRS();
         //* we decrease by 1 because of 1st row is composed of column names
         val headerColumns = 1;
         val notNullRows = trsInput.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
         //when
-        val models = trsInput.readExcelTRSfile(TRS_FILE);
+        val filteredModels = convertTRS.convertInputToTRSMentoringModel(TRS_FILE);
         //then
-        assertThat(models).size().isEqualTo(rowsSize);
+        assertThat(filteredModels).size().isEqualTo(rowsSize);
     }
 
     @Test

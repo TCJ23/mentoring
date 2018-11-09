@@ -33,19 +33,19 @@ class SAPInputReaderTest {
 
     @Test
     @DisplayName("3.1.1 - should create 25 SAP models from sample excel file")
-    void shouldCreate25SAPmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
+    void shouldCreate25SAPmodelsFromSampleFileIgnoringNullRow() throws IOException, InvalidFormatException, ExcelException {
         //given
-        SAPInputReader sapInputReader = new SAPInputReader();
-        Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
+        val converterSAP = new ConverterSAP();
+        val sapInputReader = new SAPInputReader();
+        val workbook = WorkbookFactory.create(new File(SAP_FILE));
         /** we decrease by 1 because of 1st row is composed of column names*/
         int headerColumns = 1;
         val notNullRows = sapInputReader.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
         //when
-        val models = sapInputReader.readExcelSAPfile(SAP_FILE);
+        val filteredModels = converterSAP.convertInputToSAPMentoringModel(SAP_FILE);
         //then
-        assertThat(models).size().isEqualTo(rowsSize);
-        assertThat(models).size().isEqualTo(25);
+        assertThat(filteredModels).size().isEqualTo(rowsSize);
     }
 
     @Test

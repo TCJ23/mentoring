@@ -17,7 +17,7 @@ class ConvertTRS {
         return createTRSMentoringModel(filteredTresers);
     }
 
-    List<TRSMentoringModel> convertFilteredRows(Iterator<Row> data) {
+    List<TRSMentoringModel> convertFilteredRowsTRS(Iterator<Row> data) {
         TRSInputReader input = new TRSInputReader();
         List<String> headers = input.getHeaders(data.next());
         List<TRSModel> tresers = input.readRowsTRS(headers, data);
