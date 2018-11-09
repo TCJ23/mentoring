@@ -40,6 +40,7 @@ class ConverterSAP {
                 .setSapID(saper.getPersonalNR())
                 .setSpecialization(saper.getCostCenter())
                 .setSeniority(saper.getInitEntry())
+                .setAge(saper.getDateOfBirth())
                 .setLineManagerID(saper.getPersNrSuperior())
                 .setMenteeID(saper.getPersNrMentor())
                 .build()).collect(Collectors.toList());

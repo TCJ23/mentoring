@@ -1,6 +1,7 @@
 package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 class SAPMentoringModelBuilder {
     private static final Logger LOGGER = Logger.getLogger(SAPMentoringModelBuilder.class.getName());
     private static final int DEFAULT_SENIORITY = 0;
+    private static final int DEFAULT_AGE = 0;
     private static final String DATE_PATTERN = "dd-MM-yyyy";
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private SAPMentoringModel sapMM = new SAPMentoringModel();
@@ -78,6 +80,20 @@ class SAPMentoringModelBuilder {
             LOGGER.warning("Couldn't read start date column due to wrong format. Format should be "
                     + DATE_PATTERN + "\n Setting seniority to " + DEFAULT_SENIORITY);
             sapMM.setSeniority(DEFAULT_SENIORITY);
+        }
+        return this;
+    }
+
+    SAPMentoringModelBuilder setAge(String days) {
+        try {
+            LocalDate parsedDate = LocalDate.parse(days, formatter);
+            LocalDate now = LocalDate.now();
+            long daysBetween = ChronoUnit.DAYS.between(parsedDate, now) / 365;
+            sapMM.setAge((int) daysBetween);
+        } catch (DateTimeParseException e) {
+            LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
+                    + DATE_PATTERN + "\n Setting seniority to " + DEFAULT_AGE);
+            sapMM.setSeniority(DEFAULT_AGE);
         }
         return this;
     }

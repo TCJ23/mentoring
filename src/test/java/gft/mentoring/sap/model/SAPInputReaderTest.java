@@ -29,7 +29,7 @@ class SAPInputReaderTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final String BROKEN_FILE = "./broken-file.xlsx";
-    private static final int COLUMNS_COUNT = 11;
+    private static final int COLUMNS_COUNT = 12;
 
     @Test
     @DisplayName("3.1.1 - should create 25 SAP models from sample excel file")
@@ -46,6 +46,7 @@ class SAPInputReaderTest {
         val filteredModels = converterSAP.convertInputToSAPMentoringModel(SAP_FILE);
         //then
         assertThat(filteredModels).size().isEqualTo(rowsSize);
+
     }
 
     @Test
@@ -140,6 +141,7 @@ class SAPInputReaderTest {
         assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i]);
+        assertThat(models.get(0).getDateOfBirth()).isEqualTo(values[i]);
     }
 
     @Test

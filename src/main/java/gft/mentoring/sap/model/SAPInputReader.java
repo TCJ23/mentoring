@@ -66,6 +66,7 @@ class SAPInputReader {
                 .collect(Collectors.toList());
     }
 
+
     List<SAPmodel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
         HashMap<Integer, BiConsumer<Cell, SAPmodel>> sapModels = new HashMap<>();
         /*please pay attention to First name and keep consistent with casing*/
@@ -82,6 +83,8 @@ class SAPInputReader {
         sapModels.put(headerIndex(headers, "init.entry"), (cell, saper) -> saper.setInitEntry(dateFromCell(cell)));
         sapModels.put(headerIndex(headers, "pers.no. superior"), (cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
         sapModels.put((headerIndex(headers, "pers.no. mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
+        sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setPersNrMentor(dateFromCell(cell)));
+
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createSAPmodelFromRow(row, sapModels))
                 .collect(Collectors.toList());
@@ -100,6 +103,7 @@ class SAPInputReader {
     List<SAPmodel> filterInvalid(List<SAPmodel> sapers) {
         return sapers.stream().filter(validator).collect(Collectors.toList());
     }
+
     class Validator implements Predicate<SAPmodel> {
         @Override
         public boolean test(SAPmodel sapModel) {

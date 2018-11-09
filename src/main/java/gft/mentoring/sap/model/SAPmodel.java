@@ -23,4 +23,5 @@ class SAPmodel {
     private String initEntry;
     private String persNrSuperior;
     private String persNrMentor;
+    private String dateOfBirth;
 }

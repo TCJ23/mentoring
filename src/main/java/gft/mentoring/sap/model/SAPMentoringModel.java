@@ -22,6 +22,7 @@ public class SAPMentoringModel {
     private Family family; //jobFamily
     private int level; //job
     private int seniority; //initEntry
+    private int age;//date of birth
     /** Below 2 params will help to Match data between TRS & SAP*/
     private String firstName;
     private String lastName;
