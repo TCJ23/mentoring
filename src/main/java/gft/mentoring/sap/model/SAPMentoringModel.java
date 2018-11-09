@@ -14,7 +14,7 @@ public class SAPMentoringModel {
      * @param family - this enum holds 10 values that represent 10 Families in GFT
      * @param level - this will help to convert to correct level per GFT employee*/
     private boolean contractor; //employeeSubGrp
-    private Family family; //position
+    private Family family; //jobFamily
     private int level; //job
     /** Below 2 params will help to Match data between TRS & SAP*/
     private String firstName;

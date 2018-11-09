@@ -31,7 +31,7 @@ class ConverterSAP {
                  * @see SAPMentoringModel*/
                 .setLevel(saper.getJob())
                 .setContractor(saper.getEmployeeSubGrp())
-                .setFamily(saper.getPosition())
+                .setFamily(saper.getJobFamily())
                 /** redundant fields
                  * @see SAPMentoringModel*/
                 .setFirstName(saper.getFirstName())

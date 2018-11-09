@@ -84,8 +84,8 @@ class ConverterSAPTest {
     void shouldValidateAllLogicWithoutExcelFile() {
         //given
         val data = createSAPMentoringModelHelper();
-        val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
         //when
+        val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
         val model = sapMentoringModels.get(0);
         val family = model.getFamily();
         val employee = model.isContractor();
@@ -122,7 +122,7 @@ class ConverterSAPTest {
         Cell cell5 = row0.createCell(4);
         cell5.setCellValue("employee subgroup");
         Cell cell6 = row0.createCell(5);
-        cell6.setCellValue("position");
+        cell6.setCellValue("job family");
         Cell cell7 = row0.createCell(6);
         cell7.setCellValue("job");
         Cell cell8 = row0.createCell(7);

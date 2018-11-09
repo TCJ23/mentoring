@@ -132,7 +132,7 @@ class SAPInputReaderTest {
         assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
         assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPosition()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getJobFamily()).isEqualTo(values[i++]);
         assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
         assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
         assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
@@ -198,7 +198,7 @@ class SAPInputReaderTest {
                 () -> assertEquals("SAP model", model.getPersonalNR()),
                 () -> assertEquals("SAP model", model.getCostCenter()),
                 () -> assertEquals("SAP model", model.getEmployeeSubGrp()),
-                () -> assertEquals("SAP model", model.getPosition()),
+                () -> assertEquals("SAP model", model.getJobFamily()),
                 () -> assertEquals("SAP model", model.getJob()),
                 () -> assertEquals("SAP model", model.getCostCenter()),
                 () -> assertEquals("SAP model", model.getInitEntry()),
@@ -222,7 +222,7 @@ class SAPInputReaderTest {
         Cell cell5 = row0.createCell(4);
         cell5.setCellValue("employee subgroup");
         Cell cell6 = row0.createCell(5);
-        cell6.setCellValue("position");
+        cell6.setCellValue("job family");
         Cell cell7 = row0.createCell(6);
         cell7.setCellValue("job");
         Cell cell8 = row0.createCell(7);
