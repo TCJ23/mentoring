@@ -8,11 +8,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -22,6 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("3 - Main class to test conversion from SAP file to Mentoring Model")
 class ConverterSAPTest {
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
+    private static final int firstRow = 0;
+    private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials", "pers.no.",
+            "employee subgroup", "job family", "job", "cost center", "init.entry", "pers.no. superior", "pers.no. mentor"};
+    public static final int INIT_ENTRY_COL = 8;
 
     @Test
     @DisplayName("3.2.1a - Verify SAP Model Job info to Ment.Model Level conversion")
@@ -38,11 +46,11 @@ class ConverterSAPTest {
     @DisplayName("3.2.1b - Verify SAP Model Job info for Directors converts to Level 7 or higher")
     void shouldConvertDirectorLevelToInt() throws ExcelException, InvalidFormatException {
         //given
-        val director = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(8);
+        val director = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(INIT_ENTRY_COL);
         //when
         val directorLevel = director.getLevel();
         //then
-        assertEquals(8, directorLevel);
+        assertEquals(INIT_ENTRY_COL, directorLevel);
     }
 
     @Test
@@ -107,6 +115,100 @@ class ConverterSAPTest {
         );
     }
 
+    @Test
+    @DisplayName("3.2.5 - verify that init entry column is converted to days")
+    void shouldConvertInitEntryDateToDays() {
+        //given
+        val data = createSAPSeniortiyExamples();
+        val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
+        //when
+        val worked30daysInGFT = sapMentoringModels.get(0).getSeniority();
+        val workedOneYearInGFT = sapMentoringModels.get(1).getSeniority();
+        val worked2YearsInGFT = sapMentoringModels.get(2).getSeniority();
+        //then
+        assertEquals(30, worked30daysInGFT);
+        assertEquals(365, workedOneYearInGFT);
+        assertEquals(730, worked2YearsInGFT);
+    }
+
+    private static List<Row> createSAPSeniortiyExamples() {
+        List<Row> data = new ArrayList<>();
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("trs sheet");
+        Row headers = applyColumnNamesToSpreadSheet(sheet);
+        data.add(headers);
+        short lastColumn = headers.getLastCellNum();
+        Function<Integer, String> data1 = i -> {
+            switch (i) {
+                case INIT_ENTRY_COL:
+                    return dateCreatorFromNowMinusDays(30);
+                default:
+                    return null;
+            }
+        };
+        Row row1 = applyDataToRowsInSheet(1, sheet, lastColumn, data1);
+        Function<Integer, String> data2 = i -> {
+            switch (i) {
+                case INIT_ENTRY_COL:
+                    return dateCreatorFromNowMinusDays(365);
+                default:
+                    return null;
+            }
+        };
+        Row row2 = applyDataToRowsInSheet(2, sheet, lastColumn, data2);
+        Function<Integer, String> data3 = i -> {
+            switch (i) {
+                case INIT_ENTRY_COL:
+                    return dateCreatorFromNowMinusDays(730);
+                default:
+                    return null;
+            }
+        };
+        Row row3 = applyDataToRowsInSheet(3, sheet, lastColumn, data3);
+
+        data.add(row1);
+        data.add(row2);
+        data.add(row3);
+        return data;
+    }
+
+    @NotNull
+    private static Row applyDataToRowsInSheet(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
+        Row row = sheet.createRow(rowNum);
+        for (int i = 0; i < dataLength; i++) {
+            String value = dataProvider.apply(i);
+            Cell cell = row.createCell(i);
+            if (value == null) {
+                cell.setCellValue("TRS model");
+            } else {
+                cell.setCellValue(value);
+            }
+        }
+        return row;
+    }
+    private static void iterateOverColumnsAndSetValues(Row headers) {
+        int columnAmount = 0;
+        for (String columnName : COLUMN_NAMES) {
+            Cell cell = headers.createCell(columnAmount);
+            cell.setCellValue(columnName);
+            columnAmount++;
+        }
+    }
+    @NotNull
+    private static Row applyColumnNamesToSpreadSheet(Sheet sheet) {
+        Row headers = sheet.createRow(firstRow);
+        iterateOverColumnsAndSetValues(headers);
+        return headers;
+    }
+
+    @NotNull
+    private static String dateCreatorFromNowMinusDays(int days) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate date = LocalDate.now().minusDays(days);
+        return formatter.format(date);
+    }
+
+
     private static List<Row> createSAPMentoringModelHelper() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
@@ -126,10 +228,10 @@ class ConverterSAPTest {
         cell6.setCellValue("job family");
         Cell cell7 = row0.createCell(6);
         cell7.setCellValue("job");
-        Cell cell8 = row0.createCell(8);
-        cell8.setCellValue("cost center");
         Cell cell9 = row0.createCell(7);
         cell9.setCellValue("init.entry");
+        Cell cell8 = row0.createCell(8);
+        cell8.setCellValue("cost center");
         Cell cell10 = row0.createCell(9);
         cell10.setCellValue("pers.no. superior");
         Cell cell11 = row0.createCell(10);

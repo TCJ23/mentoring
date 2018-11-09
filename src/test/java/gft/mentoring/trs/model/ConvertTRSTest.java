@@ -216,6 +216,7 @@ class ConvertTRSTest {
             }
         };
         Row row1 = applyDataToRowsInSheet(1, sheet, lastColumn, data1);
+
         Function<Integer, String> data2 = i -> {
             switch (i) {
                 case 2:
@@ -235,6 +236,7 @@ class ConvertTRSTest {
             }
         };
         Row row2 = applyDataToRowsInSheet(2, sheet, lastColumn, data2);
+
         Function<Integer, String> data3 = i -> {
             switch (i) {
                 case 2:
