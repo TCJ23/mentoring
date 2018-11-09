@@ -40,7 +40,7 @@ class TRSMentoringModelBuilder {
     }
 
     TRSMentoringModelBuilder setSpecialization(String spec) {
-        trsMM.setSpecialization(spec.trim().toLowerCase());
+        trsMM.setSpecialization(spec.trim());
         return this;
     }
 

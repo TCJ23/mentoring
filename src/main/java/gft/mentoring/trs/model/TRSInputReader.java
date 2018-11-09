@@ -1,6 +1,8 @@
 package gft.mentoring.trs.model;
 
+import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.ExcelException;
+import gft.mentoring.sap.model.SAPMentoringModel;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -12,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -119,4 +123,5 @@ class TRSInputReader {
                 && (cell.getCellTypeEnum() != CellType.STRING ||
                 stringFromCell(cell).length() > 0);
     }
+
 }
