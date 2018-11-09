@@ -74,6 +74,7 @@ class SAPInputReaderTest {
         assertThat(exception.getMessage()).isEqualToIgnoringCase("The supplied file was empty (zero bytes long)");
         System.out.println(exception.getMessage());
         lock.close();
+        tempFile.deleteOnExit();
     }
 
     @Test
@@ -84,6 +85,7 @@ class SAPInputReaderTest {
         Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
+        tempFile.deleteOnExit();
     }
 
     @Test

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +74,7 @@ class TRSInputReaderTest {
         assertThat(exception.getMessage()).isEqualToIgnoringCase("The supplied file was empty (zero bytes long)");
         System.out.println(exception.getMessage());
         lock.close();
+        tempFile.deleteOnExit();
     }
 
     @Test
@@ -85,6 +87,7 @@ class TRSInputReaderTest {
         Throwable exception = assertThrows(ExcelException.class, () -> new TRSInputReader().readExcelTRSfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
+        tempFile.deleteOnExit();
     }
 
     @Test
