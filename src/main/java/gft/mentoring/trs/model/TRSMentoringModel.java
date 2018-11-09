@@ -14,7 +14,7 @@ import lombok.Setter;
 class TRSMentoringModel {
 
     private int level; //grade
-    private int seniority; // startDate
+    private int seniority; //startDate
     private boolean leaver; //status
     private boolean contractor;//contractType
     private Family family; //jobFamily

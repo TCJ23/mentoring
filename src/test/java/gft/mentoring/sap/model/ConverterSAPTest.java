@@ -90,15 +90,16 @@ class ConverterSAPTest {
         val family = model.getFamily();
         val employee = model.isContractor();
         val level = model.getLevel();
+        val seniority = model.getSeniority();
         //then
         assertThat(family).isEqualTo(Family.AMS);
         assertThat(employee).isFalse();
         assertThat(level).isEqualTo(6);
+        assertThat(seniority).isEqualTo(0);
         assertAll(
                 () -> assertEquals("SAP model", model.getFirstName()),
                 () -> assertEquals("SAP model", model.getLastName()),
                 () -> assertEquals("SAP model", model.getSpecialization()),
-                () -> assertEquals("SAP model", model.getSeniority()),
                 () -> assertEquals("SAP model", model.getLineManagerID()),
                 () -> assertThat(model.getSapID().equalsIgnoreCase("sap model")).isTrue(),
                 () -> assertThat(model.getFederationID().equalsIgnoreCase("sap model")).isTrue(),
@@ -125,9 +126,9 @@ class ConverterSAPTest {
         cell6.setCellValue("job family");
         Cell cell7 = row0.createCell(6);
         cell7.setCellValue("job");
-        Cell cell8 = row0.createCell(7);
+        Cell cell8 = row0.createCell(8);
         cell8.setCellValue("cost center");
-        Cell cell9 = row0.createCell(8);
+        Cell cell9 = row0.createCell(7);
         cell9.setCellValue("init.entry");
         Cell cell10 = row0.createCell(9);
         cell10.setCellValue("pers.no. superior");
@@ -137,7 +138,7 @@ class ConverterSAPTest {
 
         Row row1 = sheet.createRow(1);
         for (int i = 0; i < 11; i++) {
-            if (i < 4 || i > 6) {
+            if (i < 4 || i > 7) {
                 Cell cell = row1.createCell(i);
                 cell.setCellValue("SAP model");
             }
@@ -148,6 +149,8 @@ class ConverterSAPTest {
             Cell cellLevel = row1.createCell(6);
             cellLevel.setCellValue("L6 (Seasoned)");
             data.add(row1);
+            Cell cellSeniority = row1.createCell(7);
+            cellSeniority.setCellValue("wrong data format");
         }
         return data;
     }
