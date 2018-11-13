@@ -33,9 +33,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ConverterSAPTest {
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final int firstRow = 0;
-    private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials", "pers.no.",
-            "employee subgroup", "job family", "job", "cost center", "init.entry", "pers.no. superior", "pers.no. mentor"};
-    public static final int INIT_ENTRY_COL = 8;
+    private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
+            "pers.no.", "employee subgroup", "job family",
+            "job", "cost center", "init.entry", "pers.no. superior",
+            "pers.no. mentor", "date of birth"};
+    private static final int FIRST_NAME_COL = 0;
+    private static final int LAST_NAME_COL = 1;
+    private static final int INITIALS_COL = 2;
+    private static final int PERS_NO_COL = 3;
+    private static final int EMPLOYEE_SUBGRP_COL = 4;
+    private static final int JOB_FAMILY_COL = 5;
+    private static final int JOB_COL = 6;
+    private static final int COST_CENTER_COL = 7;
+    private static final int INIT_ENTRY_COL = 8;
+    private static final int PERS_NO_SUPERIOR_COL = 9;
+    private static final int PERS_NO_MENTOR_COL = 10;
+    private static final int DATE_OF_BIRTH_COL = 11;
     private static final String EMPTY_STRING = "";
 
     @Test
@@ -127,28 +140,30 @@ class ConverterSAPTest {
         Sheet sheet = wb.createSheet("test sheet");
         List<Row> data = new ArrayList<>();
         Row row0 = sheet.createRow(0);
-        Cell cell1 = row0.createCell(0);
+        Cell cell1 = row0.createCell(FIRST_NAME_COL);
         cell1.setCellValue("first name");
-        Cell cell2 = row0.createCell(1);
+        Cell cell2 = row0.createCell(LAST_NAME_COL);
         cell2.setCellValue("last name");
-        Cell cell3 = row0.createCell(2);
+        Cell cell3 = row0.createCell(INITIALS_COL);
         cell3.setCellValue("initials");
-        Cell cell4 = row0.createCell(3);
+        Cell cell4 = row0.createCell(PERS_NO_COL);
         cell4.setCellValue("pers.no.");
-        Cell cell5 = row0.createCell(4);
+        Cell cell5 = row0.createCell(EMPLOYEE_SUBGRP_COL);
         cell5.setCellValue("employee subgroup");
-        Cell cell6 = row0.createCell(5);
+        Cell cell6 = row0.createCell(JOB_FAMILY_COL);
         cell6.setCellValue("job family");
-        Cell cell7 = row0.createCell(6);
+        Cell cell7 = row0.createCell(JOB_COL);
         cell7.setCellValue("job");
-        Cell cell9 = row0.createCell(7);
+        Cell cell9 = row0.createCell(COST_CENTER_COL);
         cell9.setCellValue("init.entry");
-        Cell cell8 = row0.createCell(8);
+        Cell cell8 = row0.createCell(INIT_ENTRY_COL);
         cell8.setCellValue("cost center");
-        Cell cell10 = row0.createCell(9);
+        Cell cell10 = row0.createCell(PERS_NO_SUPERIOR_COL);
         cell10.setCellValue("pers.no. superior");
-        Cell cell11 = row0.createCell(10);
+        Cell cell11 = row0.createCell(PERS_NO_MENTOR_COL);
         cell11.setCellValue("pers.no. mentor");
+        Cell cell12 = row0.createCell(DATE_OF_BIRTH_COL);
+        cell12.setCellValue("date of birth");
         data.add(row0);
 
         Row row1 = sheet.createRow(1);
@@ -274,7 +289,7 @@ class ConverterSAPTest {
         val headers = dataReader.getHeaders(applyColNamesToSingleRow());
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
         val data = dataReader.readRowsSAP(headers, singleRowData);
-
+        //when
         val dataConversion = new ConverterSAP();
         val actualSeniority = dataConversion.getSapMentoringModels(data).get(0).getSeniority();
         //then

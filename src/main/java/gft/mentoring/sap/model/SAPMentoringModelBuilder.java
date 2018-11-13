@@ -93,7 +93,7 @@ class SAPMentoringModelBuilder {
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
                     + DATE_PATTERN + "\n Setting seniority to " + DEFAULT_AGE);
-            sapMM.setSeniority(DEFAULT_AGE);
+            sapMM.setAge(DEFAULT_AGE);
         }
         return this;
     }
