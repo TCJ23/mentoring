@@ -88,11 +88,11 @@ class SAPMentoringModelBuilder {
         try {
             LocalDate parsedDate = LocalDate.parse(days, formatter);
             LocalDate now = LocalDate.now();
-            long daysBetween = ChronoUnit.DAYS.between(parsedDate, now) / 365;
+            long daysBetween = ChronoUnit.YEARS.between(parsedDate, now);
             sapMM.setAge((int) daysBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
-                    + DATE_PATTERN + "\n Setting seniority to " + DEFAULT_AGE);
+                    + DATE_PATTERN + "\n Setting age to " + DEFAULT_AGE);
             sapMM.setAge(DEFAULT_AGE);
         }
         return this;

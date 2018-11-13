@@ -18,9 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -137,6 +135,17 @@ class ConverterSAPTest {
                 () -> assertThat(model.getMenteeID().equalsIgnoreCase("sap model")).isTrue()
         );
     }
+
+   /* private static List<Row> cellCreatorHelper() {
+        Map<Integer, String> m = new HashMap<>() {
+            @Override
+            String get(Integer i) {
+                String v = super.get(i);
+                return v != null ? v : "SAP model";
+            }
+        }
+    }*/
+
 
     private static List<Row> createSAPMentoringModelHelperFromRow() {
         Workbook wb = new XSSFWorkbook();
@@ -292,8 +301,15 @@ class ConverterSAPTest {
         return formatter.format(date);
     }
 
+    @NotNull
+    private static String dateCreatorFromNowMinusYears(int years) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate date = LocalDate.now().minusYears(years);
+        return formatter.format(date);
+    }
+
     @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("rowByExamples")
+    @MethodSource("seniorityByRowByExamples")
     @DisplayName("3.2.6 - verify that init entry column is converted to days")
     void shouldConvertInitEntryDateToDaysParam(RowExample rowExample) {
         //given
@@ -304,9 +320,28 @@ class ConverterSAPTest {
         //when
         val dataConversion = new ConverterSAP();
         val actualSeniority = dataConversion.getSapMentoringModels(data).get(0).getSeniority();
+        val actualAge = dataConversion.getSapMentoringModels(data).get(0).getAge();
         //then
+        Assertions.assertEquals(rowExample.expected.getAge(), actualAge);
         Assertions.assertEquals(rowExample.expected.getSeniority(), actualSeniority);
     }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("ageRowByExamples")
+    @DisplayName("3.2.7 - verify that date of birth column is producing age of GFT employee")
+    void shouldConvertDateOfBirthColumnToYearsParam(RowExample rowExample) {
+        //given
+        val dataReader = new SAPInputReader();
+        val headers = dataReader.getHeaders(applyColNamesToSingleRow());
+        val singleRowData = Collections.singletonList(rowExample.testData).iterator();
+        val data = dataReader.readRowsSAP(headers, singleRowData);
+        //when
+        val dataConversion = new ConverterSAP();
+        val actualAge = dataConversion.getSapMentoringModels(data).get(0).getAge();
+        //then
+        Assertions.assertEquals(rowExample.expected.getAge(), actualAge);
+    }
+
 
     @NotNull
     private static Row applyColNamesToSingleRow() {
@@ -317,19 +352,49 @@ class ConverterSAPTest {
         return headers;
     }
 
-    private static Stream<RowExample> rowByExamples() {
+    private static Stream<RowExample> ageRowByExamples() {
         val xssfWorkbook = new XSSFWorkbook();
         val sheet = xssfWorkbook.createSheet("trs testing sheet");
         val headers = applyColumnNamesToSpreadSheet(sheet);
 
-        val worked30daysInGFT = addDateCellToRowToSheet(sheet, 1, 30, "data");
-        val intModel30 = createSAPMentoringModel(EMPTY_STRING, 30, 5, false, Family.UNDEFINED);
+        val baby1YearOld = addDateCellToRowToSheet(sheet, 1, 30, 1, "data");
+        val intModelBaby = createSAPMentoringModel(EMPTY_STRING, 30, 5, false, Family.UNDEFINED
+                , 1);
 
-        val workedOneYearInGFT = addDateCellToRowToSheet(sheet, 2, 365, "data");
-        val intModel365 = createSAPMentoringModel(EMPTY_STRING, 365, 5, false, Family.UNDEFINED);
+        val senior30years = addDateCellToRowToSheet(sheet, 2, 365, 30, "data");
+        val intModel365 = createSAPMentoringModel(EMPTY_STRING, 365, 5, false, Family.UNDEFINED
+                , 30);
 
-        val workedTwoYearsInGFT = addDateCellToRowToSheet(sheet, 3, 730, "data");
-        val intModel730 = createSAPMentoringModel(EMPTY_STRING, 730, 5, false, Family.UNDEFINED);
+        val senior35years = addDateCellToRowToSheet(sheet, 3, 730, 35, "data");
+        val intModel730 = createSAPMentoringModel(EMPTY_STRING, 730, 5, false, Family.UNDEFINED
+                , 35);
+
+        return Stream.of(
+                new RowExample("I am baby 1 year old ",
+                        baby1YearOld, intModelBaby, headers),
+                new RowExample("I'm 30 years old ",
+                        senior30years, intModel365, headers),
+                new RowExample("I'm 40 years old",
+                        senior35years, intModel730, headers)
+        );
+    }
+
+    private static Stream<RowExample> seniorityByRowByExamples() {
+        val xssfWorkbook = new XSSFWorkbook();
+        val sheet = xssfWorkbook.createSheet("trs testing sheet");
+        val headers = applyColumnNamesToSpreadSheet(sheet);
+
+        val worked30daysInGFT = addDateCellToRowToSheet(sheet, 1, 30, 1, "data");
+        val intModel30 = createSAPMentoringModel(EMPTY_STRING, 30, 5, false, Family.UNDEFINED
+                , 1);
+
+        val workedOneYearInGFT = addDateCellToRowToSheet(sheet, 2, 365, 1, "data");
+        val intModel365 = createSAPMentoringModel(EMPTY_STRING, 365, 5, false, Family.UNDEFINED
+                , 1);
+
+        val workedTwoYearsInGFT = addDateCellToRowToSheet(sheet, 3, 730, 1, "data");
+        val intModel730 = createSAPMentoringModel(EMPTY_STRING, 730, 5, false, Family.UNDEFINED
+                , 1);
 
         return Stream.of(
                 new RowExample("Working one month(30 days) in GFT ",
@@ -341,9 +406,10 @@ class ConverterSAPTest {
         );
     }
 
-    private static Row addDateCellToRowToSheet(Sheet sheet, int rownum, int days, String stringCell) {
+    private static Row addDateCellToRowToSheet(Sheet sheet, int rownum, int days, int age, String stringCell) {
         val row = sheet.createRow(rownum);
         row.createCell(INIT_ENTRY_COL).setCellValue(dateCreatorFromNowMinusDays(days));
+        row.createCell(DATE_OF_BIRTH_COL).setCellValue(dateCreatorFromNowMinusYears(age));
         return row;
     }
 
@@ -361,20 +427,21 @@ class ConverterSAPTest {
     }
 
     @NotNull
-    private static SAPMentoringModel createSAPMentoringModel(String datasample, int seniority, int level,
-                                                             boolean contractor, Family fam) {
+    private static SAPMentoringModel createSAPMentoringModel(String dataSample, int seniority, int level,
+                                                             boolean contractor, Family fam, int age) {
         val model = new SAPMentoringModel();
-        model.setFirstName(datasample);
-        model.setLastName(datasample);
-        model.setSpecialization(datasample);
-        model.setSapID(datasample);
-        model.setLineManagerID(datasample);
-        model.setMenteeID(datasample);
+        model.setFirstName(dataSample);
+        model.setLastName(dataSample);
+        model.setSpecialization(dataSample);
+        model.setSapID(dataSample);
+        model.setLineManagerID(dataSample);
+        model.setMenteeID(dataSample);
         /*meaningful settings*/
         model.setSeniority(seniority);
         model.setLevel(level);
         model.setFamily(fam);
         model.setContractor(contractor);
+        model.setAge(age);
         return model;
     }
 }

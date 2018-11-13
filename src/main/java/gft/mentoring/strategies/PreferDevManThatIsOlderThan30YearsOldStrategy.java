@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PreferDevManThatIsOlderThan30YearsOldStrategy implements VotingStrategy {
     /**
-     * @param mentor - we assumed that Mentor that is 30 years old is prefered as such Mentor is always more expierenced
-     *               than younger colleauges, we take 40 years old as maximum boundary value.
+     * @param mentor - we assumed that Mentor that is 30 years old is prefered as such Mentor is always more experienced
+     *               than younger colleagues, we take 40 years old as maximum boundary value.
      * @see MentoringModel#getAge()
      * given that maximum age of Mentor is 40 let's divide by this boundary value and return result times 25 supporting
      * points per mentee using Support type of VotingResult
