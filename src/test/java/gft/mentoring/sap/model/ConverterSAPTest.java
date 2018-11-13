@@ -37,6 +37,7 @@ class ConverterSAPTest {
             "pers.no.", "employee subgroup", "job family",
             "job", "cost center", "init.entry", "pers.no. superior",
             "pers.no. mentor", "date of birth"};
+    private static final int COLUMNS_COUNT = 12;
     private static final int FIRST_NAME_COL = 0;
     private static final int LAST_NAME_COL = 1;
     private static final int INITIALS_COL = 2;
@@ -111,7 +112,7 @@ class ConverterSAPTest {
     @DisplayName("3.2.4 - validate all logic without excel file, based on Row object")
     void shouldValidateAllLogicWithoutExcelFile() {
         //given
-        val data = createSAPMentoringModelHelper();
+        val data = createSAPMentoringModelHelperFromRow();
         //when
         val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
         val model = sapMentoringModels.get(0);
@@ -119,11 +120,13 @@ class ConverterSAPTest {
         val employee = model.isContractor();
         val level = model.getLevel();
         val seniority = model.getSeniority();
+        val age = model.getAge();
         //then
         assertThat(family).isEqualTo(Family.AMS);
         assertThat(employee).isFalse();
         assertThat(level).isEqualTo(6);
         assertThat(seniority).isEqualTo(0);
+        assertThat(age).isEqualTo(0);
         assertAll(
                 () -> assertEquals("SAP model", model.getFirstName()),
                 () -> assertEquals("SAP model", model.getLastName()),
@@ -135,7 +138,7 @@ class ConverterSAPTest {
         );
     }
 
-    private static List<Row> createSAPMentoringModelHelper() {
+    private static List<Row> createSAPMentoringModelHelperFromRow() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
         List<Row> data = new ArrayList<>();
@@ -154,9 +157,9 @@ class ConverterSAPTest {
         cell6.setCellValue("job family");
         Cell cell7 = row0.createCell(JOB_COL);
         cell7.setCellValue("job");
-        Cell cell9 = row0.createCell(COST_CENTER_COL);
+        Cell cell9 = row0.createCell(INIT_ENTRY_COL);
         cell9.setCellValue("init.entry");
-        Cell cell8 = row0.createCell(INIT_ENTRY_COL);
+        Cell cell8 = row0.createCell(COST_CENTER_COL);
         cell8.setCellValue("cost center");
         Cell cell10 = row0.createCell(PERS_NO_SUPERIOR_COL);
         cell10.setCellValue("pers.no. superior");
@@ -167,20 +170,29 @@ class ConverterSAPTest {
         data.add(row0);
 
         Row row1 = sheet.createRow(1);
-        for (int i = 0; i < 11; i++) {
-            if (i < 4 || i > 7) {
+        for (int i = 0; i < COLUMNS_COUNT; i++) {
+            if (i < 4) {
                 Cell cell = row1.createCell(i);
                 cell.setCellValue("SAP model");
+            } else if (i == 7) {
+                Cell cell = row1.createCell(i);
+                cell.setCellValue("SAP model");
+            } else if (i > 8) {
+                Cell cell = row1.createCell(i);
+                cell.setCellValue("SAP model");
+            } else {
+                Cell cellEmpOrContr = row1.createCell(EMPLOYEE_SUBGRP_COL);
+                cellEmpOrContr.setCellValue("Staff");
+                Cell cellFamily = row1.createCell(JOB_FAMILY_COL);
+                cellFamily.setCellValue("AMS");
+                Cell cellLevel = row1.createCell(JOB_COL);
+                cellLevel.setCellValue("L6 (Seasoned)");
+                data.add(row1);
+                Cell cellSeniority = row1.createCell(INIT_ENTRY_COL);
+                cellSeniority.setCellValue("wrong data format");
+                Cell ageCell = row1.createCell(DATE_OF_BIRTH_COL);
+                ageCell.setCellValue("wrong data format");
             }
-            Cell cellEmpOrContr = row1.createCell(4);
-            cellEmpOrContr.setCellValue("Staff");
-            Cell cellFamily = row1.createCell(5);
-            cellFamily.setCellValue("AMS");
-            Cell cellLevel = row1.createCell(6);
-            cellLevel.setCellValue("L6 (Seasoned)");
-            data.add(row1);
-            Cell cellSeniority = row1.createCell(7);
-            cellSeniority.setCellValue("wrong data format");
         }
         return data;
     }
