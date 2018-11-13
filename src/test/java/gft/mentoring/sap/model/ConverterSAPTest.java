@@ -179,29 +179,19 @@ class ConverterSAPTest {
         data.add(row0);
 
         Row row1 = sheet.createRow(1);
+
+        Map<Integer, String> values = new MapWithDefault<>("SAP model");
+        values.put(EMPLOYEE_SUBGRP_COL, "Staff");
+        values.put(JOB_FAMILY_COL, "AMS");
+        values.put(JOB_COL, "L6 (Seasoned)");
+        values.put(INIT_ENTRY_COL, "wrong data format");
+        values.put(DATE_OF_BIRTH_COL, "wrong data format");
+
+        data.add(row1);
+
         for (int i = 0; i < COLUMNS_COUNT; i++) {
-            if (i < 4) {
-                Cell cell = row1.createCell(i);
-                cell.setCellValue("SAP model");
-            } else if (i == 7) {
-                Cell cell = row1.createCell(i);
-                cell.setCellValue("SAP model");
-            } else if (i > 8) {
-                Cell cell = row1.createCell(i);
-                cell.setCellValue("SAP model");
-            } else {
-                Cell cellEmpOrContr = row1.createCell(EMPLOYEE_SUBGRP_COL);
-                cellEmpOrContr.setCellValue("Staff");
-                Cell cellFamily = row1.createCell(JOB_FAMILY_COL);
-                cellFamily.setCellValue("AMS");
-                Cell cellLevel = row1.createCell(JOB_COL);
-                cellLevel.setCellValue("L6 (Seasoned)");
-                data.add(row1);
-                Cell cellSeniority = row1.createCell(INIT_ENTRY_COL);
-                cellSeniority.setCellValue("wrong data format");
-                Cell ageCell = row1.createCell(DATE_OF_BIRTH_COL);
-                ageCell.setCellValue("wrong data format");
-            }
+            Cell cell = row1.createCell(i);
+            cell.setCellValue(values.get(i));
         }
         return data;
     }
@@ -374,7 +364,7 @@ class ConverterSAPTest {
                         baby1YearOld, intModelBaby, headers),
                 new RowExample("I'm 30 years old ",
                         senior30years, intModel365, headers),
-                new RowExample("I'm 40 years old",
+                new RowExample("I'm 35 years old",
                         senior35years, intModel730, headers)
         );
     }
@@ -443,5 +433,19 @@ class ConverterSAPTest {
         model.setContractor(contractor);
         model.setAge(age);
         return model;
+    }
+
+    static class MapWithDefault<K,V> extends HashMap<K,V> {
+        private V defaultVal;
+
+        private MapWithDefault(V defaultVal) {
+            this.defaultVal = defaultVal;
+        }
+
+        @Override
+        public V get(Object o) {
+            V v = super.get(o);
+            return v != null ? v : defaultVal;
+        }
     }
 }
