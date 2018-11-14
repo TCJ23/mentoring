@@ -24,4 +24,5 @@ class SAPmodel {
     private String persNrSuperior;
     private String persNrMentor;
     private String dateOfBirth;
+    private String personnelSubarea;
 }

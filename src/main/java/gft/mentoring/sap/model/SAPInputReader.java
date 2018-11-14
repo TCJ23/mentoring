@@ -84,6 +84,7 @@ class SAPInputReader {
         sapModels.put(headerIndex(headers, "pers.no. superior"), (cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
         sapModels.put((headerIndex(headers, "pers.no. mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
         sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setDateOfBirth(dateFromCell(cell)));
+        sapModels.put((headerIndex(headers, "personnel subarea")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
 
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createSAPmodelFromRow(row, sapModels))
