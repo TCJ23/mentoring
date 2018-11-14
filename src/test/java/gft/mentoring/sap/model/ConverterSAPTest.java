@@ -278,7 +278,6 @@ class ConverterSAPTest {
         int actualAge = list.get(0).getAge();
         //then
         Assertions.assertEquals(35,actualAge);
-
     }
 
     @NotNull
