@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -253,6 +254,33 @@ class ConverterSAPTest {
         return data;
     }
 
+    @Test
+    @DisplayName("3.2.8 - verify that date of birth column is converted to years")
+    void shouldConvertDateOfBirthToYears() {
+        //given
+        List<Row> data = new ArrayList<>();
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("trs sheet");
+        Row headers = applyColumnNamesToSpreadSheet(sheet);
+        data.add(headers);
+
+        Row row1 = sheet.createRow(1);
+        Map<Integer, String> values = new MapWithDefault<>("string data");
+        /* date of birth 35 years ago */
+        values.put(DATE_OF_BIRTH_COL, "23-09-1983");
+        data.add(row1);
+        for (int i = 0; i < COLUMNS_COUNT; i++) {
+            Cell cell = row1.createCell(i);
+            cell.setCellValue(values.get(i));
+        }
+        //when
+        List<SAPMentoringModel> list = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
+        int actualAge = list.get(0).getAge();
+        //then
+        Assertions.assertEquals(35,actualAge);
+
+    }
+
     @NotNull
     private static Row applyDataToRowsInSheet(int rowNum, Sheet sheet, short dataLength, Function<Integer, String> dataProvider) {
         Row row = sheet.createRow(rowNum);
@@ -299,7 +327,7 @@ class ConverterSAPTest {
     }
 
     @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("seniorityByRowByExamples")
+    @MethodSource("seniorityPerRowPerExample")
     @DisplayName("3.2.6 - verify that init entry column is converted to days")
     void shouldConvertInitEntryDateToDaysParam(RowExample rowExample) {
         //given
@@ -310,14 +338,12 @@ class ConverterSAPTest {
         //when
         val dataConversion = new ConverterSAP();
         val actualSeniority = dataConversion.getSapMentoringModels(data).get(0).getSeniority();
-        val actualAge = dataConversion.getSapMentoringModels(data).get(0).getAge();
         //then
-        Assertions.assertEquals(rowExample.expected.getAge(), actualAge);
         Assertions.assertEquals(rowExample.expected.getSeniority(), actualSeniority);
     }
 
     @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("ageRowByExamples")
+    @MethodSource("agePerRowPerExample")
     @DisplayName("3.2.7 - verify that date of birth column is producing age of GFT employee")
     void shouldConvertDateOfBirthColumnToYearsParam(RowExample rowExample) {
         //given
@@ -342,7 +368,7 @@ class ConverterSAPTest {
         return headers;
     }
 
-    private static Stream<RowExample> ageRowByExamples() {
+    private static Stream<RowExample> agePerRowPerExample() {
         val xssfWorkbook = new XSSFWorkbook();
         val sheet = xssfWorkbook.createSheet("trs testing sheet");
         val headers = applyColumnNamesToSpreadSheet(sheet);
@@ -369,7 +395,7 @@ class ConverterSAPTest {
         );
     }
 
-    private static Stream<RowExample> seniorityByRowByExamples() {
+    private static Stream<RowExample> seniorityPerRowPerExample() {
         val xssfWorkbook = new XSSFWorkbook();
         val sheet = xssfWorkbook.createSheet("trs testing sheet");
         val headers = applyColumnNamesToSpreadSheet(sheet);
@@ -435,7 +461,7 @@ class ConverterSAPTest {
         return model;
     }
 
-    static class MapWithDefault<K,V> extends HashMap<K,V> {
+    static class MapWithDefault<K, V> extends HashMap<K, V> {
         private V defaultVal;
 
         private MapWithDefault(V defaultVal) {
