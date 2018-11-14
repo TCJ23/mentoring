@@ -11,7 +11,7 @@ import lombok.*;
  */
 @NoArgsConstructor
 @Data
-class TRSModel {
+public class TRSModel {
     /** At the time of writing only below fields hold useful information
      * @param name - will be used for Merging TRS and SAP models into final MentoringModel
      * @param surname - will be used for Merging TRS and SAP models into final MentoringModel

@@ -29,28 +29,44 @@ class SAPInputReaderTest {
 
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final String BROKEN_FILE = "./broken-file.xlsx";
-    private static final int COLUMNS_COUNT = 11;
+
+    private static final int COLUMNS_COUNT = 12;
+    private static final int FIRST_ROW = 0;
+
+    private static final int FIRST_NAME_COL = 0;
+    private static final int LAST_NAME_COL = 1;
+    private static final int INITIALS_COL = 2;
+    private static final int PERS_NO_COL = 3;
+    private static final int EMPLOYEE_SUBGRP_COL = 4;
+    private static final int JOB_FAMILY_COL = 5;
+    private static final int JOB_COL = 6;
+    private static final int COST_CENTER_COL = 7;
+    private static final int INIT_ENTRY_COL = 8;
+    private static final int PERS_NO_SUPERIOR_COL = 9;
+    private static final int PERS_NO_MENTOR_COL = 10;
+    private static final int DATE_OF_BIRTH_COL = 11;
 
     @Test
-    @DisplayName("3.1.1 - should create 25 SAP models from sample excel file")
-    void shouldCreate25SAPmodelsFromSampleFile() throws IOException, InvalidFormatException, ExcelException {
+    @DisplayName("2.1.1 - should create 25 SAP models from sample excel file")
+    void shouldCreate25SAPmodelsFromSampleFileIgnoringNullRow() throws IOException, InvalidFormatException, ExcelException {
         //given
-        SAPInputReader sapInputReader = new SAPInputReader();
-        Workbook workbook = WorkbookFactory.create(new File(SAP_FILE));
+        val converterSAP = new ConverterSAP();
+        val sapInputReader = new SAPInputReader();
+        val workbook = WorkbookFactory.create(new File(SAP_FILE));
         /** we decrease by 1 because of 1st row is composed of column names*/
         int headerColumns = 1;
         val notNullRows = sapInputReader.notNullRows(workbook);
         val rowsSize = notNullRows - headerColumns;
         //when
-        val models = sapInputReader.readExcelSAPfile(SAP_FILE);
+        val filteredModels = converterSAP.convertInputToSAPMentoringModel(SAP_FILE);
         //then
-        assertThat(models).size().isEqualTo(rowsSize);
-        assertThat(models).size().isEqualTo(25);
+        assertThat(filteredModels).size().isEqualTo(rowsSize);
+
     }
 
     @Test
     @Disabled
-    @DisplayName("3.1.2 - test IOException, when Excel file is open while program runs ")
+    @DisplayName("2.1.2 - test IOException, when Excel file is open while program runs ")
     /** We had to disable test 3.1.2 broken build by IO exceptions
      70311 [ERROR] exceptionFileIsLocked  Time elapsed: 1.066 s  <<< FAILURE!
      org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
@@ -65,8 +81,8 @@ class SAPInputReaderTest {
     }
 
     @Test
-    @DisplayName("3.1.2a - test EmptyFileException, when incorrect file is given ")
-    void incorrectFilegiven() throws IOException {
+    @DisplayName("2.1.2a - test EmptyFileException, when incorrect file is given ")
+    void incorrectFileGiven() throws IOException {
         File tempFile = File.createTempFile("123", "");
         FileChannel channel = new RandomAccessFile(tempFile.getName(), "rw").getChannel();
         FileLock lock = channel.lock();
@@ -74,27 +90,29 @@ class SAPInputReaderTest {
         assertThat(exception.getMessage()).isEqualToIgnoringCase("The supplied file was empty (zero bytes long)");
         System.out.println(exception.getMessage());
         lock.close();
+        tempFile.deleteOnExit();
     }
 
     @Test
-    @DisplayName("3.1.2b - test EmptyFileException, when incorrect file is given ")
+    @DisplayName("2.1.2b - test EmptyFileException, when incorrect file is given ")
         /* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputReaderTest.exceptionInvalidFormat*/
     void exceptionInvalidFormat() throws IOException {
         File tempFile = File.createTempFile("123", "");
         Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
+        tempFile.deleteOnExit();
     }
 
     @Test
-    @DisplayName("3.1.3 - test FileNotFoundException when SAP file is not there")
+    @DisplayName("2.1.3 - test FileNotFoundException when SAP file is not there")
     void fileNotFound() {
         Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(SAP_FILE + "empty place"));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
     }
 
     @Test
-    @DisplayName("3.1.4 - test readRowsSAP correctly without sample file")
+    @DisplayName("2.1.4 - test readRowsSAP correctly without sample file")
     void createModelFromRandomFile() {
         //given
         Row mockRow = mock(Row.class);
@@ -107,16 +125,21 @@ class SAPInputReaderTest {
                 values[i] = RandomStringUtils.randomAscii(20);
         }
 
+        Date time = Calendar.getInstance().getTime();
         for (int i = 0; i < COLUMNS_COUNT; i++) {
             Mockito.when(mockRow.getCell(Mockito.eq(i), Mockito.any(Row.MissingCellPolicy.class))).thenReturn(mockCells[i]);
             if (i != 8) {
                 when(mockCells[i].getStringCellValue()).thenReturn((String) values[i]);
+            } else {
+                when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
+                when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
+                values[8] = String.valueOf((double) time.getTime());
+                when(mockCells[11].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
+                when(mockCells[11].getNumericCellValue()).thenReturn((double) time.getTime());
+                values[11] = String.valueOf((double) time.getTime());
             }
         }
-        Date time = Calendar.getInstance().getTime();
-        when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
-        when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
-        values[8] = String.valueOf((double) time.getTime());
+
 
         val createSAPModel = new SAPInputReader();
         val columnNames = createHeaders();
@@ -132,16 +155,17 @@ class SAPInputReaderTest {
         assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
         assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPosition()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getJobFamily()).isEqualTo(values[i++]);
         assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
         assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
         assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
         assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i]);
+        assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i++]);
+        assertThat(models.get(0).getDateOfBirth()).isEqualTo(values[i]);
     }
 
     @Test
-    @DisplayName("3.1.5a - Verify that column names order matches GOLDEN FILE ")
+    @DisplayName("2.1.5a - Verify that column names order matches GOLDEN FILE ")
     void shouldMatchGoldenFileColumnOrder() throws ExcelException {
         //given
         val excelValidator = new ExcelValidator();
@@ -152,7 +176,7 @@ class SAPInputReaderTest {
     }
 
     @Test
-    @DisplayName("3.1.5b - Verify that column names order DOES NOT match GOLDEN FILE ")
+    @DisplayName("2.1.5b - Verify that column names order DOES NOT match GOLDEN FILE ")
     void shouldNOTMatchGoldenFileColumnOrder() throws ExcelException {
         //given
         val excelValidator = new ExcelValidator();
@@ -163,7 +187,7 @@ class SAPInputReaderTest {
     }
 
     @Test
-    @DisplayName("3.1.5c - Verify that when validating column order also throws exception is thrown")
+    @DisplayName("2.1.5c - Verify that when validating column order also throws exception is thrown")
     void shouldThrowException() throws ExcelException {
         Throwable exception = assertThrows(ExcelException.class, () -> new ExcelValidator()
                 .verifyExcelColumnOrder(SAP_FILE + "empty place"));
@@ -171,7 +195,7 @@ class SAPInputReaderTest {
     }
 
     @Test
-    @DisplayName("3.1.6 - create 1 SAP model from Row without excel file")
+    @DisplayName("2.1.6 - create 1 SAP model from Row without excel file")
     void shouldCreateSingleSAPmodelFromRow() {
         //given
         SAPInputReader createSAPModel = new SAPInputReader();
@@ -181,7 +205,7 @@ class SAPInputReaderTest {
         List<Row> data = new ArrayList<>();
         Row columnNames = createHeaders();
         Row row1 = sheet.createRow(1);
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < COLUMNS_COUNT; i++) {
             Cell cell = row1.createCell(i);
             cell.setCellValue("SAP model");
         }
@@ -198,41 +222,44 @@ class SAPInputReaderTest {
                 () -> assertEquals("SAP model", model.getPersonalNR()),
                 () -> assertEquals("SAP model", model.getCostCenter()),
                 () -> assertEquals("SAP model", model.getEmployeeSubGrp()),
-                () -> assertEquals("SAP model", model.getPosition()),
+                () -> assertEquals("SAP model", model.getJobFamily()),
                 () -> assertEquals("SAP model", model.getJob()),
                 () -> assertEquals("SAP model", model.getCostCenter()),
                 () -> assertEquals("SAP model", model.getInitEntry()),
                 () -> assertEquals("SAP model", model.getPersNrSuperior()),
-                () -> assertEquals("SAP model", model.getPersNrMentor())
+                () -> assertEquals("SAP model", model.getPersNrMentor()),
+                () -> assertEquals("SAP model", model.getDateOfBirth())
         );
     }
 
     private static Row createHeaders() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
-        Row row0 = sheet.createRow(0);
-        Cell cell1 = row0.createCell(0);
+        Row row0 = sheet.createRow(FIRST_ROW);
+        Cell cell1 = row0.createCell(FIRST_NAME_COL);
         cell1.setCellValue("first name");
-        Cell cell2 = row0.createCell(1);
+        Cell cell2 = row0.createCell(LAST_NAME_COL);
         cell2.setCellValue("last name");
-        Cell cell3 = row0.createCell(2);
+        Cell cell3 = row0.createCell(INITIALS_COL);
         cell3.setCellValue("initials");
-        Cell cell4 = row0.createCell(3);
+        Cell cell4 = row0.createCell(PERS_NO_COL);
         cell4.setCellValue("pers.no.");
-        Cell cell5 = row0.createCell(4);
+        Cell cell5 = row0.createCell(EMPLOYEE_SUBGRP_COL);
         cell5.setCellValue("employee subgroup");
-        Cell cell6 = row0.createCell(5);
-        cell6.setCellValue("position");
-        Cell cell7 = row0.createCell(6);
+        Cell cell6 = row0.createCell(JOB_FAMILY_COL);
+        cell6.setCellValue("job family");
+        Cell cell7 = row0.createCell(JOB_COL);
         cell7.setCellValue("job");
-        Cell cell8 = row0.createCell(7);
+        Cell cell8 = row0.createCell(COST_CENTER_COL);
         cell8.setCellValue("cost center");
-        Cell cell9 = row0.createCell(8);
+        Cell cell9 = row0.createCell(INIT_ENTRY_COL);
         cell9.setCellValue("init.entry");
-        Cell cell10 = row0.createCell(9);
+        Cell cell10 = row0.createCell(PERS_NO_SUPERIOR_COL);
         cell10.setCellValue("pers.no. superior");
-        Cell cell11 = row0.createCell(10);
+        Cell cell11 = row0.createCell(PERS_NO_MENTOR_COL);
         cell11.setCellValue("pers.no. mentor");
+        Cell cell12 = row0.createCell(DATE_OF_BIRTH_COL);
+        cell12.setCellValue("date of birth");
         return row0;
     }
 }

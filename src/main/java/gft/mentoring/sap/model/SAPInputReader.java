@@ -66,22 +66,27 @@ class SAPInputReader {
                 .collect(Collectors.toList());
     }
 
+
     List<SAPmodel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
         HashMap<Integer, BiConsumer<Cell, SAPmodel>> sapModels = new HashMap<>();
+        /*please pay attention to First name and keep consistent with casing*/
         sapModels.put(headerIndex(headers, "First name"), (cell, saper) -> saper.setFirstName(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "last name"), (cell, saper) -> saper.setLastName(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "initials"), (cell, saper) -> saper.setInitials(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "pers.no."), (cell, saper) -> saper.setPersonalNR(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "employee subgroup"), (cell, saper) -> saper.setEmployeeSubGrp(stringFromCell(cell)));
-        sapModels.put(headerIndex(headers, "position"), (cell, saper) -> saper.setPosition(stringFromCell(cell)));
+        /*SAP names this column Job Family
+        sapModels.put(headerIndex(headers, "position"), (cell, saper) -> saper.setJobFamily(stringFromCell(cell)));*/
+        sapModels.put(headerIndex(headers, "job family"), (cell, saper) -> saper.setJobFamily(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "job"), (cell, saper) -> saper.setJob(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "cost center"), (cell, saper) -> saper.setCostCenter(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "init.entry"), (cell, saper) -> saper.setInitEntry(dateFromCell(cell)));
         sapModels.put(headerIndex(headers, "pers.no. superior"), (cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
         sapModels.put((headerIndex(headers, "pers.no. mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
+        sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setDateOfBirth(dateFromCell(cell)));
+
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createSAPmodelFromRow(row, sapModels))
-                .filter(validator)
                 .collect(Collectors.toList());
     }
 
@@ -93,6 +98,10 @@ class SAPInputReader {
         } else {
             throw new IllegalArgumentException("Column name '" + name + "' not found in spreadsheet");
         }
+    }
+
+    List<SAPmodel> filterInvalid(List<SAPmodel> sapers) {
+        return sapers.stream().filter(validator).collect(Collectors.toList());
     }
 
     class Validator implements Predicate<SAPmodel> {
