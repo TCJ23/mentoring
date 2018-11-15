@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 class ConverterSAP {
 
-    private LocalDate now = LocalDate.now();
+    private LocalDate baseDate;
 
-    public ConverterSAP(LocalDate now) {
-        this.now = now;
+    ConverterSAP(LocalDate baseDate) {
+        this.baseDate = baseDate;
     }
 
     List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
@@ -33,7 +33,7 @@ class ConverterSAP {
     }
 
     List<SAPMentoringModel> getSapMentoringModels(List<SAPmodel> sapers) {
-        return sapers.stream().map(saper -> new SAPMentoringModelBuilder()
+        return sapers.stream().map(saper -> new SAPMentoringModelBuilder(baseDate)
                 /** meaningful logic
                  * @see SAPMentoringModel*/
                 .setLevel(saper.getJob())

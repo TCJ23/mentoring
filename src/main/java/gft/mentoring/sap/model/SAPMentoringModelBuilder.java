@@ -15,6 +15,12 @@ class SAPMentoringModelBuilder {
     private static final String DATE_PATTERN = "dd-MM-yyyy";
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private SAPMentoringModel sapMM = new SAPMentoringModel();
+    private LocalDate date;
+
+    SAPMentoringModelBuilder(LocalDate baseDate) {
+        this.date = baseDate;
+    }
+
 
     SAPMentoringModel build() {
         return sapMM;
@@ -73,8 +79,7 @@ class SAPMentoringModelBuilder {
     SAPMentoringModelBuilder setSeniority(String days) {
         try {
             LocalDate parsedDate = LocalDate.parse(days, formatter);
-            LocalDate now = LocalDate.now();
-            long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
+            long daysBetween = ChronoUnit.DAYS.between(parsedDate, date);
             sapMM.setSeniority((int) daysBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read start date column due to wrong format. Format should be "
@@ -87,8 +92,7 @@ class SAPMentoringModelBuilder {
     SAPMentoringModelBuilder setAge(String days) {
         try {
             LocalDate parsedDate = LocalDate.parse(days, formatter);
-            LocalDate now = LocalDate.now();
-            long daysBetween = ChronoUnit.YEARS.between(parsedDate, now);
+            long daysBetween = ChronoUnit.YEARS.between(parsedDate, date);
             sapMM.setAge((int) daysBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
