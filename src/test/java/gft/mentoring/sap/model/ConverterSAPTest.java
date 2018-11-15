@@ -135,7 +135,7 @@ class ConverterSAPTest {
                 () -> assertEquals("SAP model", model.getLineManagerID()),
                 () -> assertThat(model.getSapID().equalsIgnoreCase("sap model")).isTrue(),
                 () -> assertThat(model.getFederationID().equalsIgnoreCase("sap model")).isTrue(),
-                () -> assertThat(model.getMenteeID().equalsIgnoreCase("sap model")).isTrue()
+                () -> assertThat(model.getMentorID().equalsIgnoreCase("sap model")).isTrue()
         );
     }
 
@@ -448,7 +448,7 @@ class ConverterSAPTest {
         model.setSpecialization(dataSample);
         model.setSapID(dataSample);
         model.setLineManagerID(dataSample);
-        model.setMenteeID(dataSample);
+        model.setMentorID(dataSample);
         /*meaningful settings*/
         model.setSeniority(seniority);
         model.setLevel(level);

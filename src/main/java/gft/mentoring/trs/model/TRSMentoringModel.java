@@ -3,15 +3,13 @@ package gft.mentoring.trs.model;
 
 import gft.mentoring.Family;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author tzje
  * This is a intermediate model we will use to convert infromation from SAP to create Mentoring Model
  */
 @Data
-class TRSMentoringModel {
+public class TRSMentoringModel {
 
     private int level; //grade
     private int seniority; //startDate

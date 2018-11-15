@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class ConverterSAP {
+public class ConverterSAP {
 
     private LocalDate baseDate;
 
@@ -17,7 +17,7 @@ class ConverterSAP {
         this.baseDate = baseDate;
     }
 
-    List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
+    public List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new SAPInputReader();
         val sapers = input.readExcelSAPfile(file);
         val filteredSapers = input.filterInvalid(sapers);

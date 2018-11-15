@@ -35,5 +35,5 @@ public class SAPMentoringModel {
     private String sapID; //Pers.No.
     private String specialization; //costCenter ?
     private String lineManagerID; //persNrSuperior ?
-    private String menteeID; //persNrMentor
+    private String mentorID; //persNrMentor
 }
