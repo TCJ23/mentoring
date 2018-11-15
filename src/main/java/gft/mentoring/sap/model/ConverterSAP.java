@@ -4,11 +4,18 @@ import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 class ConverterSAP {
+
+    private LocalDate now = LocalDate.now();
+
+    public ConverterSAP(LocalDate now) {
+        this.now = now;
+    }
 
     List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new SAPInputReader();

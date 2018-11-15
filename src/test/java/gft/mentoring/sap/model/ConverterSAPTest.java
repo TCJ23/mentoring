@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("3 - Main class to test conversion from SAP file to Mentoring Model")
 class ConverterSAPTest {
+    private static final LocalDate NOW = LocalDate.now();
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final int firstRow = 0;
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
@@ -55,7 +56,7 @@ class ConverterSAPTest {
     @DisplayName("3.2.1a - Verify SAP Model Job info to Ment.Model Level conversion")
     void shouldConvertLevelToInt() throws ExcelException, InvalidFormatException {
         //given
-        val sapMMs = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
+        val sapMMs = new ConverterSAP(NOW).convertInputToSAPMentoringModel(SAP_FILE).get(0);
         //when
         val level3 = sapMMs.getLevel();
         //then
@@ -66,7 +67,7 @@ class ConverterSAPTest {
     @DisplayName("3.2.1b - Verify SAP Model Job info for Directors converts to Level 7 or higher")
     void shouldConvertDirectorLevelToInt() throws ExcelException, InvalidFormatException {
         //given
-        val director = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(INIT_ENTRY_COL);
+        val director = new ConverterSAP(NOW).convertInputToSAPMentoringModel(SAP_FILE).get(INIT_ENTRY_COL);
         //when
         val directorLevel = director.getLevel();
         //then
@@ -77,7 +78,7 @@ class ConverterSAPTest {
     @DisplayName("3.2.2a - Verify SAP Model Employee Subgroup column defines if person is a CONTRACTOR")
     void shouldConvertEmployeeSubgroupColumnToIsContractorTrue() throws ExcelException, InvalidFormatException {
         //given
-        val model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(1);
+        val model = new ConverterSAP(NOW).convertInputToSAPMentoringModel(SAP_FILE).get(1);
         //when
         val contractor = model.isContractor();
         //then
@@ -89,7 +90,7 @@ class ConverterSAPTest {
     @DisplayName("3.2.2b - Verify SAP Model Employee Subgroup column defines if person is an EMPLOYEE")
     void shouldConvertEmployeeSubgroupColumnToIsContractorFalse() throws ExcelException, InvalidFormatException {
         //given
-        val model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(0);
+        val model = new ConverterSAP(NOW).convertInputToSAPMentoringModel(SAP_FILE).get(0);
         //when
         val employee = model.isContractor();
         //then
@@ -100,7 +101,7 @@ class ConverterSAPTest {
     @DisplayName("3.2.3 a - Position column should generate proper Family")
     void shouldConvertPostionColumnToOneOf10Families() throws ExcelException, InvalidFormatException {
         //given
-        val model = new ConverterSAP().convertInputToSAPMentoringModel(SAP_FILE).get(9);
+        val model = new ConverterSAP(NOW).convertInputToSAPMentoringModel(SAP_FILE).get(9);
         //when
         val testerFamily = model.getFamily();
         //then
@@ -113,7 +114,7 @@ class ConverterSAPTest {
         //given
         val data = createSAPMentoringModelHelperFromRow();
         //when
-        val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
+        val sapMentoringModels = new ConverterSAP(NOW).convertFilteredRowsSAP(data.iterator());
         val model = sapMentoringModels.get(0);
         val family = model.getFamily();
         val employee = model.isContractor();
@@ -136,17 +137,6 @@ class ConverterSAPTest {
                 () -> assertThat(model.getMenteeID().equalsIgnoreCase("sap model")).isTrue()
         );
     }
-
-   /* private static List<Row> cellCreatorHelper() {
-        Map<Integer, String> m = new HashMap<>() {
-            @Override
-            String get(Integer i) {
-                String v = super.get(i);
-                return v != null ? v : "SAP model";
-            }
-        }
-    }*/
-
 
     private static List<Row> createSAPMentoringModelHelperFromRow() {
         Workbook wb = new XSSFWorkbook();
@@ -202,7 +192,7 @@ class ConverterSAPTest {
     void shouldConvertInitEntryDateToDays() {
         //given
         val data = createSAPSeniortiyExamples();
-        val sapMentoringModels = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
+        val sapMentoringModels = new ConverterSAP(NOW).convertFilteredRowsSAP(data.iterator());
         //when
         val worked30daysInGFT = sapMentoringModels.get(0).getSeniority();
         val workedOneYearInGFT = sapMentoringModels.get(1).getSeniority();
@@ -274,7 +264,7 @@ class ConverterSAPTest {
             cell.setCellValue(values.get(i));
         }
         //when
-        List<SAPMentoringModel> list = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
+        List<SAPMentoringModel> list = new ConverterSAP(NOW).convertFilteredRowsSAP(data.iterator());
         int actualAge = list.get(0).getAge();
         //then
         Assertions.assertEquals(35,actualAge);
@@ -315,15 +305,13 @@ class ConverterSAPTest {
     @NotNull
     private static String dateCreatorFromNowMinusDays(int days) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate date = LocalDate.now().minusDays(days);
-        return formatter.format(date);
+        return formatter.format(NOW.minusDays(days));
     }
 
     @NotNull
     private static String dateCreatorFromNowMinusYears(int years) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate date = LocalDate.now().minusYears(years);
-        return formatter.format(date);
+        return formatter.format(NOW.minusYears(years));
     }
 
     @ParameterizedTest(name = "{index} => {0}")
@@ -336,7 +324,7 @@ class ConverterSAPTest {
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
         val data = dataReader.readRowsSAP(headers, singleRowData);
         //when
-        val dataConversion = new ConverterSAP();
+        val dataConversion = new ConverterSAP(NOW);
         val actualSeniority = dataConversion.getSapMentoringModels(data).get(0).getSeniority();
         //then
         Assertions.assertEquals(rowExample.expected.getSeniority(), actualSeniority);
@@ -352,7 +340,7 @@ class ConverterSAPTest {
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
         val data = dataReader.readRowsSAP(headers, singleRowData);
         //when
-        val dataConversion = new ConverterSAP();
+        val dataConversion = new ConverterSAP(NOW);
         val actualAge = dataConversion.getSapMentoringModels(data).get(0).getAge();
         //then
         Assertions.assertEquals(rowExample.expected.getAge(), actualAge);

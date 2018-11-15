@@ -14,7 +14,7 @@ import lombok.Value;
 @Value
 public class MentoringModel {
     /**
-     * @param family is department you work for GFT     in i.e Governance
+     * @param family is department you work for GFT in i.e Governance
      * @param specialization is your specialized skillset in Family i.e. Data -> Big Data
      * @param level - we have 7 levels in GFT , 7 is highest
      * @param seniority - days since you started work at GFT
@@ -31,6 +31,8 @@ public class MentoringModel {
     private int level;
     private int seniority;
     private String localization;
+    private String firstName;
+    private String lastName;
     private boolean contractor;
     private boolean leaver;
     private int menteesAssigned;
