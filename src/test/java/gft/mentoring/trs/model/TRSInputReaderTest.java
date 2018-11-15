@@ -20,6 +20,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("4 - Main Class for validating TRS INPUT")
 class TRSInputReaderTest {
+    private static final LocalDate BASE_DATE = LocalDate.now();
     private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
     private static final int firstRow = 0;
     private static final int nameCol = 0;
@@ -53,7 +55,7 @@ class TRSInputReaderTest {
         //given
         val trsInput = new TRSInputReader();
         val workbook = WorkbookFactory.create(new File(TRS_FILE));
-        val convertTRS = new ConvertTRS();
+        val convertTRS = new ConvertTRS(BASE_DATE);
         //* we decrease by 1 because of 1st row is composed of column names
         val headerColumns = 1;
         val notNullRows = trsInput.notNullRows(workbook);
@@ -189,8 +191,8 @@ class TRSInputReaderTest {
         val sheet = wb.createSheet("trs testing sheet");
         val headers = applyColumnNamesToSpreadSheet(sheet);
 
-        val emptyRow = addRowToSheet(sheet,1);
-        val fullDataRow = addRowToSheet(sheet,2);
+        val emptyRow = addRowToSheet(sheet, 1);
+        val fullDataRow = addRowToSheet(sheet, 2);
         fillRowWithData(fullDataRow);
         /**
          * We are setting this as empty Strings as
@@ -231,7 +233,6 @@ class TRSInputReaderTest {
         return headers;
     }
 
-    @NotNull
     private static void iterateOverColumnNamesAndSetValues(Row headers) {
         int columnAmount = 0;
         for (String columnName : COLUMN_NAMES) {
@@ -241,7 +242,6 @@ class TRSInputReaderTest {
         }
     }
 
-    @NotNull
     private static void fillRowWithData(Row rowWithData) {
         int columnAmount = 0;
         for (String columnName : COLUMN_NAMES) {
@@ -262,8 +262,7 @@ class TRSInputReaderTest {
 
     /* parameters are being modified, not produced hence naming convention */
     private static Row addRowToSheet(Sheet sheet, int rownum) {
-        val row = sheet.createRow(rownum);
-        return row;
+        return sheet.createRow(rownum);
     }
 
     @Value

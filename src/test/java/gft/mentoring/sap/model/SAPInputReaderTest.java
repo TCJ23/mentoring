@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,7 +52,7 @@ class SAPInputReaderTest {
     @DisplayName("2.1.1 - should create 25 SAP models from sample excel file")
     void shouldCreate25SAPmodelsFromSampleFileIgnoringNullRow() throws IOException, InvalidFormatException, ExcelException {
         //given
-        val converterSAP = new ConverterSAP();
+        val converterSAP = new ConverterSAP(LocalDate.now());
         val sapInputReader = new SAPInputReader();
         val workbook = WorkbookFactory.create(new File(SAP_FILE));
         /** we decrease by 1 because of 1st row is composed of column names*/

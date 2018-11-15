@@ -4,11 +4,18 @@ import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 class ConverterSAP {
+
+    private LocalDate baseDate;
+
+    ConverterSAP(LocalDate baseDate) {
+        this.baseDate = baseDate;
+    }
 
     List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new SAPInputReader();
@@ -26,7 +33,7 @@ class ConverterSAP {
     }
 
     List<SAPMentoringModel> getSapMentoringModels(List<SAPmodel> sapers) {
-        return sapers.stream().map(saper -> new SAPMentoringModelBuilder()
+        return sapers.stream().map(saper -> new SAPMentoringModelBuilder(baseDate)
                 /** meaningful logic
                  * @see SAPMentoringModel*/
                 .setLevel(saper.getJob())

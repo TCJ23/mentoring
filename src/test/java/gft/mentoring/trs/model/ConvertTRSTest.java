@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("5 - Main class for validating TRS conversion to intermediate Mentoring Model ")
 class ConvertTRSTest {
+    private static final LocalDate BASE_DATE = LocalDate.now();
     private static final String TRS_FILE = "./Sample_TRS_DevMan_20181002.xlsx";
     private static final int firstRow = 0;
     private static final int nameCol = 0;
@@ -52,7 +53,7 @@ class ConvertTRSTest {
     void shouldMarkTRSModelasLeaver() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertFilteredRowsTRS(data.iterator());
         //when
         val modelR0 = trsMentoringModels.get(0);
         val modelR1 = trsMentoringModels.get(1);
@@ -71,7 +72,7 @@ class ConvertTRSTest {
     void shoulConvertToProperLevel() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertFilteredRowsTRS(data.iterator());
         //when
         val level3 = trsMentoringModels.get(0).getLevel();
         val level4 = trsMentoringModels.get(1).getLevel();
@@ -85,10 +86,10 @@ class ConvertTRSTest {
 
     @Test
     @DisplayName("5.1.3 - get proper Family from Job Family column")
-    void shouldConvertPostionColumnToOneOf10Families() throws ExcelException, InvalidFormatException {
+    void shouldConvertPostionColumnToOneOf10Families() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertFilteredRowsTRS(data.iterator());
         //when
         val testingFamily = trsMentoringModels.get(0).getFamily();
         val developmentFamily = trsMentoringModels.get(1).getFamily();
@@ -107,7 +108,7 @@ class ConvertTRSTest {
     void shouldConvertStartDateToDays() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertFilteredRowsTRS(data.iterator());
         //when
         val worked30daysInGFT = trsMentoringModels.get(0).getSeniority();
         val workedOneYearInGFT = trsMentoringModels.get(1).getSeniority();
@@ -123,7 +124,7 @@ class ConvertTRSTest {
     void shouldConvertLocalization() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertFilteredRowsTRS(data.iterator());
         //when
         val lodzOffice = trsMentoringModels.get(0).getLocalization();
         val poznanOffice = trsMentoringModels.get(1).getLocalization();
@@ -139,7 +140,7 @@ class ConvertTRSTest {
     void shouldConvertContractType() {
         //given
         val data = createTRSMentoringModelHelper();
-        val trsMentoringModels = new ConvertTRS().convertFilteredRowsTRS(data.iterator());
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertFilteredRowsTRS(data.iterator());
         //when
         val employee = trsMentoringModels.get(0).isContractor();
         val contractor = trsMentoringModels.get(1).isContractor();
@@ -152,7 +153,7 @@ class ConvertTRSTest {
     @DisplayName("5.1.7 - convert from file, first & lastname")
     void shouldConvertGFTPersonFromFile() throws ExcelException, InvalidFormatException {
         //given
-        val trsMentoringModels = new ConvertTRS().convertInputToTRSMentoringModel(TRS_FILE);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertInputToTRSMentoringModel(TRS_FILE);
         //when
         val model = trsMentoringModels.get(0);
         val firstName = model.getFirstName();
@@ -166,7 +167,7 @@ class ConvertTRSTest {
     @DisplayName("5.1.8 - mappping of technology to specialization")
     void shouldConvertGFTSpecializationBasedOnTechnologyColumn() throws ExcelException, InvalidFormatException {
         //given
-        val trsMentoringModels = new ConvertTRS().convertInputToTRSMentoringModel(TRS_FILE);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE).convertInputToTRSMentoringModel(TRS_FILE);
         //when
         val dotNetSpecialized = trsMentoringModels.get(0).getSpecialization();
         val amsSupporter = trsMentoringModels.get(1).getSpecialization();
@@ -300,8 +301,7 @@ class ConvertTRSTest {
     @NotNull
     private static String dateCreatorFromNowMinusDays(int days) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate date = LocalDate.now().minusDays(days);
-        return formatter.format(date);
+        return formatter.format(BASE_DATE.minusDays(days));
     }
 
     @ParameterizedTest(name = "{index} => {0}")
@@ -314,7 +314,7 @@ class ConvertTRSTest {
         val singleRowData = Collections.singletonList(rowExample.testData).iterator();
         val data = dataReader.readRowsTRS(headers, singleRowData);
 
-        val dataConversion = new ConvertTRS();
+        val dataConversion = new ConvertTRS(BASE_DATE);
         val intermediateModel = dataConversion.createTRSMentoringModel(data).get(0);
         //then
         Assertions.assertEquals(rowExample.expected, intermediateModel);

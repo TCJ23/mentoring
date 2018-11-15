@@ -5,11 +5,19 @@ import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 class ConvertTRS {
+
+    private LocalDate baseDate;
+
+    ConvertTRS(LocalDate baseDate) {
+        this.baseDate = baseDate;
+    }
+
     List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new TRSInputReader();
         val tresers = input.readExcelTRSfile(file);
@@ -26,7 +34,7 @@ class ConvertTRS {
     }
 
     List<TRSMentoringModel> createTRSMentoringModel(List<TRSModel> tresers) {
-        return tresers.stream().map(treser -> new TRSMentoringModelBuilder()
+        return tresers.stream().map(treser -> new TRSMentoringModelBuilder(baseDate)
                 .setLeaver(treser.getStatus())
                 .setLevel(treser.getGrade())
                 .setFamily(treser.getJobFamily())

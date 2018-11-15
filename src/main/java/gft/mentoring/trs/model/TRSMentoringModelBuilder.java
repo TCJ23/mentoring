@@ -14,6 +14,11 @@ class TRSMentoringModelBuilder {
     private static final String DATE_PATTERN = "dd-MM-yyyy";
     private TRSMentoringModel trsMM = new TRSMentoringModel();
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+    private LocalDate baseDate;
+
+    TRSMentoringModelBuilder(LocalDate baseDate) {
+        this.baseDate = baseDate;
+    }
 
     TRSMentoringModel build() {
         return trsMM;
@@ -52,8 +57,7 @@ class TRSMentoringModelBuilder {
     TRSMentoringModelBuilder setSeniority(String days) {
         try {
             LocalDate parsedDate = LocalDate.parse(days, formatter);
-            LocalDate now = LocalDate.now();
-            long daysBetween = ChronoUnit.DAYS.between(parsedDate, now);
+            long daysBetween = ChronoUnit.DAYS.between(parsedDate, baseDate);
             trsMM.setSeniority((int) daysBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read start date column due to wrong format. Format should be "
