@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("1 - Main Class to test MatchingEngine")
 class MatchingSpec {
-    private static final String EMPTY_STRING = "";
+    private static final String NO_NAME = "";
     /* This test if to meet requirement 1.1 in REQUIREMENTS.md
      in @ParameterizedTest you either keep
      your testmethod name and method source name the same or use parameters as below
@@ -29,12 +29,12 @@ class MatchingSpec {
     /*Base models for testing*/
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", EMPTY_STRING, EMPTY_STRING, false, false, 0, 23).toBuilder();
+                "Lodz", NO_NAME, NO_NAME, false, false, 0, 23).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
         return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", EMPTY_STRING, EMPTY_STRING, false, true, 0, 23).toBuilder();
+                "Lodz", NO_NAME, NO_NAME, false, true, 0, 23).toBuilder();
     }
 
     @ParameterizedTest(name = "{index} => {0}")

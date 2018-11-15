@@ -98,6 +98,11 @@ class SAPMentoringModelBuilder {
         return this;
     }
 
+    SAPMentoringModelBuilder setOfficeLocation(String office) {
+        sapMM.setOfficeLocation(office);
+        return this;
+    }
+
     SAPMentoringModelBuilder setLineManagerID(String persNrSuperior) {
         sapMM.setLineManagerID(persNrSuperior);
         return this;

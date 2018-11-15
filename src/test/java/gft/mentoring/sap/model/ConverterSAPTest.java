@@ -35,8 +35,8 @@ class ConverterSAPTest {
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
             "pers.no.", "employee subgroup", "job family",
             "job", "cost center", "init.entry", "pers.no. superior",
-            "pers.no. mentor", "date of birth"};
-    private static final int COLUMNS_COUNT = 12;
+            "pers.no. mentor", "date of birth", "personnel subarea"};
+    private static final int COLUMNS_COUNT = 13;
     private static final int FIRST_NAME_COL = 0;
     private static final int LAST_NAME_COL = 1;
     private static final int INITIALS_COL = 2;
@@ -49,6 +49,7 @@ class ConverterSAPTest {
     private static final int PERS_NO_SUPERIOR_COL = 9;
     private static final int PERS_NO_MENTOR_COL = 10;
     private static final int DATE_OF_BIRTH_COL = 11;
+    private static final int PERS_SUBAREA_COL = 12;
     private static final String EMPTY_STRING = "";
 
     @Test
@@ -137,17 +138,6 @@ class ConverterSAPTest {
         );
     }
 
-   /* private static List<Row> cellCreatorHelper() {
-        Map<Integer, String> m = new HashMap<>() {
-            @Override
-            String get(Integer i) {
-                String v = super.get(i);
-                return v != null ? v : "SAP model";
-            }
-        }
-    }*/
-
-
     private static List<Row> createSAPMentoringModelHelperFromRow() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("test sheet");
@@ -177,6 +167,8 @@ class ConverterSAPTest {
         cell11.setCellValue("pers.no. mentor");
         Cell cell12 = row0.createCell(DATE_OF_BIRTH_COL);
         cell12.setCellValue("date of birth");
+        Cell cell13 = row0.createCell(PERS_SUBAREA_COL);
+        cell13.setCellValue("personnel subarea");
         data.add(row0);
 
         Row row1 = sheet.createRow(1);
@@ -277,7 +269,7 @@ class ConverterSAPTest {
         List<SAPMentoringModel> list = new ConverterSAP().convertFilteredRowsSAP(data.iterator());
         int actualAge = list.get(0).getAge();
         //then
-        Assertions.assertEquals(35,actualAge);
+        Assertions.assertEquals(35, actualAge);
     }
 
     @NotNull
