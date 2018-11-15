@@ -39,15 +39,16 @@ class ConverterSAP {
                 .setLevel(saper.getJob())
                 .setContractor(saper.getEmployeeSubGrp())
                 .setFamily(saper.getJobFamily())
+                .setLastName(saper.getLastName())
+                .setFirstName(saper.getFirstName())
+                .setSeniority(saper.getInitEntry())
+                .setAge(saper.getDateOfBirth())
+                .setOfficeLocation(saper.getPersonnelSubarea())
                 /** redundant fields
                  * @see SAPMentoringModel*/
-                .setFirstName(saper.getFirstName())
-                .setLastName(saper.getLastName())
                 .setFederationID(saper.getInitials())
                 .setSapID(saper.getPersonalNR())
                 .setSpecialization(saper.getCostCenter())
-                .setSeniority(saper.getInitEntry())
-                .setAge(saper.getDateOfBirth())
                 .setLineManagerID(saper.getPersNrSuperior())
                 .setMenteeID(saper.getPersNrMentor())
                 .build()).collect(Collectors.toList());

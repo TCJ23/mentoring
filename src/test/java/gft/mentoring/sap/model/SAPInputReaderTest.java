@@ -31,7 +31,7 @@ class SAPInputReaderTest {
     private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
     private static final String BROKEN_FILE = "./broken-file.xlsx";
 
-    private static final int COLUMNS_COUNT = 12;
+    private static final int COLUMNS_COUNT = 13;
     private static final int FIRST_ROW = 0;
 
     private static final int FIRST_NAME_COL = 0;
@@ -46,6 +46,7 @@ class SAPInputReaderTest {
     private static final int PERS_NO_SUPERIOR_COL = 9;
     private static final int PERS_NO_MENTOR_COL = 10;
     private static final int DATE_OF_BIRTH_COL = 11;
+    private static final int PERS_SUBAREA_COL = 12;
 
     @Test
     @DisplayName("2.1.1 - should create 25 SAP models from sample excel file")
@@ -110,59 +111,6 @@ class SAPInputReaderTest {
     void fileNotFound() {
         Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(SAP_FILE + "empty place"));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
-    }
-
-    @Test
-    @DisplayName("2.1.4 - test readRowsSAP correctly without sample file")
-    void createModelFromRandomFile() {
-        //given
-        Row mockRow = mock(Row.class);
-        Cell[] mockCells = new Cell[COLUMNS_COUNT];
-        for (int i = 0; i < COLUMNS_COUNT; i++)
-            mockCells[i] = mock(Cell.class);
-        Object[] values = new Object[COLUMNS_COUNT];
-        for (int i = 0; i < COLUMNS_COUNT; i++) {
-            if (i != 8)
-                values[i] = RandomStringUtils.randomAscii(20);
-        }
-
-        Date time = Calendar.getInstance().getTime();
-        for (int i = 0; i < COLUMNS_COUNT; i++) {
-            Mockito.when(mockRow.getCell(Mockito.eq(i), Mockito.any(Row.MissingCellPolicy.class))).thenReturn(mockCells[i]);
-            if (i != 8) {
-                when(mockCells[i].getStringCellValue()).thenReturn((String) values[i]);
-            } else {
-                when(mockCells[8].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
-                when(mockCells[8].getNumericCellValue()).thenReturn((double) time.getTime());
-                values[8] = String.valueOf((double) time.getTime());
-                when(mockCells[11].getCellTypeEnum()).thenReturn(CellType.NUMERIC);
-                when(mockCells[11].getNumericCellValue()).thenReturn((double) time.getTime());
-                values[11] = String.valueOf((double) time.getTime());
-            }
-        }
-
-
-        val createSAPModel = new SAPInputReader();
-        val columnNames = createHeaders();
-        val headers = createSAPModel.getHeaders(columnNames);
-        //when
-        val data = Collections.singletonList(mockRow);
-        val models = new SAPInputReader().readRowsSAP(headers, data.iterator());
-        //then
-        assertThat(models).isNotEmpty();
-        int i = 0;
-        assertThat(models.get(0).getFirstName()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getLastName()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getInitials()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersonalNR()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getEmployeeSubGrp()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getJobFamily()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getJob()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getCostCenter()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getInitEntry()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersNrSuperior()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getPersNrMentor()).isEqualTo(values[i++]);
-        assertThat(models.get(0).getDateOfBirth()).isEqualTo(values[i]);
     }
 
     @Test
@@ -261,6 +209,8 @@ class SAPInputReaderTest {
         cell11.setCellValue("pers.no. mentor");
         Cell cell12 = row0.createCell(DATE_OF_BIRTH_COL);
         cell12.setCellValue("date of birth");
+        Cell cell13 = row0.createCell(PERS_SUBAREA_COL);
+        cell13.setCellValue("personnel subarea");
         return row0;
     }
 }
