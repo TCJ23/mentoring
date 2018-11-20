@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ExcelValidator {
-    private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
+    private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
 
     boolean verifyExcelColumnOrder(@NotNull String fileName) throws ExcelException {
         try {

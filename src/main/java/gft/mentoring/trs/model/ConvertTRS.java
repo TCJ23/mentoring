@@ -10,15 +10,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class ConvertTRS {
+public class ConvertTRS {
 
     private LocalDate baseDate;
 
-    ConvertTRS(LocalDate baseDate) {
+    public ConvertTRS(LocalDate baseDate) {
         this.baseDate = baseDate;
     }
 
-    List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
+    public List<TRSMentoringModel> convertInputToTRSMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new TRSInputReader();
         val tresers = input.readExcelTRSfile(file);
         val filteredTresers = input.filterInvalid(tresers);

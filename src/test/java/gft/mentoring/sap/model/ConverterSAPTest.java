@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("3 - Main class to test conversion from SAP file to Mentoring Model")
 class ConverterSAPTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
+    private static final String SAP_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
     private static final int firstRow = 0;
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
             "pers.no.", "employee subgroup", "job family",
@@ -135,7 +135,7 @@ class ConverterSAPTest {
                 () -> assertEquals("SAP model", model.getLineManagerID()),
                 () -> assertThat(model.getSapID().equalsIgnoreCase("sap model")).isTrue(),
                 () -> assertThat(model.getFederationID().equalsIgnoreCase("sap model")).isTrue(),
-                () -> assertThat(model.getMenteeID().equalsIgnoreCase("sap model")).isTrue()
+                () -> assertThat(model.getMentorID().equalsIgnoreCase("sap model")).isTrue()
         );
     }
 
@@ -448,7 +448,7 @@ class ConverterSAPTest {
         model.setSpecialization(dataSample);
         model.setSapID(dataSample);
         model.setLineManagerID(dataSample);
-        model.setMenteeID(dataSample);
+        model.setMentorID(dataSample);
         /*meaningful settings*/
         model.setSeniority(seniority);
         model.setLevel(level);

@@ -2,7 +2,6 @@ package gft.mentoring;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 /**

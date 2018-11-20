@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("2 - Main class to test SAP INPUT")
 class SAPInputReaderTest {
 
-    private static final String SAP_FILE = "./Sample_SAP_DevMan_20180821.xlsx";
+    private static final String SAP_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
     private static final String BROKEN_FILE = "./broken-file.xlsx";
 
     private static final int COLUMNS_COUNT = 13;
