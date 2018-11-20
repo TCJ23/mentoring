@@ -14,7 +14,7 @@ public class ConvertTRS {
 
     private LocalDate baseDate;
 
-    ConvertTRS(LocalDate baseDate) {
+    public ConvertTRS(LocalDate baseDate) {
         this.baseDate = baseDate;
     }
 

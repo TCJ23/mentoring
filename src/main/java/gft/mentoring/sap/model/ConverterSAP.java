@@ -13,7 +13,7 @@ public class ConverterSAP {
 
     private LocalDate baseDate;
 
-    ConverterSAP(LocalDate baseDate) {
+    public ConverterSAP(LocalDate baseDate) {
         this.baseDate = baseDate;
     }
 

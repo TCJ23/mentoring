@@ -61,9 +61,11 @@ class TRSInputReader {
         trsModels.put(headerIndex(headers, "grade"), (cell, treser) -> treser.setGrade(stringFromCell(cell)));
         trsModels.put(headerIndex(headers, "technology"), (cell, treser) -> treser.setTechnology(stringFromCell(cell)));
         trsModels.put(headerIndex(headers, "job family"), (cell, treser) -> treser.setJobFamily(stringFromCell(cell)));
-        trsModels.put(headerIndex(headers, "start date"), (cell, treser) -> treser.setStartDate(dateFromCell(cell)));
+//        trsModels.put(headerIndex(headers, "start date"), (cell, treser) -> treser.setStartDate(dateFromCell(cell)));
+        trsModels.put(headerIndex(headers, "start date"), (cell, treser) -> treser.setStartDate(stringFromCell(cell)));
         trsModels.put(headerIndex(headers, "office location"), (cell, treser) -> treser.setOfficeLocation(stringFromCell(cell)));
-        trsModels.put(headerIndex(headers, "contract type"), (cell, treser) -> treser.setContractType(dateFromCell(cell)));
+        trsModels.put(headerIndex(headers, "contract type"), (cell, treser) -> treser.setContractType(stringFromCell(cell)));
+//        trsModels.put(headerIndex(headers, "contract type"), (cell, treser) -> treser.setContractType(dateFromCell(cell)));
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
                 .map(row -> createTRSmodelFromRow(row, trsModels))
                 .collect(Collectors.toList());
@@ -103,7 +105,8 @@ class TRSInputReader {
     }
 
     private String stringFromCell(@NotNull Cell cell) {
-        return cell.getStringCellValue();
+//        return cell.getStringCellValue();
+        return formatter.formatCellValue(cell);
     }
 
     private Cell getCell(@NotNull Row row, int i) {
