@@ -38,8 +38,8 @@ class ExcelValidator {
         return columnNames;
     }
 
-  /*  public static void main(String[] args) throws IOException, InvalidFormatException {
+    public static void main(String[] args) throws IOException, InvalidFormatException {
         List<String> strings = readExcelFileForHeaderNames(GOLDEN_FILE);
         strings.forEach(System.out::println);
-    }*/
+    }
 }

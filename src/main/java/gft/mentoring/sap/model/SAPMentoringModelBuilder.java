@@ -1,6 +1,7 @@
 package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,7 @@ class SAPMentoringModelBuilder {
     private static final int DEFAULT_AGE = 0;
     private static final String DATE_PATTERN = "dd-MM-yyyy";
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+    private DataFormatter formatterDefault = new DataFormatter();
     private SAPMentoringModel sapMM = new SAPMentoringModel();
     private LocalDate date;
 
