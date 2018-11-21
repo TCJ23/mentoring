@@ -6,7 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.*;
@@ -69,7 +71,7 @@ class ExcelValidator {
 //        strings.forEach(System.out::println);
 //        List<String> cells = getCellContent(WERONIKA);
 //        cells.forEach(System.out::println);
-        getCellsContentPOI(WERONIKA);
+        getCellsContentPOI(SAP_AGE_EXAMPLES);
     }
 
     private static void getCellsContentPOI(@NotNull String fileName) throws IOException, InvalidFormatException {
@@ -93,7 +95,12 @@ class ExcelValidator {
                         break;
                     case NUMERIC:
                         if (DateUtil.isCellDateFormatted(cell)) {
-                            System.out.println(cell.getDateCellValue());
+                            System.out.println("CZYSTY POI " + cell.getDateCellValue());
+                            Date czas = cell.getDateCellValue();
+                            double excelDateinDouble = DateUtil.getExcelDate(czas);
+                            System.out.println("DOUBLE " + excelDateinDouble);
+                            Date javaDate = DateUtil.getJavaDate(excelDateinDouble);
+                            System.out.println("JAVA DATE " + new SimpleDateFormat("dd-MM-yyyy").format(javaDate));
                         } else {
                             System.out.println(cell.getNumericCellValue());
                         }
