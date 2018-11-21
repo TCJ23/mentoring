@@ -38,9 +38,8 @@ class ModelMatcherTest {
                 BASE_DATE);
         val age = unifiedModels.get(0).getAge();
         val excelDate = LocalDate.of(1983, 9, 23);
-        val years35ago = ChronoUnit.YEARS.between(excelDate, BASE_DATE);
+        val years35 = ChronoUnit.YEARS.between(excelDate, BASE_DATE);
         //then
-        Assertions.assertEquals(years35ago, age);
-
+        Assertions.assertEquals(years35, age);
     }
 }
