@@ -3,12 +3,14 @@ package gft.mentoring.sap.model;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.util.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -84,8 +86,8 @@ class SAPInputReader {
         sapModels.put(headerIndex(headers, "init.entry"), (cell, saper) -> saper.setInitEntry(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "pers.no. superior"), (cell, saper) -> saper.setPersNrSuperior(stringFromCell(cell)));
         sapModels.put((headerIndex(headers, "pers.no. mentor")), (cell, saper) -> saper.setPersNrMentor(stringFromCell(cell)));
-//        sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setDateOfBirth(dateFromCell(cell)));
-        sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setDateOfBirth(stringFromCell(cell)));
+        sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setDateOfBirth(dateFromCell(cell)));
+//        sapModels.put((headerIndex(headers, "date of birth")), (cell, saper) -> saper.setDateOfBirth(stringFromCell(cell)));
         sapModels.put((headerIndex(headers, "personnel subarea")), (cell, saper) -> saper.setPersonnelSubarea(stringFromCell(cell)));
 
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(data, Spliterator.ORDERED), false)
@@ -123,7 +125,18 @@ class SAPInputReader {
     }
 
     private String dateFromCell(@NotNull Cell cell) {
-        return formatter.formatCellValue(cell);
+        switch (cell.getCellTypeEnum()) {
+            case STRING:
+                return cell.getRichStringCellValue().getString();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return new SimpleDateFormat("dd-MM-yyyy").format(cell.getDateCellValue());
+                } else {
+                    return Double.toString(cell.getNumericCellValue());
+                }
+            default:
+                return "";
+        }
     }
 
     private String stringFromCell(@NotNull Cell cell) {

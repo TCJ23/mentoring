@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.logging.Logger;
 
 class SAPMentoringModelBuilder {
@@ -15,11 +16,7 @@ class SAPMentoringModelBuilder {
     private static final int DEFAULT_SENIORITY = 0;
     private static final int DEFAULT_AGE = 0;
     private static final String DATE_PATTERN = "dd-MM-yyyy";
-    private static final String CORRECT_PATTERN = "M/d/y";
     private DateTimeFormatter javaFormatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
-//    private DateTimeFormatter javaFormatter = DateTimeFormatter.ofPattern(CORRECT_PATTERN);
-//    private DateTimeFormatter javaFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-    private DataFormatter formatterDefault = new DataFormatter();
     private SAPMentoringModel sapMM = new SAPMentoringModel();
     private LocalDate date;
 
@@ -82,10 +79,10 @@ class SAPMentoringModelBuilder {
         return this;
     }
 
-    SAPMentoringModelBuilder setSeniority(String days) {
+    SAPMentoringModelBuilder setSeniority(String date) {
         try {
-            LocalDate parsedDate = LocalDate.parse(days, javaFormatter);
-            long daysBetween = ChronoUnit.DAYS.between(parsedDate, date);
+            LocalDate parsedDate = LocalDate.parse(date, javaFormatter);
+            long daysBetween = ChronoUnit.DAYS.between(parsedDate, this.date);
             sapMM.setSeniority((int) daysBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read start date column due to wrong format. Format should be "
@@ -95,14 +92,14 @@ class SAPMentoringModelBuilder {
         return this;
     }
 
-    SAPMentoringModelBuilder setAge(String days) {
+    SAPMentoringModelBuilder setAge(String date) {
         try {
-            LocalDate parsedDate = LocalDate.parse(days, javaFormatter);
-            long daysBetween = ChronoUnit.YEARS.between(parsedDate, date);
+            LocalDate parsedDate = LocalDate.parse(date, javaFormatter);
+            long daysBetween = ChronoUnit.YEARS.between(parsedDate, this.date);
             sapMM.setAge((int) daysBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
-                    + CORRECT_PATTERN + "\n Setting age to " + DEFAULT_AGE);
+                    + DATE_PATTERN + "\n Setting age to " + DEFAULT_AGE);
             sapMM.setAge(DEFAULT_AGE);
         }
         return this;

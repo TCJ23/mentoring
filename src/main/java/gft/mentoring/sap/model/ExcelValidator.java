@@ -18,12 +18,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 
+/** This class is used mainly for debugging and exercising within APACHE POI LIBRARY ! */
 class ExcelValidator {
     private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
-    private static final String SAP_2_MENTEES_ASSIGNED = "SAP_2MenteesAssigned.xlsx";
-    private static final String SAP_AGE_EXAMPLES = "SAP_age_conversion_check.xlsx";
-    private static final String WERONIKA = "Weronika format z SAPa.xlsx";
-
 
     boolean verifyExcelColumnOrder(@NotNull String fileName) throws ExcelException {
         try {
@@ -46,79 +43,5 @@ class ExcelValidator {
         }
         workbook.close();
         return columnNames;
-    }
-
-    private static List<String> getCellContent(@NotNull String fileName) throws IOException, InvalidFormatException {
-        DataFormatter formatter = new DataFormatter();
-        List<String> cellContent = new ArrayList<>();
-        Workbook workbook = WorkbookFactory.create(new File(fileName));
-        Sheet sheet = workbook.getSheetAt(0);
-        int lastCell = sheet.getRow(0).getLastCellNum();
-        Row header = sheet.getRow(0);
-        for (int i = 0; i < lastCell; i++) {
-            cellContent.add(header.getCell(i).getRichStringCellValue().toString());
-        }
-        Row firstRow = sheet.getRow(1);
-        for (int i = 0; i < lastCell; i++) {
-            cellContent.add(formatter.formatCellValue(firstRow.getCell(i)));
-        }
-        workbook.close();
-        return cellContent;
-    }
-
-    public static void main(String[] args) throws IOException, InvalidFormatException {
-//        List<String> strings = readExcelFileForHeaderNames(GOLDEN_FILE);
-//        strings.forEach(System.out::println);
-//        List<String> cells = getCellContent(WERONIKA);
-//        cells.forEach(System.out::println);
-        getCellsContentPOI(SAP_AGE_EXAMPLES);
-    }
-
-    private static void getCellsContentPOI(@NotNull String fileName) throws IOException, InvalidFormatException {
-        Workbook workbook = WorkbookFactory.create(new File(fileName));
-        DataFormatter formatter = new DataFormatter();
-        Sheet sheet1 = workbook.getSheetAt(0);
-        for (Row row : sheet1) {
-            for (Cell cell : row) {
-                CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
-                System.out.print(cellRef.formatAsString());
-                System.out.print(" - ");
-
-                // get the text that appears in the cell by getting the cell value and applying any data formats (Date, 0.00, 1.23e9, $1.23, etc)
-                String text = formatter.formatCellValue(cell);
-                System.out.println(text);
-
-                // Alternatively, get the value and format it yourself
-                switch (cell.getCellTypeEnum()) {
-                    case STRING:
-                        System.out.println(cell.getRichStringCellValue().getString());
-                        break;
-                    case NUMERIC:
-                        if (DateUtil.isCellDateFormatted(cell)) {
-                            System.out.println("CZYSTY POI " + cell.getDateCellValue());
-                            Date czas = cell.getDateCellValue();
-                            double excelDateinDouble = DateUtil.getExcelDate(czas);
-                            System.out.println("DOUBLE " + excelDateinDouble);
-                            Date javaDate = DateUtil.getJavaDate(excelDateinDouble);
-                            System.out.println("JAVA DATE " + new SimpleDateFormat("dd-MM-yyyy").format(javaDate));
-                        } else {
-                            System.out.println(cell.getNumericCellValue());
-                        }
-                        break;
-                    case BOOLEAN:
-                        System.out.println(cell.getBooleanCellValue());
-                        break;
-                    case FORMULA:
-                        System.out.println(cell.getCellFormula());
-                        break;
-                    case BLANK:
-                        System.out.println();
-                        break;
-                    default:
-                        System.out.println();
-                }
-            }
-        }
-        workbook.close();
     }
 }
