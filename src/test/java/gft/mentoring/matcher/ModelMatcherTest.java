@@ -20,6 +20,9 @@ class ModelMatcherTest {
     private static final String TRS_LEAVER_EXAMPLES = "TRS_Leaver_Examples.xlsx";
     private static final String SAP_RANDOM = "SAP_random.xlsx";
     private static final String TRS_RANDOM = "TRS_random.xlsx";
+    private static final String SAP_DUPLICATE = "SAP_duplicate_entires.xlsx";
+    private static final String TRS_DUPLICATE = "TRS_duplicate_entires.xlsx";
+
 
     @Test
     @DisplayName("6.1.1 - validate that Mentees Assigned is properly converted from SAP file")
@@ -64,7 +67,7 @@ class ModelMatcherTest {
     @DisplayName("6.1.4a - Notice Period in TRS marks as leaver")
     void shouldDetectLeaverFromTRSFileNoticePeriodStatus() throws ExcelException, InvalidFormatException {
         //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
+        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_LEAVER_EXAMPLES,
                 BASE_DATE);
         val leaver = unifiedModels.get(0).isLeaver();
         //then
@@ -75,7 +78,7 @@ class ModelMatcherTest {
     @DisplayName("6.1.4b - missing info in TRS status Column")
     void shouldIgnoreMissingLeaverInfoFromTRSFile() throws ExcelException, InvalidFormatException {
         //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
+        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_LEAVER_EXAMPLES,
                 BASE_DATE);
         val nonLeaver = unifiedModels.get(1).isLeaver();
         //then
@@ -86,7 +89,7 @@ class ModelMatcherTest {
     @DisplayName("6.1.4c - Hired in TRS marks as leaver")
     void shouldDetectLeaverFromTRSFileHiredStatus() throws ExcelException, InvalidFormatException {
         //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
+        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_LEAVER_EXAMPLES,
                 BASE_DATE);
         val leaver = unifiedModels.get(2).isLeaver();
         //then
@@ -95,12 +98,23 @@ class ModelMatcherTest {
 
     @Test
     @DisplayName("6.1.4d - Employee in TRS DOES NOT mark as leaver")
-    void should() throws ExcelException, InvalidFormatException {
+    void shouldIgnoreWorkingEmployeesFromTRSFile() throws ExcelException, InvalidFormatException {
         //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
+        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_LEAVER_EXAMPLES,
                 BASE_DATE);
         val leaver = unifiedModels.get(2).isLeaver();
         //then
         Assertions.assertTrue(leaver);
+    }
+
+    @Test
+    @DisplayName("6.2.1 - Make Sure Matcher continues to work regardless of matching entities")
+    void shouldContinueToWorkEvenWithDuplicateMatchingEntries() throws ExcelException, InvalidFormatException {
+        //given & when
+        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_DUPLICATE,
+                BASE_DATE);
+        val leaver = unifiedModels.get(3).isLeaver();
+        //then
+        Assertions.assertFalse(leaver);
     }
 }
