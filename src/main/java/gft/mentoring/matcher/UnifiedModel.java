@@ -8,7 +8,6 @@ import lombok.Value;
 @AllArgsConstructor
 @Value
 @Data
-
 class UnifiedModel {
     private String firstName;
     private String lastName;

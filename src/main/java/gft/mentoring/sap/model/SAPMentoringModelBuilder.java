@@ -95,8 +95,8 @@ class SAPMentoringModelBuilder {
     SAPMentoringModelBuilder setAge(String date) {
         try {
             LocalDate parsedDate = LocalDate.parse(date, javaFormatter);
-            long daysBetween = ChronoUnit.YEARS.between(parsedDate, this.date);
-            sapMM.setAge((int) daysBetween);
+            long yearsBetween = ChronoUnit.YEARS.between(parsedDate, this.date);
+            sapMM.setAge((int) yearsBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
                     + DATE_PATTERN + "\n Setting age to " + DEFAULT_AGE);
