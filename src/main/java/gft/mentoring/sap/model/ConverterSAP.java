@@ -44,13 +44,13 @@ public class ConverterSAP {
                 .setSeniority(saper.getInitEntry())
                 .setAge(saper.getDateOfBirth())
                 .setOfficeLocation(saper.getPersonnelSubarea())
+                .setSapID(saper.getPersonalNR())
+                .setMenteeID(saper.getPersNrMentor())
                 /** redundant fields
                  * @see SAPMentoringModel*/
                 .setFederationID(saper.getInitials())
-                .setSapID(saper.getPersonalNR())
                 .setSpecialization(saper.getCostCenter())
                 .setLineManagerID(saper.getPersNrSuperior())
-                .setMenteeID(saper.getPersNrMentor())
                 .build()).collect(Collectors.toList());
     }
 }

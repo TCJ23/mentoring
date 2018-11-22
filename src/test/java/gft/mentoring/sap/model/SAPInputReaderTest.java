@@ -63,7 +63,6 @@ class SAPInputReaderTest {
         val filteredModels = converterSAP.convertInputToSAPMentoringModel(SAP_FILE);
         //then
         assertThat(filteredModels).size().isEqualTo(rowsSize);
-
     }
 
     @Test

@@ -1,17 +1,24 @@
 package gft.mentoring.sap.model;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.*;
+
+/** This class is used mainly for debugging and exercising within APACHE POI LIBRARY ! */
 class ExcelValidator {
     private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
 
@@ -37,9 +44,4 @@ class ExcelValidator {
         workbook.close();
         return columnNames;
     }
-
-  /*  public static void main(String[] args) throws IOException, InvalidFormatException {
-        List<String> strings = readExcelFileForHeaderNames(GOLDEN_FILE);
-        strings.forEach(System.out::println);
-    }*/
 }
