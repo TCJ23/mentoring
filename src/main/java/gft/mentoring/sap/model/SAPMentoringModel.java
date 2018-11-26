@@ -19,7 +19,11 @@ public class SAPMentoringModel {
      *                  can be recalculated with start date from TRS data
      *                  @see TRSModel#getStartDate()
      * @param officeLocation - this should match TRS Office Location info although values are in English here
-     *                  @see TRSModel#getOfficeLocation() */
+     *                  @see TRSModel#getOfficeLocation() *
+     * @param menteesAssigned - calculate mentees assigned to mentor using SAP file information by taking
+     * @param sapID
+     * @param mentorID */
+
     private boolean contractor; //employeeSubGrp
     private Family family; //jobFamily
     private int level; //job
@@ -29,11 +33,14 @@ public class SAPMentoringModel {
     private String firstName;
     private String lastName;
     private String officeLocation; //personnelSubarea
+    /** We calculate mentees assigned to mentor using SAP file information by taking sapID and its occurrence
+     * in column with MentorID*/
+    private int menteesAssigned; // combination of below 2 params
+    private String sapID; //Pers.No.
+    private String mentorID; //persNrMentor
     /** At the time of writing below values from SAP do not hold useful information
      * it might occur in future that some of these will be used to match SAP information with TRS information*/
     private String federationID; //Initials
-    private String sapID; //Pers.No.
     private String specialization; //costCenter ?
     private String lineManagerID; //persNrSuperior ?
-    private String mentorID; //persNrMentor
 }
