@@ -4,9 +4,8 @@ import gft.mentoring.Family;
 
 import java.time.LocalDate;
 
-public class UnifiedModelBuilder {
+class UnifiedModelBuilder {
 
-    private LocalDate date;
     private String firstName;
     private String lastName;
     private Family family;
@@ -19,8 +18,7 @@ public class UnifiedModelBuilder {
     private int menteesAssigned;
     private int age;
 
-    UnifiedModelBuilder(LocalDate baseDate) {
-        this.date = baseDate;
+    UnifiedModelBuilder() {
     }
 
     UnifiedModel build() {

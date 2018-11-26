@@ -7,17 +7,18 @@ import org.apache.poi.ss.usermodel.Row;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ConverterSAP {
+class ConverterSAP {
 
     private LocalDate baseDate;
 
-    public ConverterSAP(LocalDate baseDate) {
+    ConverterSAP(LocalDate baseDate) {
         this.baseDate = baseDate;
     }
 
-    public List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
+    List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new SAPInputReader();
         val sapers = input.readExcelSAPfile(file);
         val filteredSapers = input.filterInvalid(sapers);
@@ -32,7 +33,17 @@ public class ConverterSAP {
         return getSapMentoringModels(filteredSapers);
     }
 
-    List<SAPMentoringModel> getSapMentoringModels(List<SAPmodel> sapers) {
+    private Map<String, List<SAPModel>> findSAPidInMentorColumn(List<SAPModel> sapModels) {
+        return sapModels.stream().collect(Collectors.groupingBy(SAPModel::getPersNrMentor));
+    }
+
+    private int countMenteesAssignedToMentor(SAPModel saper, List<SAPModel> sapModels) {
+        Map<String, List<SAPModel>> menteesAssigned = findSAPidInMentorColumn(sapModels);
+        return menteesAssigned.containsKey(saper.getPersonalNR())
+                ? menteesAssigned.get(saper.getPersonalNR()).size() : 0;
+    }
+
+    List<SAPMentoringModel> getSapMentoringModels(List<SAPModel> sapers) {
         return sapers.stream().map(saper -> new SAPMentoringModelBuilder(baseDate)
                 /** meaningful logic
                  * @see SAPMentoringModel*/
@@ -46,6 +57,7 @@ public class ConverterSAP {
                 .setOfficeLocation(saper.getPersonnelSubarea())
                 .setSapID(saper.getPersonalNR())
                 .setMenteeID(saper.getPersNrMentor())
+                .setMenteesAssigned(countMenteesAssignedToMentor(saper, sapers))
                 /** redundant fields
                  * @see SAPMentoringModel*/
                 .setFederationID(saper.getInitials())

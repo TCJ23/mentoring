@@ -1,15 +1,15 @@
 package gft.mentoring.matcher;
 
+
 import gft.mentoring.Family;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
 
-
 @AllArgsConstructor
 @Value
 @Data
-class UnifiedModel implements SegregationModel{
+public class MultiMatchModel {
     private String firstName;
     private String lastName;
     private Family family;

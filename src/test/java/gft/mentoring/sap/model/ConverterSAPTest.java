@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ConverterSAPTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
     private static final String SAP_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
+    private static final String TRS_2_MENTEES_ASSIGNED = "TRS_2MenteesAssigned.xlsx";
+    private static final String SAP_2_MENTEES_ASSIGNED = "SAP_2MenteesAssigned.xlsx";
     private static final int firstRow = 0;
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
             "pers.no.", "employee subgroup", "job family",
@@ -470,5 +473,17 @@ class ConverterSAPTest {
             V v = super.get(o);
             return v != null ? v : defaultVal;
         }
+    }
+
+    @Test
+    @DisplayName("3.2.9 - validate that Mentees Assigned is properly converted from SAP file")
+    void shouldFind2MenteesAssignedToMentorFromSAPfile() throws ExcelException, InvalidFormatException {
+        //given
+        val converter = new ConverterSAP(BASE_DATE).convertInputToSAPMentoringModel(SAP_2_MENTEES_ASSIGNED);
+        //when
+        val sapMentoringModel = converter.get(0);
+        val menteesAssigned = sapMentoringModel.getMenteesAssigned();
+        //then
+        Assertions.assertEquals(2, menteesAssigned);
     }
 }

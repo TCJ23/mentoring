@@ -3,7 +3,6 @@ package gft.mentoring.sap.model;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -26,7 +25,7 @@ class SAPInputReader {
      * We assume that SAP Excel file will be stored in agreed folder
      */
     private DataFormatter formatter = new DataFormatter();
-    private Predicate<SAPmodel> validator = new Validator();
+    private Predicate<SAPModel> validator = new Validator();
 
     /**
      * We cannot avoid some of exceptions to be thrown, this might not be an issue when running application in production
@@ -43,7 +42,7 @@ class SAPInputReader {
      * Change the contents of a text file in its entirety, overwriting any
      * existing text.
      **/
-    List<SAPmodel> readExcelSAPfile(@NotNull String inputFile) throws ExcelException, InvalidFormatException {
+    List<SAPModel> readExcelSAPfile(@NotNull String inputFile) throws ExcelException, InvalidFormatException {
         Workbook workbook;
         try {
             workbook = WorkbookFactory.create(new File(inputFile));
@@ -69,8 +68,8 @@ class SAPInputReader {
     }
 
 
-    List<SAPmodel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
-        HashMap<Integer, BiConsumer<Cell, SAPmodel>> sapModels = new HashMap<>();
+    List<SAPModel> readRowsSAP(@NotNull List<String> headers, @NotNull Iterator<Row> data) {
+        HashMap<Integer, BiConsumer<Cell, SAPModel>> sapModels = new HashMap<>();
         /*please pay attention to First name and keep consistent with casing*/
         sapModels.put(headerIndex(headers, "First name"), (cell, saper) -> saper.setFirstName(stringFromCell(cell)));
         sapModels.put(headerIndex(headers, "last name"), (cell, saper) -> saper.setLastName(stringFromCell(cell)));
@@ -103,20 +102,20 @@ class SAPInputReader {
         }
     }
 
-    List<SAPmodel> filterInvalid(List<SAPmodel> sapers) {
+    List<SAPModel> filterInvalid(List<SAPModel> sapers) {
         return sapers.stream().filter(validator).collect(Collectors.toList());
     }
 
-    class Validator implements Predicate<SAPmodel> {
+    class Validator implements Predicate<SAPModel> {
         @Override
-        public boolean test(SAPmodel sapModel) {
+        public boolean test(SAPModel sapModel) {
             return StringUtils.isNotBlank(sapModel.getFirstName());
         }
     }
 
-    private SAPmodel createSAPmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, SAPmodel>> model) {
-        SAPmodel saper = new SAPmodel();
-        for (Map.Entry<Integer, BiConsumer<Cell, SAPmodel>> entry : model.entrySet()) {
+    private SAPModel createSAPmodelFromRow(@NotNull Row row, Map<Integer, BiConsumer<Cell, SAPModel>> model) {
+        SAPModel saper = new SAPModel();
+        for (Map.Entry<Integer, BiConsumer<Cell, SAPModel>> entry : model.entrySet()) {
             entry.getValue().accept(getCell(row, entry.getKey()), saper);
         }
         return saper;

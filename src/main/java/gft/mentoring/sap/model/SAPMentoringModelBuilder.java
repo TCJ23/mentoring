@@ -1,15 +1,15 @@
 package gft.mentoring.sap.model;
 
 import gft.mentoring.Family;
-import org.apache.poi.ss.usermodel.DataFormatter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 class SAPMentoringModelBuilder {
     private static final Logger LOGGER = Logger.getLogger(SAPMentoringModelBuilder.class.getName());
@@ -23,7 +23,6 @@ class SAPMentoringModelBuilder {
     SAPMentoringModelBuilder(LocalDate baseDate) {
         this.date = baseDate;
     }
-
 
     SAPMentoringModel build() {
         return sapMM;
@@ -95,8 +94,8 @@ class SAPMentoringModelBuilder {
     SAPMentoringModelBuilder setAge(String date) {
         try {
             LocalDate parsedDate = LocalDate.parse(date, javaFormatter);
-            long daysBetween = ChronoUnit.YEARS.between(parsedDate, this.date);
-            sapMM.setAge((int) daysBetween);
+            long yearsBetween = ChronoUnit.YEARS.between(parsedDate, this.date);
+            sapMM.setAge((int) yearsBetween);
         } catch (DateTimeParseException e) {
             LOGGER.warning("Couldn't read date of birth column due to wrong format. Format should be "
                     + DATE_PATTERN + "\n Setting age to " + DEFAULT_AGE);
@@ -104,6 +103,12 @@ class SAPMentoringModelBuilder {
         }
         return this;
     }
+
+    SAPMentoringModelBuilder setMenteesAssigned(int menteesAssigned) {
+        sapMM.setMenteesAssigned(menteesAssigned);
+        return this;
+    }
+
 
     SAPMentoringModelBuilder setOfficeLocation(String office) {
         sapMM.setOfficeLocation(office);
