@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
  * @author tzje
  * This is main class to turn Excel data delivered from SAP in intermediate model
  */
-class SAPInputReader {
+public class SAPInputReader {
     /**
      * We assume that SAP Excel file will be stored in agreed folder
      */

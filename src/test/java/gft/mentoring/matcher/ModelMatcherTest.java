@@ -1,7 +1,11 @@
-/*
 package gft.mentoring.matcher;
 
+import gft.mentoring.sap.model.ConverterSAP;
 import gft.mentoring.sap.model.ExcelException;
+import gft.mentoring.sap.model.SAPInputReader;
+import gft.mentoring.sap.model.SAPMentoringModel;
+import gft.mentoring.trs.model.ConvertTRS;
+import gft.mentoring.trs.model.TRSMentoringModel;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 
 
 @DisplayName("6 - Main class to test Matcher Component")
@@ -28,25 +33,25 @@ class ModelMatcherTest {
     private static final String TRS_RANDOM = "TRS_random.xlsx";
     private static final String SAP_DUPLICATE = "SAP_duplicate_entires.xlsx";
     private static final String TRS_DUPLICATE = "TRS_duplicate_entires.xlsx";
+    private static final String SAP_ONE_TO_ONE= "SAP_OneToOneMatch_solid_example.xlsx";
+    private static final String TRS_ONE_TO_ONE = "TRS_OneToOneMatch_solid_example.xlsx";
 
 
     @Test
     @Disabled
-    @DisplayName("6.1.1 - validate that Mentees Assigned is properly converted from SAP file")
-    void shouldFind2MenteesAssignedToMentorFromSAPfile() throws ExcelException, InvalidFormatException {
+    @DisplayName("6.1.1 - validate that Matcher creates MentoringModels in 1:1 match")
+    void shouldCreate3MentoringModelsFromSampleFiles() throws ExcelException, InvalidFormatException {
         //given
-
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_2_MENTEES_ASSIGNED, TRS_2_MENTEES_ASSIGNED,
-                BASE_DATE);
+        List<SAPMentoringModel> sapMentoringModels = new ConverterSAP(BASE_DATE).convertInputToSAPMentoringModel(SAP_AGE_EXAMPLES);
+        List<TRSMentoringModel> trsMentoringModels = new ConvertTRS(BASE_DATE).convertInputToTRSMentoringModel(TRS_RANDOM);
         //when
-        val firstModelFromFile = (UnifiedModel) unifiedModels.get(0);
-        val unifiedModelHas2MenteesAssigned = firstModelFromFile.getMenteesAssigned();
+        Map<SAPMentoringModel, List<TRSMentoringModel>> mentoringModels = new ModelMatcher().matchIntermediateModels(sapMentoringModels, trsMentoringModels, BASE_DATE);
 
         //then
-        Assertions.assertEquals(2, unifiedModelHas2MenteesAssigned);
+        assertThat(mentoringModels).size().isEqualTo(3);
     }
 
-    @Test
+   /* @Test
     @Disabled
     @DisplayName("6.1.2 - check if age for Unified Model is converted properly")
     void shouldConvertModelWith35YearsOfAgeFromSAPsampleFile() throws ExcelException, InvalidFormatException {
@@ -167,6 +172,5 @@ class ModelMatcherTest {
                 BASE_DATE);
         //then
         assertThat(unifiedModels).size().isEqualTo(3);
-    }
+    }*/
 }
-*/

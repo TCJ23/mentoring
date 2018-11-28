@@ -35,6 +35,7 @@ class ConverterSAPTest {
     private static final String SAP_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
     private static final String TRS_2_MENTEES_ASSIGNED = "TRS_2MenteesAssigned.xlsx";
     private static final String SAP_2_MENTEES_ASSIGNED = "SAP_2MenteesAssigned.xlsx";
+    private static final String SAP_0_MENTEES_ASSIGNED_OR_BLANK = "SAP_0MenteesAssigned_or_Blank.xlsx";
     private static final int firstRow = 0;
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
             "pers.no.", "employee subgroup", "job family",
@@ -452,7 +453,7 @@ class ConverterSAPTest {
         model.setSapID(dataSample);
         model.setLineManagerID(dataSample);
         model.setMentorID(dataSample);
-        /*meaningful settings*/
+        /** meaningful settings*/
         model.setSeniority(seniority);
         model.setLevel(level);
         model.setFamily(fam);
@@ -485,5 +486,17 @@ class ConverterSAPTest {
         val menteesAssigned = sapMentoringModel.getMenteesAssigned();
         //then
         Assertions.assertEquals(2, menteesAssigned);
+    }
+
+    @Test
+    @DisplayName("3.2.10 - validate that NO Mentees Assigned is not braking ceonversion from SAP file")
+    void shouldFind0MenteesAssignedToMentorFromSAPfile() throws ExcelException, InvalidFormatException {
+        //given
+        val converter = new ConverterSAP(BASE_DATE).convertInputToSAPMentoringModel(SAP_0_MENTEES_ASSIGNED_OR_BLANK);
+        //when
+        val sapMentoringModel = converter.get(0);
+        val menteesAssigned = sapMentoringModel.getMenteesAssigned();
+        //then
+        Assertions.assertEquals(0, menteesAssigned);
     }
 }

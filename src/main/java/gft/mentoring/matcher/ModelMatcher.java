@@ -1,14 +1,9 @@
-/*
 package gft.mentoring.matcher;
 
+import gft.mentoring.Family;
 import gft.mentoring.MentoringModel;
-import gft.mentoring.sap.model.ConverterSAP;
-import gft.mentoring.sap.model.ExcelException;
 import gft.mentoring.sap.model.SAPMentoringModel;
-import gft.mentoring.trs.model.ConvertTRS;
 import gft.mentoring.trs.model.TRSMentoringModel;
-import lombok.val;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,44 +12,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-*
+/**
  * This is main class to combine information from both systems, we are interested in finding 1:1 match between SAP & TRS
  * Intermediate Models. We would also like to store information for 0 and n+1 matching models.
+ */
 
 
 class ModelMatcher {
     Map<SAPMentoringModel, List<TRSMentoringModel>> matchIntermediateModels(List<SAPMentoringModel> sapMentoringModels,
                                                                             List<TRSMentoringModel> trsMentoringModels,
-                                                                            LocalDate now)
-            throws ExcelException, InvalidFormatException {
+                                                                            LocalDate now) {
 
+        Map<String, List<SAPMentoringModel>> menteesAssigned = mentorsOccurence(sapMentoringModels);
         Map<SAPMentoringModel, List<TRSMentoringModel>> unifiedModels = new HashMap<>();
 
         sapMentoringModels.forEach(sapModel -> {
-            List<TRSMentoringModel> matching = findMatching(sapModel, trsMentoringModels);
+            List<TRSMentoringModel> matchedModelsInTRS = findMatching(sapModel, trsMentoringModels);
 
-            if (matching.isEmpty()) {
+            if (matchedModelsInTRS.isEmpty()) {
                 ZeroMatchModel zeroMatchModel = storeUnmatched(sapModel);
-                unifiedModels.add(zeroMatchModel);
-
-            } else if (matching.size() == 1) {
-                Map<String, List<SAPMentoringModel>> menteesAssigned = mentorsOccurence(sapMentoringModels);
-
-                unifiedModels.add
-                        (combine(sapModel, matching.get(0), menteesAssigned.containsKey(sapModel.getSapID())
-                                ? menteesAssigned.get(sapModel.getSapID()).size() : 0));
+                unifiedModels.put(sapModel, matchedModelsInTRS);
+            } else if (matchedModelsInTRS.size() == 1) {
+                unifiedModels.put(sapModel, matchedModelsInTRS);
             } else {
                 storeMultipleMatchOccurrences(sapModel);
-        }
-            unifiedModels.put(sapModel, matching);
+            }
+            unifiedModels.put(sapModel, matchedModelsInTRS);
         });
         return unifiedModels;
     }
 
-    public List<MentoringModel> match(Map<SAPMentoringModel, List<TRSMentoringModel>> mapa) {
-
-        return null;
-    }
 
     Map<String, List<SAPMentoringModel>> mentorsOccurence(List<SAPMentoringModel> sapMentoringModels) {
         return sapMentoringModels.stream().collect
@@ -62,27 +49,29 @@ class ModelMatcher {
     }
 
 
-move to static inner class
+    //move to static inner class
+/*(combine(sapModel, matchedModelsInTRS.get(0), menteesAssigned.containsKey(sapModel.getSapID())
+            ? menteesAssigned.get(sapModel.getSapID()).size() : 0))*/
 
-    private UnifiedModel combine(SAPMentoringModel priorityModel, TRSMentoringModel secondaryModel, int menteesAssigned) {
-        // match 1:1
-        // build UnifiedModel
-        return new UnifiedModelBuilder()
-                .setFirstName(priorityModel.getFirstName())
-                .setLastName(priorityModel.getLastName())
-                .setFamily(priorityModel.getFamily())
-                //
-                .setSpecialization(priorityModel.getSpecialization())
-                .setLevel(priorityModel.getLevel())
-                .setSeniority(priorityModel.getSeniority())
-                .setLocalization(priorityModel.getOfficeLocation())
-                .setContractor(priorityModel.isContractor())
-                .setLeaver(secondaryModel != null && secondaryModel.isLeaver())
-                .setMenteesAssigned(menteesAssigned)
-                .setAge(priorityModel.getAge())
-                .build();
+    static class MentoringBuilder {
+
+        static MentoringModel combine(SAPMentoringModel priorityModel, TRSMentoringModel secondaryModel,
+                                      int menteesAssigned) {
+            return MentoringModel.builder().
+                    firstName(priorityModel.getFirstName())
+                    .lastName(priorityModel.getLastName())
+                    .family(priorityModel.getFamily())
+                    .specialization(secondaryModel.getSpecialization())
+                    .level(priorityModel.getLevel())
+                    .seniority(priorityModel.getSeniority())
+                    .localization(priorityModel.getOfficeLocation())
+                    .contractor(priorityModel.isContractor())
+                    .leaver(secondaryModel.isContractor())
+                    .menteesAssigned(menteesAssigned)
+                    .age(priorityModel.getAge())
+                    .build();
+        }
     }
-
 
     private ZeroMatchModel storeUnmatched(SAPMentoringModel saperMM) {
         // do something with unmatched entity
@@ -112,6 +101,4 @@ move to static inner class
         return saperMM.getFirstName().trim().equalsIgnoreCase(treserMM.getFirstName().trim())
                 && saperMM.getLastName().trim().equalsIgnoreCase(treserMM.getLastName().trim());
     }
-
 }
-*/

@@ -28,13 +28,13 @@ class MatchingSpec {
 
     /*Base models for testing*/
     private static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", NO_NAME, NO_NAME, false, false, 0, 23).toBuilder();
+        return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
+                "Lodz", false, false, 0, 23).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", NO_NAME, NO_NAME, false, true, 0, 23).toBuilder();
+        return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
+                "Lodz", false, true, 0, 23).toBuilder();
     }
 
     @ParameterizedTest(name = "{index} => {0}")
@@ -44,6 +44,7 @@ class MatchingSpec {
         //given
         val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily)
                 .contractor(singleMatchingParam.contractor).build();
+
         val mentee = newMentee().family(singleMatchingParam.menteeFamily)
                 .contractor(singleMatchingParam.contractor).build();
         //when
