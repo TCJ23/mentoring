@@ -1,11 +1,9 @@
 package gft.mentoring.matcher;
 
-import gft.mentoring.Family;
 import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.SAPMentoringModel;
 import gft.mentoring.trs.model.TRSMentoringModel;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
