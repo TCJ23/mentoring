@@ -45,7 +45,7 @@ class ModelMatcher {
 
     private static class MentoringBuilder {
 
-        static MentoringModel combine(SAPMentoringModel priorityModel, TRSMentoringModel secondaryModel) {
+        static MentoringModel combine(@NotNull SAPMentoringModel priorityModel, @NotNull TRSMentoringModel secondaryModel) {
             return MentoringModel.builder().
                     firstName(priorityModel.getFirstName())
                     .lastName(priorityModel.getLastName())
