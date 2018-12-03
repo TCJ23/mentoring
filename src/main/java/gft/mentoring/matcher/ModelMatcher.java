@@ -5,10 +5,7 @@ import gft.mentoring.sap.model.SAPMentoringModel;
 import gft.mentoring.trs.model.TRSMentoringModel;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,12 +29,13 @@ class ModelMatcher {
     private Map<SAPMentoringModel, List<TRSMentoringModel>> matchIntermediateModels(List<SAPMentoringModel> sapMentoringModels,
                                                                                     List<TRSMentoringModel> trsMentoringModels) {
 
-        Map<SAPMentoringModel, List<TRSMentoringModel>> unifiedModels = new HashMap<>();
+        Map<SAPMentoringModel, List<TRSMentoringModel>> unifiedModels = new LinkedHashMap<>();
 
         sapMentoringModels.forEach(sapModel -> {
             List<TRSMentoringModel> matchedModelsInTRS = findMatching(sapModel, trsMentoringModels);
             unifiedModels.put(sapModel, matchedModelsInTRS);
         });
+
         return unifiedModels;
     }
 
@@ -71,7 +69,7 @@ class ModelMatcher {
                     .seniority(priorityModel.getSeniority())
                     .localization(priorityModel.getOfficeLocation())
                     .contractor(priorityModel.isContractor())
-                    .leaver(secondaryModel.isContractor())
+                    .leaver(secondaryModel.isLeaver())
                     .menteesAssigned(priorityModel.getMenteesAssigned())
                     .age(priorityModel.getAge())
                     .build();

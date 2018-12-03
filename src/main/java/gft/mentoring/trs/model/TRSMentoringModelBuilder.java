@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 class TRSMentoringModelBuilder {
     private static final Logger LOGGER = Logger.getLogger(TRSMentoringModelBuilder.class.getName());
     private static final int DEFAULT_SENIORITY = 0;
+    private static final String EMPTY_STRING = "";
     private static final String DATE_PATTERN = "dd-MM-yyyy";
     private TRSMentoringModel trsMM = new TRSMentoringModel();
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
@@ -25,8 +26,8 @@ class TRSMentoringModelBuilder {
     }
 
     TRSMentoringModelBuilder setLeaver(String leave) {
-        if (leave.trim().equalsIgnoreCase("Notice Period") ||
-                leave.trim().equalsIgnoreCase("Hired")) trsMM.setLeaver(true);
+        if (leave.trim().equalsIgnoreCase("notice period") ||
+                leave.trim().equalsIgnoreCase("hired")) trsMM.setLeaver(true);
         return this;
     }
 
