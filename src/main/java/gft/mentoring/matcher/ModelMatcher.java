@@ -3,6 +3,7 @@ package gft.mentoring.matcher;
 import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.SAPMentoringModel;
 import gft.mentoring.trs.model.TRSMentoringModel;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,31 +18,46 @@ import java.util.stream.Collectors;
 
 
 class ModelMatcher {
-    Map<SAPMentoringModel, List<TRSMentoringModel>> matchIntermediateModels(List<SAPMentoringModel> sapMentoringModels,
-                                                                            List<TRSMentoringModel> trsMentoringModels)
-    {
+
+    private List<TRSMentoringModel> findMatching(SAPMentoringModel sap, List<TRSMentoringModel> trsList) {
+        return trsList.stream().filter(trs -> matches(trs, sap)).collect(Collectors.toList());
+    }
+
+    private boolean matches(TRSMentoringModel treserMM, SAPMentoringModel saperMM) {
+        // check first name and last name
+        return saperMM.getFirstName().trim().equalsIgnoreCase(treserMM.getFirstName().trim())
+                && saperMM.getLastName().trim().equalsIgnoreCase(treserMM.getLastName().trim());
+    }
+
+    private Map<SAPMentoringModel, List<TRSMentoringModel>> matchIntermediateModels(List<SAPMentoringModel> sapMentoringModels,
+                                                                                    List<TRSMentoringModel> trsMentoringModels) {
+
         Map<SAPMentoringModel, List<TRSMentoringModel>> unifiedModels = new HashMap<>();
 
         sapMentoringModels.forEach(sapModel -> {
             List<TRSMentoringModel> matchedModelsInTRS = findMatching(sapModel, trsMentoringModels);
-
-            if (matchedModelsInTRS.isEmpty()) {
-                ZeroMatchModel zeroMatchModel = storeUnmatched(sapModel);
-                unifiedModels.put(sapModel, matchedModelsInTRS);
-
-            } else if (matchedModelsInTRS.size() == 1) {
-                MentoringModel mentoringModel = MentoringBuilder.combine(sapModel, trsMentoringModels.get(0));
-//                unifiedModels.put(mentoringModel);
-            } else {
-                storeMultipleMatchOccurrences(sapModel);
-            }
             unifiedModels.put(sapModel, matchedModelsInTRS);
         });
         return unifiedModels;
     }
 
+    List<MentoringModel> createMatches(List<SAPMentoringModel> sapMentoringModels,
+                                       List<TRSMentoringModel> trsMentoringModels) {
+        Map<SAPMentoringModel, List<TRSMentoringModel>> result = matchIntermediateModels(sapMentoringModels, trsMentoringModels);
 
+        List<MentoringModel> models = new ArrayList<>();
+        for (Map.Entry<SAPMentoringModel, List<TRSMentoringModel>> entry : result.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                System.out.println("No match for " + entry.getKey());
+            } else if (entry.getValue().size() == 1) {
+                models.add(MentoringBuilder.combine(entry.getKey(), entry.getValue().get(0)));
+            } else {
+                System.out.println("Multiple match for " + entry.getKey());
+            }
+        }
 
+        return models;
+    }
 
     private static class MentoringBuilder {
 
@@ -60,34 +76,21 @@ class ModelMatcher {
                     .age(priorityModel.getAge())
                     .build();
         }
-    }
 
-    private ZeroMatchModel storeUnmatched(SAPMentoringModel saperMM) {
-        // do something with unmatched entity
-        // or check job family and grade and location
-        return new ZeroMatchModel(
-                saperMM.getFirstName(),
-                saperMM.getLastName(),
-                saperMM.getFamily(),
-                saperMM.getSpecialization(),
-                saperMM.getLevel());
-    }
-
-
-    private List<MultiMatchModel> storeMultipleMatchOccurrences(SAPMentoringModel multiMatch) {
-        // do something with entity wchich is matched multiple times
-        List<SAPMentoringModel> multimatches = new ArrayList<>();
-        multimatches.add(multiMatch);
-        return null;
-    }
-
-    private List<TRSMentoringModel> findMatching(SAPMentoringModel sap, List<TRSMentoringModel> trsList) {
-        return trsList.stream().filter(trs -> matches(trs, sap)).collect(Collectors.toList());
-    }
-
-    private boolean matches(TRSMentoringModel treserMM, SAPMentoringModel saperMM) {
-        // check first name and last name
-        return saperMM.getFirstName().trim().equalsIgnoreCase(treserMM.getFirstName().trim())
-                && saperMM.getLastName().trim().equalsIgnoreCase(treserMM.getLastName().trim());
+        static MentoringModel returnSAPMentoringModel(@NotNull SAPMentoringModel priorityModel, TRSMentoringModel trsMentoringModel) {
+            return MentoringModel.builder().
+                    firstName(priorityModel.getFirstName())
+                    .lastName(priorityModel.getLastName())
+                    .family(priorityModel.getFamily())
+                    .specialization("")
+                    .level(priorityModel.getLevel())
+                    .seniority(priorityModel.getSeniority())
+                    .localization(priorityModel.getOfficeLocation())
+                    .contractor(priorityModel.isContractor())
+                    .leaver(false)
+                    .menteesAssigned(priorityModel.getMenteesAssigned())
+                    .age(priorityModel.getAge())
+                    .build();
+        }
     }
 }
