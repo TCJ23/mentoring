@@ -38,15 +38,13 @@ class ModelMatcherTest {
 
 
     @Test
-    @Disabled
     @DisplayName("6.1.1 - validate that Matcher creates MentoringModels in 1:1 match")
     void shouldCreate3MentoringModelsFromSampleFiles() throws ExcelException, InvalidFormatException {
         //given
         List<SAPMentoringModel> sapMentoringModels = new ConverterSAP(BASE_DATE).convertInputToSAPMentoringModel(SAP_AGE_EXAMPLES);
         List<TRSMentoringModel> trsMentoringModels = new ConvertTRS(BASE_DATE).convertInputToTRSMentoringModel(TRS_RANDOM);
         //when
-        Map<SAPMentoringModel, List<TRSMentoringModel>> mentoringModels = new ModelMatcher().matchIntermediateModels(sapMentoringModels, trsMentoringModels, BASE_DATE);
-
+        Map<SAPMentoringModel, List<TRSMentoringModel>> mentoringModels = new ModelMatcher().matchIntermediateModels(sapMentoringModels, trsMentoringModels);
         //then
         assertThat(mentoringModels).size().isEqualTo(3);
     }

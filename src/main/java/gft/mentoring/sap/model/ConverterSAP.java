@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 public class ConverterSAP {
 
     private LocalDate baseDate;
@@ -33,14 +35,8 @@ public class ConverterSAP {
         return getSapMentoringModels(filteredSapers);
     }
 
-    private Map<String, List<SAPModel>> findSAPidInMentorColumn(List<SAPModel> sapModels) {
-        return sapModels.stream().collect(Collectors.groupingBy(SAPModel::getPersNrMentor));
-    }
-
-    private int countMenteesAssignedToMentor(SAPModel saper, List<SAPModel> sapModels) {
-        Map<String, List<SAPModel>> menteesAssigned = findSAPidInMentorColumn(sapModels);
-        return menteesAssigned.containsKey(saper.getPersonalNR())
-                ? menteesAssigned.get(saper.getPersonalNR()).size() : 0;
+    private int findSAPidInMentorColumn(List<SAPModel> sapModels, SAPModel mentor) {
+        return (int) sapModels.stream().filter(mentee -> mentee.getPersNrMentor().equals(mentor.getPersonalNR())).count();
     }
 
     List<SAPMentoringModel> getSapMentoringModels(List<SAPModel> sapers) {
@@ -57,7 +53,7 @@ public class ConverterSAP {
                 .setOfficeLocation(saper.getPersonnelSubarea())
                 .setSapID(saper.getPersonalNR())
                 .setMenteeID(saper.getPersNrMentor())
-                .setMenteesAssigned(countMenteesAssignedToMentor(saper, sapers))
+                .setMenteesAssigned(findSAPidInMentorColumn(sapers, saper))
                 /** redundant fields
                  * @see SAPMentoringModel*/
                 .setFederationID(saper.getInitials())

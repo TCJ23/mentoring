@@ -20,10 +20,8 @@ import java.util.stream.Collectors;
 
 class ModelMatcher {
     Map<SAPMentoringModel, List<TRSMentoringModel>> matchIntermediateModels(List<SAPMentoringModel> sapMentoringModels,
-                                                                            List<TRSMentoringModel> trsMentoringModels,
-                                                                            LocalDate now) {
-
-        Map<String, List<SAPMentoringModel>> menteesAssigned = mentorsOccurence(sapMentoringModels);
+                                                                            List<TRSMentoringModel> trsMentoringModels)
+    {
         Map<SAPMentoringModel, List<TRSMentoringModel>> unifiedModels = new HashMap<>();
 
         sapMentoringModels.forEach(sapModel -> {
@@ -32,8 +30,10 @@ class ModelMatcher {
             if (matchedModelsInTRS.isEmpty()) {
                 ZeroMatchModel zeroMatchModel = storeUnmatched(sapModel);
                 unifiedModels.put(sapModel, matchedModelsInTRS);
+
             } else if (matchedModelsInTRS.size() == 1) {
-                unifiedModels.put(sapModel, matchedModelsInTRS);
+                MentoringModel mentoringModel = MentoringBuilder.combine(sapModel, trsMentoringModels.get(0));
+//                unifiedModels.put(mentoringModel);
             } else {
                 storeMultipleMatchOccurrences(sapModel);
             }
@@ -43,10 +43,6 @@ class ModelMatcher {
     }
 
 
-    Map<String, List<SAPMentoringModel>> mentorsOccurence(List<SAPMentoringModel> sapMentoringModels) {
-        return sapMentoringModels.stream().collect
-                (Collectors.groupingBy(SAPMentoringModel::getMentorID));
-    }
 
 
     //move to static inner class
@@ -55,8 +51,7 @@ class ModelMatcher {
 
     static class MentoringBuilder {
 
-        static MentoringModel combine(SAPMentoringModel priorityModel, TRSMentoringModel secondaryModel,
-                                      int menteesAssigned) {
+        static MentoringModel combine(SAPMentoringModel priorityModel, TRSMentoringModel secondaryModel) {
             return MentoringModel.builder().
                     firstName(priorityModel.getFirstName())
                     .lastName(priorityModel.getLastName())
@@ -67,7 +62,7 @@ class ModelMatcher {
                     .localization(priorityModel.getOfficeLocation())
                     .contractor(priorityModel.isContractor())
                     .leaver(secondaryModel.isContractor())
-                    .menteesAssigned(menteesAssigned)
+                    .menteesAssigned(priorityModel.getMenteesAssigned())
                     .age(priorityModel.getAge())
                     .build();
         }
