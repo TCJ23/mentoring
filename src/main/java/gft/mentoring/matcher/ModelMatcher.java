@@ -45,11 +45,7 @@ class ModelMatcher {
 
 
 
-    //move to static inner class
-/*(combine(sapModel, matchedModelsInTRS.get(0), menteesAssigned.containsKey(sapModel.getSapID())
-            ? menteesAssigned.get(sapModel.getSapID()).size() : 0))*/
-
-    static class MentoringBuilder {
+    private static class MentoringBuilder {
 
         static MentoringModel combine(SAPMentoringModel priorityModel, TRSMentoringModel secondaryModel) {
             return MentoringModel.builder().

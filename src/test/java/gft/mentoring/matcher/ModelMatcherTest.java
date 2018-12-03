@@ -1,5 +1,6 @@
 package gft.mentoring.matcher;
 
+import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.ConverterSAP;
 import gft.mentoring.sap.model.ExcelException;
 import gft.mentoring.sap.model.SAPInputReader;
@@ -33,18 +34,23 @@ class ModelMatcherTest {
     private static final String TRS_RANDOM = "TRS_random.xlsx";
     private static final String SAP_DUPLICATE = "SAP_duplicate_entires.xlsx";
     private static final String TRS_DUPLICATE = "TRS_duplicate_entires.xlsx";
-    private static final String SAP_ONE_TO_ONE= "SAP_OneToOneMatch_solid_example.xlsx";
+    private static final String SAP_ONE_TO_ONE = "SAP_OneToOneMatch_solid_example.xlsx";
     private static final String TRS_ONE_TO_ONE = "TRS_OneToOneMatch_solid_example.xlsx";
+    private static final String SAP_3_PEOPLE_TO_MATCH = "SAP_3people_toMatch.xlsx";
+    private static final String TRS_3_PEOPLE_TO_MATCH = "TRS_3people_toMatch.xlsx";
 
 
     @Test
     @DisplayName("6.1.1 - validate that Matcher creates MentoringModels in 1:1 match")
     void shouldCreate3MentoringModelsFromSampleFiles() throws ExcelException, InvalidFormatException {
         //given
-        List<SAPMentoringModel> sapMentoringModels = new ConverterSAP(BASE_DATE).convertInputToSAPMentoringModel(SAP_AGE_EXAMPLES);
-        List<TRSMentoringModel> trsMentoringModels = new ConvertTRS(BASE_DATE).convertInputToTRSMentoringModel(TRS_RANDOM);
+        List<SAPMentoringModel> sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_3_PEOPLE_TO_MATCH);
+        List<TRSMentoringModel> trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_3_PEOPLE_TO_MATCH);
         //when
-        Map<SAPMentoringModel, List<TRSMentoringModel>> mentoringModels = new ModelMatcher().matchIntermediateModels(sapMentoringModels, trsMentoringModels);
+        List<MentoringModel> mentoringModels = new ModelMatcher()
+                .createMatches(sapMentoringModels, trsMentoringModels);
         //then
         assertThat(mentoringModels).size().isEqualTo(3);
     }
