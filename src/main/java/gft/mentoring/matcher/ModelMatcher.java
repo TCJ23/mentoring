@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
  */
 
 
-class ModelMatcher {
+public class ModelMatcher {
+
     private static final Logger LOGGER = Logger.getLogger(ModelMatcher.class.getName());
 
     private List<TRSMentoringModel> findMatchingGFTPeople(SAPMentoringModel sap, @NotNull List<TRSMentoringModel> trsList) {
@@ -45,9 +46,12 @@ class ModelMatcher {
 
         return unifiedModels;
     }
-    /** should be moved to seperate class or main */
-    List<MentoringModel> createMentoringModelsFromMatchingGFTPeople(List<SAPMentoringModel> sapMentoringModels,
-                                                                    List<TRSMentoringModel> trsMentoringModels) {
+
+    /**
+     * should be moved to seperate class or main
+     */
+    public List<MentoringModel> createMentoringModelsFromMatchingGFTPeople(List<SAPMentoringModel> sapMentoringModels,
+                                                                           List<TRSMentoringModel> trsMentoringModels) {
 
         Map<SAPMentoringModel, List<TRSMentoringModel>> matchedModels =
                 matchIntermediateModels(sapMentoringModels, trsMentoringModels);
@@ -68,16 +72,20 @@ class ModelMatcher {
 
         return models;
     }
-    /** On 1:1 match between Intermediate models
+
+    /**
+     * On 1:1 match between Intermediate models
+     *
      * @see SAPMentoringModel
      * @see TRSMentoringModel
      * we know how to combine them into
-     * @see MentoringModel*/
+     * @see MentoringModel
+     */
     private static class MentoringBuilder {
-     /** @param  priorityModel
-      * takes precedence over
-      * @param secondaryModel
-      * in all but 2 cases for leaver and specialization*/
+        /**
+         * @param priorityModel  takes precedence over
+         * @param secondaryModel in all but 2 cases for leaver and specialization
+         */
 
         static MentoringModel combineSAPmmModelWithTRSmmModel(@NotNull SAPMentoringModel priorityModel, @NotNull TRSMentoringModel secondaryModel) {
             return MentoringModel.builder().
