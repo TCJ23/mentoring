@@ -198,9 +198,10 @@ class ModelMatcherTest {
         //when
         val mentoringModels = new ModelMatcher()
                 .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
-        MentoringModel mentee1 = mentoringModels.get(0);
-        MentoringModel mentee2 = mentoringModels.get(1);
-        MentoringModel mentor = mentoringModels.get(2);
+
+        val mentee1 = mentoringModels.get(0);
+        val mentee2 = mentoringModels.get(1);
+        val mentor = mentoringModels.get(2);
         //then
         assertAll(
                 () -> assertTrue(mentee1.isMentee()),
