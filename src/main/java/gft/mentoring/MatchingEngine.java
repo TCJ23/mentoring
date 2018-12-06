@@ -23,6 +23,7 @@ class MatchingEngine {
             new RejectLowerSeniorityDevManStrategy(),
             new RejectOtherLocationsForLodzAndPoznan(),
             new RejectDevManThatIsMentee(),
+            new RejectDevManBelow4thLevel(),
             new DevManHasToBeAtLevel4AndAbove(),
             new DevManHasToWorkAtLeastOneYearInGFTStrategy(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),

@@ -459,7 +459,7 @@ class MatchingSpec {
 
     /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    @DisplayName("1.2.1a - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromLodz() {
         //given
         val menteeLodz = newMentee().localization("Lodz").build();
@@ -477,7 +477,7 @@ class MatchingSpec {
 
     /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    @DisplayName("1.2.1b- When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromPoznan() {
         //given
         val menteePoznan = newMentee().localization("Poznan").build();
@@ -495,7 +495,7 @@ class MatchingSpec {
 
     /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 - When mentee is from Warsaw his/her mentor can't be from Poznan")
+    @DisplayName("1.2.1c - When mentee is from Warsaw his/her mentor can't be from Poznan")
     void shouldRejectMentorFromPoznanWhenMenteeIsFromWarsaw() {
         //given
         val menteeWarsaw = newMentee().localization("Warsaw").build();
@@ -512,8 +512,8 @@ class MatchingSpec {
     }
 
     @Test
-    @DisplayName("2.2 - candidate cannot be Mentee ")
-    void shouldRejectPersonThatIsMentee(){
+    @DisplayName("1.2.2 - candidate cannot be Mentee ")
+    void shouldRejectPersonThatIsMentee() {
         //given
         val mentee = newMentee().build();
         val mentor = newMentor().build();
@@ -521,6 +521,22 @@ class MatchingSpec {
         val mentorThatTechnicallyIsMentee = newMentor().isMentee(true).build();
         //when
         val proposals = new MatchingEngine().findProposals(mentee, mentorThatTechnicallyIsMentee, notMentor, mentor)
+                .collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentor)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
+    }
+
+    @Test
+    @DisplayName("1.2.3 - candidate cannot be Mentor with grade below 4th level ")
+    void shouldRejectMentorsWithGradeLowerThan4() {
+        //given
+        val mentee = newMentee().build();
+        val mentor = newMentor().build();
+        val mentorBelow4thLevel = newMentor().level(3).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorBelow4thLevel, mentor)
                 .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);

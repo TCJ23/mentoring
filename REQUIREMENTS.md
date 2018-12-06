@@ -104,3 +104,7 @@
 
 2.1. [When mentee is from Warsaw his/her mentor can't be from Poznan](19#)
   (Weronika Wajberg-Ślązak)
+
+=== 2018-12-06 ===
+3.1 [Mentor cannot have level lower than 4](20#)
+   (Tomasz Jurek)
