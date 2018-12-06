@@ -35,4 +35,5 @@ public class MentoringModel {
     private boolean leaver;
     private int menteesAssigned;
     private int age;
+    private boolean isMentee;
 }

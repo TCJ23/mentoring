@@ -1,5 +1,6 @@
 package gft.mentoring.matcher;
 
+import gft.mentoring.MentoringModel;
 import gft.mentoring.sap.model.ConverterSAP;
 import gft.mentoring.sap.model.ExcelException;
 import gft.mentoring.trs.model.ConvertTRS;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -31,6 +33,8 @@ class ModelMatcherTest {
     private static final String TRS_ONE_TO_ONE = "TRS_OneToOneMatch_solid_example.xlsx";
     private static final String SAP_3_PEOPLE_TO_MATCH = "SAP_3people_toMatch.xlsx";
     private static final String TRS_3_PEOPLE_TO_MATCH = "TRS_3people_toMatch.xlsx";
+    private static final String SAP_IS_MENTEE_EXAMPLE = "SAP_marking_mentees_from_MentorIDColumn.xlsx";
+    private static final String TRS_MARKING_MENTEES = "TRS_marking_mentees_from_MentorIDColumn.xlsx";
 
 
     @Test
@@ -82,7 +86,6 @@ class ModelMatcherTest {
         val dateInExcel = LocalDate.of(2017, 11, 22);
         val seniority = mentoringModel.getSeniority();
         val daysSince = ChronoUnit.DAYS.between(dateInExcel, BASE_DATE);
-        System.out.println(seniority);
         //then
         Assertions.assertEquals(daysSince, seniority);
     }
@@ -182,5 +185,27 @@ class ModelMatcherTest {
                 .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
         //then
         assertThat(mentoringModels).size().isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("6.2.3- create mentees when Pers.no. Mentor Column has 0 value")
+    void shouldCreateMenteesWhenMentorColumnHas0value() throws ExcelException, InvalidFormatException {
+        //given
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_IS_MENTEE_EXAMPLE);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_MARKING_MENTEES);
+        //when
+        val mentoringModels = new ModelMatcher()
+                .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        MentoringModel mentee1 = mentoringModels.get(0);
+        MentoringModel mentee2 = mentoringModels.get(1);
+        MentoringModel mentor = mentoringModels.get(2);
+        //then
+        assertAll(
+                () -> assertTrue(mentee1.isMentee()),
+                () -> assertTrue(mentee2.isMentee()),
+                () -> assertFalse(mentor.isMentee())
+        );
     }
 }

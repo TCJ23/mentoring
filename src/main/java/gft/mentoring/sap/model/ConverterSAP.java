@@ -48,7 +48,7 @@ public class ConverterSAP {
                 .setAge(saper.getDateOfBirth())
                 .setOfficeLocation(saper.getPersonnelSubarea())
                 .setSapID(saper.getPersonalNR())
-                .setMenteeID(saper.getPersNrMentor())
+                .setMentorID(saper.getPersNrMentor())
                 .setMenteesAssigned(findSAPidInMentorColumn(sapers, saper))
                 /** redundant fields
                  * @see SAPMentoringModel*/

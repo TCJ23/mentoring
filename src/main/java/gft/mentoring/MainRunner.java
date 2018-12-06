@@ -16,21 +16,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class will lanuch program
+ */
+
 public class MainRunner {
+    private static final String TESTING_FOLDER = "./findFilesTest/SAP_04122018.xlsx";
+    private static final String TESTING_FOLDER2 = ".\\findFilesTest\\SAP_04122018.xlsx";
+
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String SAP_FILE = "./findFilesTest/SAP_04122018.xlsx";
-    private static final String SAP_FILE2 = ".\\findFilesTest\\SAP_04122018.xlsx";
+    private static final String PATH = "./findFilesTest";
+
 
     public static void main(String[] args) throws ExcelException, InvalidFormatException {
-     /*   String defaultPath = args[0];
-        String sapFile = args[1];
-        String trsFile = args[2];
-        String defaultDate = args[3];*/
 
-        try (Stream<Path> filesInPath = Files.list(Paths.get("./findFilesTest"))) {
+        try (Stream<Path> filesInPath = Files.list(Paths.get(PATH))) {
             List<String> fileNames =
                     filesInPath.filter(path -> path.toString().endsWith(".xlsx"))
                             .filter(path -> StringUtils.contains(path.toString(), "SAP") ||
@@ -60,16 +64,19 @@ public class MainRunner {
 
             List<MentoringModel> mentees = seperateMenteesOnly(mentoringModels);
             List<MentoringModel> mentors = seperateMentorsOnly(mentoringModels);
+
             Stream<MentoringModel> proposals =
-                    new MatchingEngine().findProposals(mentees.iterator().next(), mentors.iterator().next());
+                    new MatchingEngine().findProposals(mentoringModels.iterator().next(), mentoringModels.iterator().next());
 
             System.out.println("PROPOZALE :)");
-            proposals.forEach(System.out::println);
+//            proposals.collect(Collectors.toList()).forEach(System.out::println);
+            System.out.println(proposals.count());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private static String getSAPfileName(List<String> fileNames) {
         for (String file : fileNames) {
@@ -79,7 +86,7 @@ public class MainRunner {
             }
             System.out.println("nie znalazłem innego pliku");
         }
-        return "";//TO DO return SAMPLE GOLDEN FILE
+        return "";//TO DO return SAP SAMPLE GOLDEN FILE
     }
 
     private static String getTRSfileName(List<String> fileNames) {
@@ -90,7 +97,7 @@ public class MainRunner {
             }
             System.out.println("nie znalazłem innego pliku ");
         }
-        return "";
+        return "";//TO DO return TRS SAMPLE GOLDEN FILE
     }
 
     private static List<MentoringModel> seperateMenteesOnly(List<MentoringModel> peopleGFT) {
@@ -105,3 +112,28 @@ public class MainRunner {
                 .collect(Collectors.toList());
     }
 }
+  /*     new NewModelMatcher()
+                .catchMatchedModels(matched -> {
+
+                })
+                .catchUnmatchedTrs(unmatchedTrs -> {
+
+                })
+
+
+
+    }*/
+/*class NewModelMatcher {
+    NewModelMatcher catchMatchedModels(Consumer<MentoringModel> handler) {
+        return this;
+    }
+
+    NewModelMatcher catchUnmatchedTrs(Consumer<TRSMentoringModel> handler) {
+        return this;
+    }
+
+    NewModelMatcher catchUnmatchedSap(Consumer<SAPMentoringModel> handler) {
+        return this;
+    }
+
+}*/

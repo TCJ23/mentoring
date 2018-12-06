@@ -16,25 +16,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("1 - Main Class to test MatchingEngine")
 class MatchingSpec {
     private static final String NO_NAME = "";
-    /* This test if to meet requirement 1.1 in REQUIREMENTS.md
-     in @ParameterizedTest you either keep
-     your testmethod name and method source name the same or use parameters as below
-     This class should test MatchingEngine().findProposals
-     for MentoringModel in
-     Project Development
-     Architecture Digital
-     Data
-     we can assign Mentors from above Families treated as one*/
+    /**
+     * This test if to meet requirement 1.1 in REQUIREMENTS.md
+     * in @ParameterizedTest you either keep
+     * your testmethod name and method source name the same or use parameters as below
+     * This class should test MatchingEngine().findProposals
+     * for MentoringModel in
+     * @see Family#PROJECT_DEVELOPMENT
+     * @see Family#ARCHITECTURE
+     * @see Family#DATA
+     *
+     * Data
+     * we can assign Mentors from above Families treated as one*/
 
-    /*Base models for testing*/
+    /**
+     * Base models for testing
+     */
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", false, false, 0, 23).toBuilder();
+                "Lodz", false, false, 0, 23, false).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
         return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, true, 0, 23).toBuilder();
+                "Lodz", false, true, 0, 23, true).toBuilder();
     }
 
     @ParameterizedTest(name = "{index} => {0}")
@@ -86,7 +91,9 @@ class MatchingSpec {
         }
     }
 
-    /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
+    /**
+     * This test if to meet requirement 1.2 in REQUIREMENTS.md
+     */
     @Test
     @DisplayName("1.2 - From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {

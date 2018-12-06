@@ -499,4 +499,19 @@ class ConverterSAPTest {
         //then
         Assertions.assertEquals(0, menteesAssigned);
     }
+
+    @Test
+    @DisplayName("3.2.11 - in Pers.no. Mentor Column work normally with 0 value or empty")
+    void shouldSetZeroOnMentorIDWhenEmptyOrZeroCell() throws ExcelException, InvalidFormatException {
+        //given
+        val converter = new ConverterSAP(BASE_DATE).convertInputToSAPMentoringModel(SAP_0_MENTEES_ASSIGNED_OR_BLANK);
+        //when
+        val sapMentoringModelwithZeroinCell = converter.get(0);
+        val sapMentoringModel2withEmptyCell = converter.get(1);
+        val noMentorAssigned = sapMentoringModelwithZeroinCell.getMentorID();
+        val noMentorAssigned2 = sapMentoringModelwithZeroinCell.getMentorID();
+        //then
+        Assertions.assertEquals("0", noMentorAssigned);
+        Assertions.assertEquals("0", noMentorAssigned2);
+    }
 }

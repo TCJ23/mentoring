@@ -116,9 +116,11 @@ class SAPMentoringModelBuilder {
         return this;
     }
 
-    SAPMentoringModelBuilder setMenteeID(String persNrMentor) {
-        sapMM.setMentorID(persNrMentor);
+    SAPMentoringModelBuilder setMentorID(String persNrMentor) {
+        if (persNrMentor.equals("")) {
+            sapMM.setMentorID("0");
+        } else
+            sapMM.setMentorID(persNrMentor);
         return this;
     }
-
 }
