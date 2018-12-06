@@ -22,6 +22,7 @@ class MatchingEngine {
             new RejectLowerLevelDevManThanMenteeStrategy(),
             new RejectLowerSeniorityDevManStrategy(),
             new RejectOtherLocationsForLodzAndPoznan(),
+            new RejectDevManThatIsMentee(),
             new DevManHasToBeAtLevel4AndAbove(),
             new DevManHasToWorkAtLeastOneYearInGFTStrategy(),
             new PreferDevManFromSameFamilyOrSimilarGroupStrategy(),
@@ -37,11 +38,11 @@ class MatchingEngine {
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
         return Arrays.stream(candidates)
                 .map(mentorCandidate -> new SympathyResultTuple(mentorCandidate, sympathy(mentee, mentorCandidate)))
-                .filter(it -> it.sympathy != SympathyResult.None)
+                .filter(sympathyResultTuple -> sympathyResultTuple.sympathy != SympathyResult.None)
                 .map(mentorCandidate -> new SymapthyLevelTuple(mentorCandidate.mentor,
                         ((SympathyResult.Some) mentorCandidate.sympathy).getValue()))
                 .sorted((mentorCandidate1, mentorCandidate2) -> -(mentorCandidate1.sympathy - mentorCandidate2.sympathy))
-                .map(it -> it.mentor)
+                .map(symapthyLevelTuple -> symapthyLevelTuple.mentor)
                 ;
     }
 

@@ -95,7 +95,7 @@ class MatchingSpec {
      * This test if to meet requirement 1.2 in REQUIREMENTS.md
      */
     @Test
-    @DisplayName("1.2 - From 2 Mentors prefer Mentor from exact same Family as Mentee")
+    @DisplayName("1.2a - From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.DATA).build();
@@ -111,7 +111,7 @@ class MatchingSpec {
     }
 
     @Test
-    @DisplayName("1.2 - From 2 Mentors propose only Mentor from exact same Family as Mentee")
+    @DisplayName("1.2b - From 2 Mentors propose only Mentor from exact same Family as Mentee")
     void findBestProposalFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.AMS).build();
@@ -372,7 +372,7 @@ class MatchingSpec {
     @DisplayName("1.14 - Seniority over Level")
     void shouldPreferDevManWithHigherSeniorityThanLevel() {
         //given
-        val mentee = newMentor().build();
+        val mentee = newMentee().build();
         val higherLevelMentor = newMentor().level(mentee.getLevel() + 1).build();
         val olderSeniorityMentor = newMentor().seniority(mentee.getSeniority() + 3 * 365).build();
         //when
@@ -509,6 +509,23 @@ class MatchingSpec {
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(mentorFromWarsaw)).isTrue();
         assertThat(proposals.size() == 2).isTrue();
+    }
+
+    @Test
+    @DisplayName("2.2 - candidate cannot be Mentee ")
+    void shouldRejectPersonThatIsMentee(){
+        //given
+        val mentee = newMentee().build();
+        val mentor = newMentor().build();
+        val notMentor = newMentee().build();
+        val mentorThatTechnicallyIsMentee = newMentor().isMentee(true).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorThatTechnicallyIsMentee, notMentor, mentor)
+                .collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentor)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
     }
 
     @Test
