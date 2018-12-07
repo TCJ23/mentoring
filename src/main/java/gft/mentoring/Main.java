@@ -1,18 +1,25 @@
 package gft.mentoring;
 
 import gft.mentoring.sap.model.ExcelException;
+import lombok.Value;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.time.LocalDate;
 
 public class Main {
+
+
+    private static final String DIRECTORY_TO_RUN_APP = ".";
+
     public static void main(String[] args) throws ExcelException, InvalidFormatException {
-        MainRunner mainRunner = new MainRunner(Configuration.PATH);
-        mainRunner.loadResources();
-        mainRunner.mergeDataFromSystems();
+        new MainRunner(new DevManConfig(LocalDate.now(), DIRECTORY_TO_RUN_APP))
+                .loadResources()
+                .mergeDataFromSystems();
     }
-    static class Configuration {
-        private static final LocalDate BASE_DATE = LocalDate.now();
-        private static final String PATH = ".";
-    }
+}
+
+@Value
+class DevManConfig {
+    private LocalDate now;
+    private final String path;
 }

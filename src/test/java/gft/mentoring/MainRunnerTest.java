@@ -1,11 +1,14 @@
 package gft.mentoring;
 
 import gft.mentoring.sap.model.ExcelException;
+import lombok.Value;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,15 +23,17 @@ class MainRunnerTest {
 
     @Test
     @DisplayName("7.1- validate that loading resources finds proper files in testing folder")
-    void shouldFindSAPandTRSfilesInTestingFolder() {
+    void shouldFindSAPandTRSfilesInTestingFolder() throws ExcelException {
         //given & when
-        val files = new MainRunner(TESTING_DIRECTORY).loadResources();
+        MainRunner.DataMerger dataMerger = new MainRunner(new DevManConfig(BASE_DATE, TESTING_DIRECTORY))
+                .loadResources();
         //then
         /** due to Linux/Windows naming convention this assertions breaks build
-        assertThat(files).containsExactlyInAnyOrder(".\\findFilesTest\\employees-basic-report.xlsx",
-                ".\\findFilesTest\\SAP_04122018.xlsx");
+         assertThat(files).containsExactlyInAnyOrder(".\\findFilesTest\\employees-basic-report.xlsx",
+         ".\\findFilesTest\\SAP_04122018.xlsx");
          * */
-        assertThat(files.size()).isEqualTo(2);
+        List<String> filenames = (List<String>) Whitebox.getInternalState(dataMerger, "filenames");
+        assertThat(filenames.size()).isEqualTo(2);
     }
 
     @Test
@@ -36,7 +41,10 @@ class MainRunnerTest {
     void shouldThrowExcelExceptionWhenFilesAreMissingInTestingFolder() {
         //given & when
         //then
-        Throwable exception = assertThrows(ExcelException.class, () -> new MainRunner(MISSING_FILE_TEST).mergeDataFromSystems());
+        Throwable exception = assertThrows(ExcelException.class, () -> new MainRunner(
+                new DevManConfig(BASE_DATE, MISSING_FILE_TEST))
+                .loadResources()
+                .mergeDataFromSystems());
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
     }

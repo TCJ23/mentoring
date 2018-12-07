@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,38 +23,49 @@ import java.util.stream.Stream;
  * This class will lanuch program
  */
 
-public class MainRunner {
+class MainRunner {
 
     private final LocalDate currentDate;
     private final String directory;
+    private List<String> filenames;
 
-    MainRunner(String path) {
-        this.directory = path;
-        this.currentDate = LocalDate.now();
+    MainRunner(DevManConfig conf) {
+        this.directory = conf.getPath();
+        this.currentDate = conf.getNow();
     }
 
-    List<String> loadResources() {
+    public DataMerger loadResources() throws ExcelException {
         try (Stream<Path> filesInPath = Files.list(Paths.get(this.directory))) {
-            return filesInPath.filter(path -> path.toString().endsWith(".xlsx"))
+            return new DataMerger(currentDate, filesInPath.filter(path -> path.toString().endsWith(".xlsx"))
                     .filter(path -> StringUtils.contains(path.toString(), "SAP") ||
                             StringUtils.contains(path.toString(), "employees-basic-report"))
                     .map(Path::toString)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ExcelException("missing files", e.getCause());
         }
-        return new ArrayList<>();
     }
 
-    List<MentoringModel> mergeDataFromSystems() throws ExcelException, InvalidFormatException {
+    static class DataMerger {
 
-        List<SAPMentoringModel> sapMentoringModels =
-                new ConverterSAP(currentDate).convertInputToSAPMentoringModel(getSAPfileName(loadResources()));
+        private final LocalDate currentDate;
+        private final List<String> filenames;
 
-        List<TRSMentoringModel> trsMentoringModels =
-                new ConvertTRS(currentDate).convertInputToTRSMentoringModel(getTRSfileName(loadResources()));
+        DataMerger(LocalDate currentDate, List<String> filenames) {
+            this.currentDate = currentDate;
+            this.filenames = filenames;
+        }
 
-        return new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        public List<MentoringModel> mergeDataFromSystems() throws ExcelException, InvalidFormatException {
+
+            List<SAPMentoringModel> sapMentoringModels =
+                    new ConverterSAP(currentDate).convertInputToSAPMentoringModel(getSAPfileName(filenames));
+
+            List<TRSMentoringModel> trsMentoringModels =
+                    new ConvertTRS(currentDate).convertInputToTRSMentoringModel(getTRSfileName(filenames));
+
+            return new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        }
     }
 
     private static String getSAPfileName(List<String> fileNames) {
