@@ -8,13 +8,13 @@ import java.time.LocalDate;
 
 public class Main {
 
-
     private static final String DIRECTORY_TO_RUN_APP = ".";
 
     public static void main(String[] args) throws ExcelException, InvalidFormatException {
         new MainRunner(new DevManConfig(LocalDate.now(), DIRECTORY_TO_RUN_APP))
                 .loadResources()
-                .mergeDataFromSystems();
+                .mergeDataFromSystems()
+                .saveProposalsToFile();
     }
 }
 

@@ -3,6 +3,7 @@ package gft.mentoring;
 import gft.mentoring.sap.model.ExcelException;
 import lombok.Value;
 import lombok.val;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -20,9 +21,10 @@ class MainRunnerTest {
     private static final String SAP_FILE2 = ".\\findFilesTest\\SAP_04122018.xlsx";
     private static final String TESTING_DIRECTORY = "./findFilesTest";
     private static final String MISSING_FILE_TEST = "./missingFileTest";
+    private static final String HAPPY_PATH_TEST = "./happyPathTest";
 
     @Test
-    @DisplayName("7.1- validate that loading resources finds proper files in testing folder")
+    @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
     void shouldFindSAPandTRSfilesInTestingFolder() throws ExcelException {
         //given & when
         MainRunner.DataMerger dataMerger = new MainRunner(new DevManConfig(BASE_DATE, TESTING_DIRECTORY))
@@ -37,7 +39,7 @@ class MainRunnerTest {
     }
 
     @Test
-    @DisplayName("7.2- validate that missing files will throw custom ExcelException ")
+    @DisplayName("7.2 - validate that missing files will throw custom ExcelException ")
     void shouldThrowExcelExceptionWhenFilesAreMissingInTestingFolder() {
         //given & when
         //then
@@ -47,5 +49,16 @@ class MainRunnerTest {
                 .mergeDataFromSystems());
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("7.3 - run happy path and make sure file is created ")
+    void shouldCreateDevmanProposalsTXTfile() throws ExcelException, InvalidFormatException {
+        //given & when
+        //then
+        new MainRunner(new DevManConfig(BASE_DATE, HAPPY_PATH_TEST))
+                .loadResources()
+                .mergeDataFromSystems()
+                .saveProposalsToFile();
     }
 }

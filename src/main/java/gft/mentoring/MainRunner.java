@@ -15,26 +15,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This class will lanuch program
+ * This class will launch program
  */
 
 class MainRunner {
 
     private final LocalDate currentDate;
     private final String directory;
-    private List<String> filenames;
 
     MainRunner(DevManConfig conf) {
         this.directory = conf.getPath();
         this.currentDate = conf.getNow();
     }
 
-    public DataMerger loadResources() throws ExcelException {
+    DataMerger loadResources() throws ExcelException {
         try (Stream<Path> filesInPath = Files.list(Paths.get(this.directory))) {
             return new DataMerger(currentDate, filesInPath.filter(path -> path.toString().endsWith(".xlsx"))
                     .filter(path -> StringUtils.contains(path.toString(), "SAP") ||
@@ -42,7 +41,7 @@ class MainRunner {
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-            throw new ExcelException("File not found or inaccessible", e.getCause());
+            throw new ExcelException("File not found or inaccessible ", e.getCause());
         }
     }
 
@@ -56,7 +55,7 @@ class MainRunner {
             this.filenames = filenames;
         }
 
-        public List<MentoringModel> mergeDataFromSystems() throws ExcelException, InvalidFormatException {
+        DataSaver mergeDataFromSystems() throws ExcelException, InvalidFormatException {
 
             List<SAPMentoringModel> sapMentoringModels =
                     new ConverterSAP(currentDate).convertInputToSAPMentoringModel(getSAPfileName(filenames));
@@ -64,26 +63,81 @@ class MainRunner {
             List<TRSMentoringModel> trsMentoringModels =
                     new ConvertTRS(currentDate).convertInputToTRSMentoringModel(getTRSfileName(filenames));
 
-            return new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
-        }
-    }
+            List<MentoringModel> mentoringModels = new ModelMatcher().
+                    createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
 
-    private static String getSAPfileName(List<String> fileNames) {
-        for (String file : fileNames) {
-            if (file.contains("SAP")) {
-                return file;
+            return new DataSaver(mentoringModels);
+        }
+
+        static class DataSaver {
+
+            private final List<MentoringModel> mentoringModels;
+
+            DataSaver(List<MentoringModel> mentoringModels) {
+                this.mentoringModels = mentoringModels;
+            }
+
+            void saveProposalsToFile() throws ExcelException {
+
+                List<MentoringModel> mentees = mentoringModels
+                        .stream()
+                        .filter(MentoringModel::isMentee)
+                        .collect(Collectors.toList());
+
+                MatchingEngine matchingEngine = new MatchingEngine();
+
+                //Map<MentoringModel, Stream<MentoringModel>> devmanAssignments = new LinkedHashMap<>();
+                List<String> devmanAssignmentsInfo = new ArrayList<>();
+                for (MentoringModel mentee : mentees) {
+                    devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, matchingEngine.findProposals(mentee, mentoringModels.toArray(new MentoringModel[0]))));
+                }
+                /*mentees.stream()
+                        .collect(Collectors.toMap(
+                                Function.identity(),
+                                mentoringModel -> matchingEngine.findProposals(mentoringModel, mentoringModels.toArray(new MentoringModel[0]))));*/
+                try {
+                    Files.write(Paths.get("./devman-proposals.txt"), devmanAssignmentsInfo);
+                } catch (IOException e) {
+                    throw new ExcelException("Could not write to txt file ", e.getCause());
+                }
+            }
+
+            String createDevmanInformationLines(MentoringModel mentee, Stream<MentoringModel> candidates) {
+                String menteeLine = formatMentee(mentee);
+                List<String> mentors = candidates.map(mentoringModel -> menteeLine + formatMentor(mentoringModel)).collect(Collectors.toList());
+                return menteeLine + ": " + StringUtils.join(mentors);
+            }
+
+            private String formatMentor(MentoringModel mentor) {
+                return " we propose following candidates " + mentor.getFirstName() + " " + mentor.getLastName()
+                        + " of level " + mentor.getLevel() + " from " + mentor.getFamily() +
+                        " family with specialization " + mentor.getSpecialization();
+            }
+
+            private String formatMentee(MentoringModel mentee) {
+                return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() +
+                        " that works in " + mentee.getFamily() + " family with specialization "
+                        + mentee.getSpecialization() + " ";
             }
         }
-        return "";//TO DO return SAP SAMPLE GOLDEN FILE
-    }
 
-    private static String getTRSfileName(List<String> fileNames) {
-        for (String file : fileNames) {
-            if (file.contains("employees")) {
-                return file;
+        private static String getSAPfileName(List<String> fileNames) {
+            for (String file : fileNames) {
+                if (file.contains("SAP")) {
+                    return file;
+                }
             }
+            return "";//TO DO return SAP SAMPLE GOLDEN FILE
         }
-        return "";//TO DO return TRS SAMPLE GOLDEN FILE
+
+        private static String getTRSfileName(List<String> fileNames) {
+            for (String file : fileNames) {
+                if (file.contains("employees")) {
+                    return file;
+                }
+            }
+            return "";//TO DO return TRS SAMPLE GOLDEN FILE
+        }
     }
 }
   /*     new NewModelMatcher()
@@ -111,41 +165,4 @@ class MainRunner {
     }
 
 }*/
-       /* ConverterSAP converterSAP = new ConverterSAP(BASE_DATE);
-        List<SAPMentoringModel> sapMentoringModels =
-                converterSAP.convertInputToSAPMentoringModel(getSAPfileName(fileNames));
 
-        ConvertTRS convertTRS = new ConvertTRS(BASE_DATE);
-        List<TRSMentoringModel> trsMentoringModels =
-                convertTRS.convertInputToTRSMentoringModel(getTRSfileName(fileNames));
-
-        sapMentoringModels.forEach(System.out::println);
-        System.out.println();
-        trsMentoringModels.forEach(System.out::println);
-        System.out.println();
-
-        ModelMatcher modelMatcher = new ModelMatcher();
-        List<MentoringModel> mentoringModels =
-                modelMatcher.createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
-
-        mentoringModels.forEach(System.out::println);
-        System.out.println();
-
-        List<MentoringModel> mentees = seperateMenteesOnly(mentoringModels);
-        List<MentoringModel> mentors = seperateMentorsOnly(mentoringModels);
-
-        Stream<MentoringModel> proposals =
-                new MatchingEngine().findProposals(mentoringModels.iterator().next(), mentoringModels.iterator().next());
-
-        System.out.println("PROPOZALE :)");
-        System.out.println(proposals.count());
-
-    } catch(
-    IOException e)
-
-    {
-        e.printStackTrace();
-    }
-
-}
-*/
