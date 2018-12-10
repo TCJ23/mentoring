@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,6 +24,7 @@ class MainRunnerTest {
     private static final String TESTING_DIRECTORY = "./findFilesTest";
     private static final String MISSING_FILE_TEST = "./missingFileTest";
     private static final String HAPPY_PATH_TEST = "./happyPathTest";
+    private static final String FILE_TO_WRITE = "./devman-proposals.txt";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
@@ -60,5 +63,7 @@ class MainRunnerTest {
                 .loadResources()
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
+
+        assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
     }
 }

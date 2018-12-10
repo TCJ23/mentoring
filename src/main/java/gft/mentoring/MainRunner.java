@@ -9,11 +9,13 @@ import gft.mentoring.trs.model.ConvertTRS;
 import gft.mentoring.trs.model.TRSMentoringModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,7 +43,7 @@ class MainRunner {
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-            throw new ExcelException("File not found or inaccessible ", e.getCause());
+            throw new ExcelException("File not found or inaccessible", e.getCause());
         }
     }
 
@@ -78,6 +80,7 @@ class MainRunner {
             }
 
             void saveProposalsToFile() throws ExcelException {
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmm'.txt'").format(new Date());
 
                 List<MentoringModel> mentees = mentoringModels
                         .stream()
@@ -96,7 +99,7 @@ class MainRunner {
                                 Function.identity(),
                                 mentoringModel -> matchingEngine.findProposals(mentoringModel, mentoringModels.toArray(new MentoringModel[0]))));*/
                 try {
-                    Files.write(Paths.get("./devman-proposals.txt"), devmanAssignmentsInfo);
+                    Files.write(Paths.get("./devman-proposals-" + timeStamp + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
                     throw new ExcelException("Could not write to txt file ", e.getCause());
                 }
@@ -108,12 +111,14 @@ class MainRunner {
                 return menteeLine + ": " + StringUtils.join(mentors);
             }
 
+            @NotNull
             private String formatMentor(MentoringModel mentor) {
                 return " we propose following candidates " + mentor.getFirstName() + " " + mentor.getLastName()
                         + " of level " + mentor.getLevel() + " from " + mentor.getFamily() +
                         " family with specialization " + mentor.getSpecialization();
             }
 
+            @NotNull
             private String formatMentee(MentoringModel mentee) {
                 return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() +
                         " that works in " + mentee.getFamily() + " family with specialization "
