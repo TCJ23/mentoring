@@ -1,19 +1,20 @@
-/*
 package gft.mentoring.matcher;
 
+import gft.mentoring.MentoringModel;
+import gft.mentoring.sap.model.ConverterSAP;
 import gft.mentoring.sap.model.ExcelException;
+import gft.mentoring.trs.model.ConvertTRS;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 
 @DisplayName("6 - Main class to test Matcher Component")
@@ -26,38 +27,43 @@ class ModelMatcherTest {
     private static final String TRS_LEAVER_EXAMPLES = "TRS_Leaver_Examples.xlsx";
     private static final String SAP_RANDOM = "SAP_random.xlsx";
     private static final String TRS_RANDOM = "TRS_random.xlsx";
-    private static final String SAP_DUPLICATE = "SAP_duplicate_entires.xlsx";
-    private static final String TRS_DUPLICATE = "TRS_duplicate_entires.xlsx";
+    private static final String SAP_MULTI_AND_ZERO_MATCHES = "SAP_duplicate_with_zero_match_entires.xlsx";
+    private static final String TRS_MULTI_AND_ZERO_MATCHES = "TRS_duplicate_with_zero_match_entires.xlsx";
+    private static final String SAP_ONE_TO_ONE = "SAP_OneToOneMatch_solid_example.xlsx";
+    private static final String TRS_ONE_TO_ONE = "TRS_OneToOneMatch_solid_example.xlsx";
+    private static final String SAP_3_PEOPLE_TO_MATCH = "SAP_3people_toMatch.xlsx";
+    private static final String TRS_3_PEOPLE_TO_MATCH = "TRS_3people_toMatch.xlsx";
+    private static final String SAP_IS_MENTEE_EXAMPLE = "SAP_marking_mentees_from_MentorIDColumn.xlsx";
+    private static final String TRS_MARKING_MENTEES = "TRS_marking_mentees_from_MentorIDColumn.xlsx";
 
 
     @Test
-    @Disabled
-    @DisplayName("6.1.1 - validate that Mentees Assigned is properly converted from SAP file")
-    void shouldFind2MenteesAssignedToMentorFromSAPfile() throws ExcelException, InvalidFormatException {
+    @DisplayName("6.1.1 - validate that Matcher creates MentoringModels in 1:1 match")
+    void shouldCreate3MentoringModelsFromSampleFiles() throws ExcelException, InvalidFormatException {
         //given
-
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_2_MENTEES_ASSIGNED, TRS_2_MENTEES_ASSIGNED,
-                BASE_DATE);
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_3_PEOPLE_TO_MATCH);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_3_PEOPLE_TO_MATCH);
         //when
-        val firstModelFromFile = (UnifiedModel) unifiedModels.get(0);
-        val unifiedModelHas2MenteesAssigned = firstModelFromFile.getMenteesAssigned();
-
+        val mentoringModels = new ModelMatcher()
+                .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
         //then
-        Assertions.assertEquals(2, unifiedModelHas2MenteesAssigned);
+        assertThat(mentoringModels).size().isEqualTo(3);
     }
 
     @Test
-    @Disabled
-    @DisplayName("6.1.2 - check if age for Unified Model is converted properly")
+    @DisplayName("6.1.2 - check if age for Mentoring Model is converted properly")
     void shouldConvertModelWith35YearsOfAgeFromSAPsampleFile() throws ExcelException, InvalidFormatException {
         //given
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_AGE_EXAMPLES, TRS_RANDOM,
-                BASE_DATE);
-
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_AGE_EXAMPLES);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_RANDOM);
         //when
-        Assertions.assertTrue(unifiedModels.get(0) instanceof UnifiedModel);
-        UnifiedModel model = (UnifiedModel) unifiedModels.get(0);
-        val age = model.getAge();
+        val mentoringModels = new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        val mentoringModel = mentoringModels.get(0);
+        val age = mentoringModel.getAge();
         val excelDate = LocalDate.of(1983, 9, 23);
         val years35 = ChronoUnit.YEARS.between(excelDate, BASE_DATE);
 
@@ -66,18 +72,19 @@ class ModelMatcherTest {
     }
 
     @Test
-    @Disabled
-    @DisplayName("6.1.3 - check if seniority for Unified Model is converted properly")
+    @DisplayName("6.1.3 - check if seniority for Mentoring Model is converted properly")
     void shouldConvertModelWithOneYearOfSeniority() throws ExcelException, InvalidFormatException {
         //given
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_SENIORITY_EXAMPLE, TRS_RANDOM,
-                BASE_DATE);
-        Assertions.assertTrue(unifiedModels.get(0) instanceof UnifiedModel);
-        val model = (UnifiedModel) unifiedModels.get(0);
-
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_SENIORITY_EXAMPLE);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_RANDOM);
         //when
+        val mentoringModels = new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        val mentoringModel = mentoringModels.get(0);
+
         val dateInExcel = LocalDate.of(2017, 11, 22);
-        val seniority = model.getSeniority();
+        val seniority = mentoringModel.getSeniority();
         val daysSince = ChronoUnit.DAYS.between(dateInExcel, BASE_DATE);
         //then
         Assertions.assertEquals(daysSince, seniority);
@@ -86,87 +93,120 @@ class ModelMatcherTest {
     @Test
     @DisplayName("6.1.4a - Notice Period in TRS marks as leaver")
     void shouldDetectLeaverFromTRSFileNoticePeriodStatus() throws ExcelException, InvalidFormatException {
-        //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
-                BASE_DATE);
-
+        //given
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_RANDOM);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_LEAVER_EXAMPLES);
         //when
-        Assertions.assertTrue(unifiedModels.get(0) instanceof UnifiedModel);
-        val model = (UnifiedModel) unifiedModels.get(0);
-        val leaver = model.isLeaver();
-
+        val mentoringModels = new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        val mentoringModel = mentoringModels.get(0);
+        //when
+        val leaver = mentoringModel.isLeaver();
         //then
         Assertions.assertTrue(leaver);
     }
 
     @Test
-    @DisplayName("6.1.4b - missing info in TRS status Column")
+    @DisplayName("6.1.4b - missing info in TRS status Column doesn't mark Mentoring Model as leaver")
     void shouldIgnoreMissingLeaverInfoFromTRSFile() throws ExcelException, InvalidFormatException {
         //given
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
-                BASE_DATE);
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_RANDOM);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_LEAVER_EXAMPLES);
         //when
-        Assertions.assertTrue(unifiedModels.get(1) instanceof UnifiedModel);
-        val unifiedModel = (UnifiedModel) unifiedModels.get(1);
-        val nonLeaver = unifiedModel.isLeaver();
+        val mentoringModels = new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        val mentoringModel = mentoringModels.get(1);
+        val nonLeaver = mentoringModel.isLeaver();
         //then
         Assertions.assertFalse(nonLeaver);
     }
 
     @Test
-    @DisplayName("6.1.4c - Hired in TRS marks as leaver")
+    @DisplayName("6.1.4c - Hired status in TRS marks as leaver")
     void shouldDetectLeaverFromTRSFileHiredStatus() throws ExcelException, InvalidFormatException {
-        //given & when
-        List<SegregationModel> unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
-                BASE_DATE);
+        //given
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_RANDOM);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_LEAVER_EXAMPLES);
         //when
-        if (unifiedModels.get(2) instanceof UnifiedModel) {
-            UnifiedModel model = (UnifiedModel) unifiedModels.get(2);
-            //then
-            val leaver = model.isLeaver();
-            Assertions.assertTrue(leaver);
-        }
+        val mentoringModels = new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        val mentoringModel = mentoringModels.get(2);
+        //then
+        val leaver = mentoringModel.isLeaver();
+        Assertions.assertTrue(leaver);
     }
 
     @Test
     @DisplayName("6.1.4d - Employee in TRS DOES NOT mark as leaver")
     void shouldIgnoreWorkingEmployeesFromTRSFile() throws ExcelException, InvalidFormatException {
         //given
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_RANDOM, TRS_LEAVER_EXAMPLES,
-                BASE_DATE);
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_RANDOM);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_LEAVER_EXAMPLES);
         //when
-        Assertions.assertTrue(unifiedModels.get(3) instanceof UnifiedModel);
+        val mentoringModels = new ModelMatcher().createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+        val mentoringModel = mentoringModels.get(3);
+        val nonLeaver = mentoringModel.isLeaver();
         //then
-        val model = (UnifiedModel) unifiedModels.get(3);
-        val nonLeaver = model.isLeaver();
         Assertions.assertFalse(nonLeaver);
     }
 
     @Test
-    @DisplayName("6.2.1 - Make Sure Matcher continues to work with abandoned entry")
-    void shouldFind3UnifiedModelPlus1ZeroMatchModelContinueToWorkEvenWithDuplicateMatchingEntries()
+    @DisplayName("6.2.1 - validate that Matcher ignores duplicates ")
+    void shouldIgnoreDuplicateEntriesAndCreate2MentoringModels()
             throws ExcelException, InvalidFormatException {
-        //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_DUPLICATE,
-                BASE_DATE);
+        //given
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_MULTI_AND_ZERO_MATCHES);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_MULTI_AND_ZERO_MATCHES);
+        //when
+        val mentoringModels = new ModelMatcher()
+                .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
         //then
-        Assertions.assertTrue(unifiedModels.get(0) instanceof UnifiedModel);
-        Assertions.assertTrue(unifiedModels.get(1) instanceof UnifiedModel);
-        Assertions.assertTrue(unifiedModels.get(2) instanceof UnifiedModel);
-//        Assertions.assertTrue(unifiedModels.get(3) instanceof ZeroMatchModel);
-//        assertThat(unifiedModels).size().isEqualTo(4);
+        assertThat(mentoringModels).size().isEqualTo(2);
     }
 
     @Test
-    @Disabled
-    @DisplayName("6.2.2 - Make Sure Matcher continues to work with duplicate entries")
-    void shouldFind2UnifiedModelPlus1MultiMatchModelContinueToWorkEvenWithDuplicateMatchingEntries()
+    @DisplayName("6.2.2 - validate that Matcher ignores multi match entries")
+    void shouldIgnoreZeroMatchEntriesAndCreate2MentoringModels()
             throws ExcelException, InvalidFormatException {
-        //given & when
-        val unifiedModels = new ModelMatcher().matchIntermediateModels(SAP_DUPLICATE, TRS_DUPLICATE,
-                BASE_DATE);
+        //given
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_MULTI_AND_ZERO_MATCHES);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_MULTI_AND_ZERO_MATCHES);
+        //when
+        val mentoringModels = new ModelMatcher()
+                .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
         //then
-        assertThat(unifiedModels).size().isEqualTo(3);
+        assertThat(mentoringModels).size().isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("6.2.3- create mentees when Pers.no. Mentor Column has 0 value")
+    void shouldCreateMenteesWhenMentorColumnHas0value() throws ExcelException, InvalidFormatException {
+        //given
+        val sapMentoringModels = new ConverterSAP(BASE_DATE)
+                .convertInputToSAPMentoringModel(SAP_IS_MENTEE_EXAMPLE);
+        val trsMentoringModels = new ConvertTRS(BASE_DATE)
+                .convertInputToTRSMentoringModel(TRS_MARKING_MENTEES);
+        //when
+        val mentoringModels = new ModelMatcher()
+                .createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+
+        val mentee1 = mentoringModels.get(0);
+        val mentee2 = mentoringModels.get(1);
+        val mentor = mentoringModels.get(2);
+        //then
+        assertAll(
+                () -> assertTrue(mentee1.isMentee()),
+                () -> assertTrue(mentee2.isMentee()),
+                () -> assertFalse(mentor.isMentee())
+        );
     }
 }
-*/

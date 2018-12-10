@@ -1,6 +1,5 @@
 package gft.mentoring;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
@@ -9,7 +8,7 @@ import lombok.Value;
  * This is our main model class, essentially everyone in GFT can be modelled by this abstraction
  */
 @Builder(toBuilder = true)
-@AllArgsConstructor
+//@Builder
 @Value
 public class MentoringModel {
     /**
@@ -25,15 +24,16 @@ public class MentoringModel {
      * @param age - we prefer experienced GFT Mentors starting from 30 years to 40
      */
 
+    private String firstName;
+    private String lastName;
     private Family family;
     private String specialization;
     private int level;
     private int seniority;
     private String localization;
-    private String firstName;
-    private String lastName;
     private boolean contractor;
     private boolean leaver;
     private int menteesAssigned;
     private int age;
+    private boolean isMentee;
 }

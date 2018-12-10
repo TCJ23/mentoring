@@ -3,22 +3,20 @@ package gft.mentoring.sap.model;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
-
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-class ConverterSAP {
+public class ConverterSAP {
 
     private LocalDate baseDate;
 
-    ConverterSAP(LocalDate baseDate) {
+    public ConverterSAP(LocalDate baseDate) {
         this.baseDate = baseDate;
     }
 
-    List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
+    public List<SAPMentoringModel> convertInputToSAPMentoringModel(String file) throws ExcelException, InvalidFormatException {
         val input = new SAPInputReader();
         val sapers = input.readExcelSAPfile(file);
         val filteredSapers = input.filterInvalid(sapers);
@@ -33,14 +31,8 @@ class ConverterSAP {
         return getSapMentoringModels(filteredSapers);
     }
 
-    private Map<String, List<SAPModel>> findSAPidInMentorColumn(List<SAPModel> sapModels) {
-        return sapModels.stream().collect(Collectors.groupingBy(SAPModel::getPersNrMentor));
-    }
-
-    private int countMenteesAssignedToMentor(SAPModel saper, List<SAPModel> sapModels) {
-        Map<String, List<SAPModel>> menteesAssigned = findSAPidInMentorColumn(sapModels);
-        return menteesAssigned.containsKey(saper.getPersonalNR())
-                ? menteesAssigned.get(saper.getPersonalNR()).size() : 0;
+    private int findSAPidInMentorColumn(List<SAPModel> sapModels, SAPModel mentor) {
+        return (int) sapModels.stream().filter(mentee -> mentee.getPersNrMentor().equals(mentor.getPersonalNR())).count();
     }
 
     List<SAPMentoringModel> getSapMentoringModels(List<SAPModel> sapers) {
@@ -56,8 +48,8 @@ class ConverterSAP {
                 .setAge(saper.getDateOfBirth())
                 .setOfficeLocation(saper.getPersonnelSubarea())
                 .setSapID(saper.getPersonalNR())
-                .setMenteeID(saper.getPersNrMentor())
-                .setMenteesAssigned(countMenteesAssignedToMentor(saper, sapers))
+                .setMentorID(saper.getPersNrMentor())
+                .setMenteesAssigned(findSAPidInMentorColumn(sapers, saper))
                 /** redundant fields
                  * @see SAPMentoringModel*/
                 .setFederationID(saper.getInitials())

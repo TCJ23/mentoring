@@ -6,10 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 class SAPMentoringModelBuilder {
     private static final Logger LOGGER = Logger.getLogger(SAPMentoringModelBuilder.class.getName());
@@ -35,7 +32,6 @@ class SAPMentoringModelBuilder {
             } else {
                 String lvl = s.replaceAll("^L(\\d)+.*$", "$1");
                 sapMM.setLevel(Integer.parseInt(lvl));
-                //sapMM.setLevel(Integer.parseInt(s.trim().replaceAll("[\\D]", "")));
             }
         } catch (NumberFormatException e) {
             sapMM.setLevel(0);
@@ -120,9 +116,11 @@ class SAPMentoringModelBuilder {
         return this;
     }
 
-    SAPMentoringModelBuilder setMenteeID(String persNrMentor) {
-        sapMM.setMentorID(persNrMentor);
+    SAPMentoringModelBuilder setMentorID(String persNrMentor) {
+        if (persNrMentor.equals("")) {
+            sapMM.setMentorID("0");
+        } else
+            sapMM.setMentorID(persNrMentor);
         return this;
     }
-
 }

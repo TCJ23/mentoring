@@ -16,25 +16,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("1 - Main Class to test MatchingEngine")
 class MatchingSpec {
     private static final String NO_NAME = "";
-    /* This test if to meet requirement 1.1 in REQUIREMENTS.md
-     in @ParameterizedTest you either keep
-     your testmethod name and method source name the same or use parameters as below
-     This class should test MatchingEngine().findProposals
-     for MentoringModel in
-     Project Development
-     Architecture Digital
-     Data
-     we can assign Mentors from above Families treated as one*/
+    /**
+     * This test if to meet requirement 1.1 in REQUIREMENTS.md
+     * in @ParameterizedTest you either keep
+     * your testmethod name and method source name the same or use parameters as below
+     * This class should test MatchingEngine().findProposals
+     * for MentoringModel in
+     * @see Family#PROJECT_DEVELOPMENT
+     * @see Family#ARCHITECTURE
+     * @see Family#DATA
+     *
+     * Data
+     * we can assign Mentors from above Families treated as one*/
 
-    /*Base models for testing*/
+    /**
+     * Base models for testing
+     */
     private static MentoringModel.MentoringModelBuilder newMentor() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", NO_NAME, NO_NAME, false, false, 0, 23).toBuilder();
+        return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
+                "Lodz", false, false, 0, 23, false).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
-        return new MentoringModel(Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", NO_NAME, NO_NAME, false, true, 0, 23).toBuilder();
+        return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
+                "Lodz", false, true, 0, 23, true).toBuilder();
     }
 
     @ParameterizedTest(name = "{index} => {0}")
@@ -44,6 +49,7 @@ class MatchingSpec {
         //given
         val proposal = newMentor().family(singleMatchingParam.mentorCandidateFamily)
                 .contractor(singleMatchingParam.contractor).build();
+
         val mentee = newMentee().family(singleMatchingParam.menteeFamily)
                 .contractor(singleMatchingParam.contractor).build();
         //when
@@ -85,9 +91,11 @@ class MatchingSpec {
         }
     }
 
-    /*This test if to meet requirement 1.2 in REQUIREMENTS.md*/
+    /**
+     * This test if to meet requirement 1.2 in REQUIREMENTS.md
+     */
     @Test
-    @DisplayName("1.2 - From 2 Mentors prefer Mentor from exact same Family as Mentee")
+    @DisplayName("1.2a - From 2 Mentors prefer Mentor from exact same Family as Mentee")
     void findPreferedCandidateFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.DATA).build();
@@ -103,7 +111,7 @@ class MatchingSpec {
     }
 
     @Test
-    @DisplayName("1.2 - From 2 Mentors propose only Mentor from exact same Family as Mentee")
+    @DisplayName("1.2b - From 2 Mentors propose only Mentor from exact same Family as Mentee")
     void findBestProposalFromManyMentors() {
         //given
         MentoringModel mentee = newMentee().family(Family.AMS).build();
@@ -364,7 +372,7 @@ class MatchingSpec {
     @DisplayName("1.14 - Seniority over Level")
     void shouldPreferDevManWithHigherSeniorityThanLevel() {
         //given
-        val mentee = newMentor().build();
+        val mentee = newMentee().build();
         val higherLevelMentor = newMentor().level(mentee.getLevel() + 1).build();
         val olderSeniorityMentor = newMentor().seniority(mentee.getSeniority() + 3 * 365).build();
         //when
@@ -451,7 +459,7 @@ class MatchingSpec {
 
     /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    @DisplayName("1.2.1a - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromLodz() {
         //given
         val menteeLodz = newMentee().localization("Lodz").build();
@@ -469,7 +477,7 @@ class MatchingSpec {
 
     /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 - When Mentee is from Lodz or Poznan need to have Mentor from the same location")
+    @DisplayName("1.2.1b- When Mentee is from Lodz or Poznan need to have Mentor from the same location")
     void shouldRejectMentorFromOtherLocationWhenMenteeIsFromPoznan() {
         //given
         val menteePoznan = newMentee().localization("Poznan").build();
@@ -487,7 +495,7 @@ class MatchingSpec {
 
     /*This test if to meet requirement 2.1 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("2.1 - When mentee is from Warsaw his/her mentor can't be from Poznan")
+    @DisplayName("1.2.1c - When mentee is from Warsaw his/her mentor can't be from Poznan")
     void shouldRejectMentorFromPoznanWhenMenteeIsFromWarsaw() {
         //given
         val menteeWarsaw = newMentee().localization("Warsaw").build();
@@ -501,6 +509,39 @@ class MatchingSpec {
         val proposedMentor = proposals.get(0);
         assertThat(proposedMentor.equals(mentorFromWarsaw)).isTrue();
         assertThat(proposals.size() == 2).isTrue();
+    }
+
+    @Test
+    @DisplayName("1.2.2 - candidate cannot be Mentee ")
+    void shouldRejectPersonThatIsMentee() {
+        //given
+        val mentee = newMentee().build();
+        val mentor = newMentor().build();
+        val notMentor = newMentee().build();
+        val mentorThatTechnicallyIsMentee = newMentor().isMentee(true).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorThatTechnicallyIsMentee, notMentor, mentor)
+                .collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentor)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
+    }
+
+    @Test
+    @DisplayName("1.2.3 - candidate cannot be Mentor with grade below 4th level ")
+    void shouldRejectMentorsWithGradeLowerThan4() {
+        //given
+        val mentee = newMentee().build();
+        val mentor = newMentor().build();
+        val mentorBelow4thLevel = newMentor().level(3).build();
+        //when
+        val proposals = new MatchingEngine().findProposals(mentee, mentorBelow4thLevel, mentor)
+                .collect(Collectors.toList());
+        //then
+        val proposedMentor = proposals.get(0);
+        assertThat(proposedMentor.equals(mentor)).isTrue();
+        assertThat(proposals.size() == 1).isTrue();
     }
 
     @Test
