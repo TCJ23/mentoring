@@ -8,10 +8,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,7 +27,7 @@ class MainRunnerTest {
     private static final String TESTING_DIRECTORY = "./findFilesTest";
     private static final String MISSING_FILE_TEST = "./missingFileTest";
     private static final String HAPPY_PATH_TEST = "./happyPathTest";
-    private static final String FILE_TO_WRITE = "./devman-proposals.txt";
+    private static final String FILE_TO_WRITE = "./";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
@@ -56,14 +59,17 @@ class MainRunnerTest {
 
     @Test
     @DisplayName("7.3 - run happy path and make sure file is created ")
-    void shouldCreateDevmanProposalsTXTfile() throws ExcelException, InvalidFormatException {
+    void shouldCreateDevmanProposalsTXTfile() throws ExcelException, InvalidFormatException, IOException {
         //given & when
-        //then
         new MainRunner(new DevManConfig(BASE_DATE, HAPPY_PATH_TEST))
                 .loadResources()
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
+        //then
+        Stream<Path> pathStream = Files.walk(Paths.get(FILE_TO_WRITE))
+                .filter(path -> path.toString().endsWith(".txt"));
 
-        assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
+//        assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
+        assertThat(pathStream.findFirst().isPresent()).toString().startsWith("devman-proposals-");
     }
 }

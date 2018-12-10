@@ -107,7 +107,8 @@ class MainRunner {
 
             String createDevmanInformationLines(MentoringModel mentee, Stream<MentoringModel> candidates) {
                 String menteeLine = formatMentee(mentee);
-                List<String> mentors = candidates.map(mentoringModel -> menteeLine + formatMentor(mentoringModel)).collect(Collectors.toList());
+                List<String> mentors = candidates.map(mentoringModel -> menteeLine + formatMentor(mentoringModel) + "\n")
+                        .collect(Collectors.toList());
                 return menteeLine + ": " + StringUtils.join(mentors);
             }
 
@@ -115,7 +116,7 @@ class MainRunner {
             private String formatMentor(MentoringModel mentor) {
                 return " we propose following candidates " + mentor.getFirstName() + " " + mentor.getLastName()
                         + " of level " + mentor.getLevel() + " from " + mentor.getFamily() +
-                        " family with specialization " + mentor.getSpecialization();
+                        " family with specialization " + mentor.getSpecialization() + "\n";
             }
 
             @NotNull
