@@ -42,7 +42,7 @@ class MainRunner {
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-            throw new ExcelException("missing files", e.getCause());
+            throw new ExcelException("File not found or inaccessible", e.getCause());
         }
     }
 
