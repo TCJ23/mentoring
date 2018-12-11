@@ -420,19 +420,25 @@ class MatchingSpec {
 
     /*This test if to meet requirement 1.16 in REQUIREMENTS.md*/
     @Test
-    @DisplayName("1.16 - Mentor needs to have longer Seniority than Mentee")
+    @DisplayName("1.16 - Mentor above 30 years old and older is  preferred for Mentee")
     void shouldPreferMentorBetweenAgeOf30to40() {
         //given
         val mentee = newMentee().build();
-        val youngMentor = newMentor().age(20).build();
-        val mentorAt30YearsOld = newMentor().age(30).build();
-        val mentorAt40YearsOld = newMentor().age(40).build();
+        val youngMentor = newMentor().lastName("young").age(20).build();
+        val mentorAt31YearsOld = newMentor().lastName("35").age(31).build();
+        val mentorAt40YearsOld = newMentor().lastName("40").age(40).build();
         //when
-        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt30YearsOld, mentorAt40YearsOld)
+        val proposals = new MatchingEngine().findProposals(mentee, youngMentor, mentorAt31YearsOld, mentorAt40YearsOld)
                 .collect(Collectors.toList());
         //then
         val proposedMentor = proposals.get(0);
-        assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
+        val secondProposal = proposals.get(1);
+        val lastProposal = proposals.get(2);
+
+//        assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
+        assertThat(proposedMentor).isEqualTo(mentorAt40YearsOld);
+        assertThat(secondProposal).isEqualTo(mentorAt31YearsOld);
+        assertThat(lastProposal).isEqualTo(youngMentor);
         assertThat(proposals.size() == 3).isTrue();
     }
 

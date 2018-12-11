@@ -92,7 +92,8 @@ class MainRunner {
                 //Map<MentoringModel, Stream<MentoringModel>> devmanAssignments = new LinkedHashMap<>();
                 List<String> devmanAssignmentsInfo = new ArrayList<>();
                 for (MentoringModel mentee : mentees) {
-                    devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, matchingEngine.findProposals(mentee, mentoringModels.toArray(new MentoringModel[0]))));
+                    devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, matchingEngine.findProposals(mentee,
+                            mentoringModels.toArray(new MentoringModel[0]))));
                 }
                 /*mentees.stream()
                         .collect(Collectors.toMap(
@@ -107,21 +108,21 @@ class MainRunner {
 
             String createDevmanInformationLines(MentoringModel mentee, Stream<MentoringModel> candidates) {
                 String menteeLine = formatMentee(mentee);
-                List<String> mentors = candidates.map(mentoringModel -> menteeLine + formatMentor(mentoringModel) + "\n")
+                List<String> mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel) + "\n")
                         .collect(Collectors.toList());
-                return menteeLine + ": " + StringUtils.join(mentors);
+                return menteeLine + " " + StringUtils.join(mentors.iterator().next());
             }
 
             @NotNull
             private String formatMentor(MentoringModel mentor) {
-                return " we propose following candidates " + mentor.getFirstName() + " " + mentor.getLastName()
+                return " we propose following candidates: \n " + mentor.getFirstName() + " " + mentor.getLastName()
                         + " of level " + mentor.getLevel() + " from " + mentor.getFamily() +
                         " family with specialization " + mentor.getSpecialization() + "\n";
             }
 
             @NotNull
             private String formatMentee(MentoringModel mentee) {
-                return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() +
+                return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() + "\n" +
                         " that works in " + mentee.getFamily() + " family with specialization "
                         + mentee.getSpecialization() + " ";
             }
