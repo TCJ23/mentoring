@@ -101,7 +101,7 @@ class MainRunner {
 
                 try {
                     Files.write(Paths.get(directory + "devman-proposals-" +
-                            MainRunner.currentDate
+                            MainRunner.currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"))
                             + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
                     throw new ExcelException("Could not write to txt file ", e.getCause());
