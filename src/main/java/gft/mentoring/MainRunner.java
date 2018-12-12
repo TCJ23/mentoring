@@ -14,8 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -24,21 +25,22 @@ import java.util.stream.Stream;
 /**
  * This class will launch program
  * we will use static nested classes to achieve fluent API in
+ *
  * @see Main
  */
 
 class MainRunner {
 
-    private final LocalDate currentDate;
-    private final String directory;
+    private static LocalDateTime currentDate = LocalDateTime.now();
+    private static String directory = ".";
 
     MainRunner(DevManConfig conf) {
-        this.directory = conf.getPath();
-        this.currentDate = conf.getNow();
+        directory = conf.getPath();
+        currentDate = conf.getNow();
     }
 
     DataMerger loadResources() throws ExcelException {
-        try (Stream<Path> filesInPath = Files.list(Paths.get(this.directory))) {
+        try (Stream<Path> filesInPath = Files.list(Paths.get(directory))) {
             return new DataMerger(currentDate, filesInPath.filter(path -> path.toString().endsWith(".xlsx"))
                     .filter(path -> StringUtils.contains(path.toString(), "SAP") ||
                             StringUtils.contains(path.toString(), "employees-basic-report"))
@@ -55,8 +57,8 @@ class MainRunner {
         private final LocalDate currentDate;
         private final List<String> filenames;
 
-        DataMerger(LocalDate currentDate, List<String> filenames) {
-            this.currentDate = currentDate;
+        DataMerger(LocalDateTime currentDate, List<String> filenames) {
+            this.currentDate = LocalDate.from(currentDate);
             this.filenames = filenames;
         }
 
@@ -83,8 +85,6 @@ class MainRunner {
             }
 
             void saveProposalsToFile() throws ExcelException {
-                //TODO wyjeb to!
-                String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
 
                 val mentees = mentoringModels
                         .stream()
@@ -100,7 +100,9 @@ class MainRunner {
                 }
 
                 try {
-                    Files.write(Paths.get("./devman-proposals-" + timeStamp + UUID.randomUUID() + ".txt"), devmanAssignmentsInfo);
+                    Files.write(Paths.get(directory + "./devman-proposals-" +
+                            MainRunner.currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"))
+                            + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
                     throw new ExcelException("Could not write to txt file ", e.getCause());
                 }

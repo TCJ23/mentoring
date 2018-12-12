@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("7 - This class will run E2E tests for this application")
 class MainRunnerTest {
-    private static final LocalDate BASE_DATE = LocalDate.now();
+    private static final LocalDateTime BASE_DATE = LocalDateTime.now();
     private static final String TESTING_DIRECTORY = "./findFilesTest";
     private static final String MISSING_FILE_TEST = "./missingFileTest";
     private static final String HAPPY_PATH_TEST = "./happyPathTest";
