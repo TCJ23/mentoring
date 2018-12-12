@@ -18,7 +18,9 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -87,18 +89,14 @@ class MainRunner {
                         .filter(MentoringModel::isMentee)
                         .collect(Collectors.toList());
 
-                MatchingEngine matchingEngine = new MatchingEngine();
 
-                //Map<MentoringModel, Stream<MentoringModel>> devmanAssignments = new LinkedHashMap<>();
+                MatchingEngine matchingEngine = new MatchingEngine();
                 List<String> devmanAssignmentsInfo = new ArrayList<>();
                 for (MentoringModel mentee : mentees) {
                     devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, matchingEngine.findProposals(mentee,
                             mentoringModels.toArray(new MentoringModel[0]))));
                 }
-                /*mentees.stream()
-                        .collect(Collectors.toMap(
-                                Function.identity(),
-                                mentoringModel -> matchingEngine.findProposals(mentoringModel, mentoringModels.toArray(new MentoringModel[0]))));*/
+
                 try {
                     Files.write(Paths.get("./devman-proposals-" + timeStamp + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
@@ -108,23 +106,26 @@ class MainRunner {
 
             String createDevmanInformationLines(MentoringModel mentee, Stream<MentoringModel> candidates) {
                 String menteeLine = formatMentee(mentee);
-                List<String> mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel) + "\n")
-                        .collect(Collectors.toList());
-                return menteeLine + " " + StringUtils.join(mentors.iterator().next());
+                AtomicInteger index = new AtomicInteger(1);
+                String mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
+                        .collect(Collectors.joining(""));
+
+                return menteeLine + " " + mentors;
             }
 
             @NotNull
-            private String formatMentor(MentoringModel mentor) {
-                return " we propose following candidates: \n " + mentor.getFirstName() + " " + mentor.getLastName()
+            private String formatMentor(MentoringModel mentor, int candidateOrder) {
+                return " \nwe propose as number" + candidateOrder + " following candidate: "
+                        + mentor.getFirstName() + " " + mentor.getLastName()
                         + " of level " + mentor.getLevel() + " from " + mentor.getFamily() +
                         " family with specialization " + mentor.getSpecialization() + "\n";
             }
 
             @NotNull
             private String formatMentee(MentoringModel mentee) {
-                return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() + "\n" +
+                return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() +
                         " that works in " + mentee.getFamily() + " family with specialization "
-                        + mentee.getSpecialization() + " ";
+                        + mentee.getSpecialization() + "\n";
             }
         }
 

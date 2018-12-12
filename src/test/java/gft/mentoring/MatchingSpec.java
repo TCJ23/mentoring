@@ -435,7 +435,6 @@ class MatchingSpec {
         val secondProposal = proposals.get(1);
         val lastProposal = proposals.get(2);
 
-//        assertThat(proposedMentor.equals(mentorAt40YearsOld)).isTrue();
         assertThat(proposedMentor).isEqualTo(mentorAt40YearsOld);
         assertThat(secondProposal).isEqualTo(mentorAt31YearsOld);
         assertThat(lastProposal).isEqualTo(youngMentor);

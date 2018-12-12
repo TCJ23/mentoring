@@ -69,7 +69,7 @@ class MainRunnerTest {
         Stream<Path> pathStream = Files.walk(Paths.get(FILE_TO_WRITE))
                 .filter(path -> path.toString().endsWith(".txt"));
 
-//        assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
+        assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
         assertThat(pathStream.findFirst().isPresent()).toString().startsWith("devman-proposals-");
     }
 }
