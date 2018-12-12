@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 class MainRunner {
 
     private static LocalDateTime currentDate = LocalDateTime.now();
-    private static String directory = ".";
+    private static String directory = "./";
 
     MainRunner(DevManConfig conf) {
         directory = conf.getPath();
