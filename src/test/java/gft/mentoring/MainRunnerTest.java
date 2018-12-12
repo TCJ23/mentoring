@@ -22,12 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("7 - This class will run E2E tests for this application")
 class MainRunnerTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String SAP_FILE = "./findFilesTest/SAP_04122018.xlsx";
-    private static final String SAP_FILE2 = ".\\findFilesTest\\SAP_04122018.xlsx";
     private static final String TESTING_DIRECTORY = "./findFilesTest";
     private static final String MISSING_FILE_TEST = "./missingFileTest";
     private static final String HAPPY_PATH_TEST = "./happyPathTest";
     private static final String FILE_TO_WRITE = "./";
+    private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "./ignoringMentorFromFirstIteration";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
@@ -53,7 +52,9 @@ class MainRunnerTest {
                 new DevManConfig(BASE_DATE, MISSING_FILE_TEST))
                 .loadResources()
                 .mergeDataFromSystems());
-        assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
+        assertThat(exception.getMessage())
+                .isEqualToIgnoringCase("File not found or inaccessible");
+//                .isEqualToIgnoringCase("Files are missing or you have more than 2 files in same folder");
         System.out.println(exception.getMessage());
     }
 
@@ -71,5 +72,17 @@ class MainRunnerTest {
 
         assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
         assertThat(pathStream.findFirst().isPresent()).toString().startsWith("devman-proposals-");
+    }
+
+    @Test
+    @DisplayName("7.4 - Once Best Mentor is proposed to Mentee, second Mentee should have proposed Next Best Mentor in line")
+    void shouldAssignBestMentorToFirstMenteeThenNextBestMentorToSecondMentee()
+            throws ExcelException, InvalidFormatException {
+        //given & when
+        new MainRunner(new DevManConfig(BASE_DATE, IGNORE_MENTOR_FROM_FIRST_ITERATION))
+                .loadResources()
+                .mergeDataFromSystems()
+                .saveProposalsToFile();
+        //then
     }
 }

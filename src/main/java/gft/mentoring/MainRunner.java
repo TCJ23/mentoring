@@ -4,9 +4,8 @@ package gft.mentoring;
 import gft.mentoring.matcher.ModelMatcher;
 import gft.mentoring.sap.model.ConverterSAP;
 import gft.mentoring.sap.model.ExcelException;
-import gft.mentoring.sap.model.SAPMentoringModel;
 import gft.mentoring.trs.model.ConvertTRS;
-import gft.mentoring.trs.model.TRSMentoringModel;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +19,12 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
  * This class will launch program
+ * we will use static nested classes to achieve fluent API in
+ * @see Main
  */
 
 class MainRunner {
@@ -46,6 +46,7 @@ class MainRunner {
                     .collect(Collectors.toList()));
         } catch (IOException e) {
             throw new ExcelException("File not found or inaccessible", e.getCause());
+//            throw new ExcelException("Files are missing or you have more than 2 files in same folder", e.getCause());
         }
     }
 
@@ -61,13 +62,13 @@ class MainRunner {
 
         DataSaver mergeDataFromSystems() throws ExcelException, InvalidFormatException {
 
-            List<SAPMentoringModel> sapMentoringModels =
+            val sapMentoringModels =
                     new ConverterSAP(currentDate).convertInputToSAPMentoringModel(getSAPfileName(filenames));
 
-            List<TRSMentoringModel> trsMentoringModels =
+            val trsMentoringModels =
                     new ConvertTRS(currentDate).convertInputToTRSMentoringModel(getTRSfileName(filenames));
 
-            List<MentoringModel> mentoringModels = new ModelMatcher().
+            val mentoringModels = new ModelMatcher().
                     createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
 
             return new DataSaver(mentoringModels);
@@ -82,15 +83,16 @@ class MainRunner {
             }
 
             void saveProposalsToFile() throws ExcelException {
-                String timeStamp = new SimpleDateFormat("yyyyMMddHHmm'.txt'").format(new Date());
+                //TODO wyjeb to!
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
 
-                List<MentoringModel> mentees = mentoringModels
+                val mentees = mentoringModels
                         .stream()
                         .filter(MentoringModel::isMentee)
                         .collect(Collectors.toList());
 
 
-                MatchingEngine matchingEngine = new MatchingEngine();
+                val matchingEngine = new MatchingEngine();
                 List<String> devmanAssignmentsInfo = new ArrayList<>();
                 for (MentoringModel mentee : mentees) {
                     devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, matchingEngine.findProposals(mentee,
@@ -98,7 +100,7 @@ class MainRunner {
                 }
 
                 try {
-                    Files.write(Paths.get("./devman-proposals-" + timeStamp + ".txt"), devmanAssignmentsInfo);
+                    Files.write(Paths.get("./devman-proposals-" + timeStamp + UUID.randomUUID() + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
                     throw new ExcelException("Could not write to txt file ", e.getCause());
                 }
@@ -108,24 +110,25 @@ class MainRunner {
                 String menteeLine = formatMentee(mentee);
                 AtomicInteger index = new AtomicInteger(1);
                 String mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
-                        .collect(Collectors.joining(""));
+                        .collect(Collectors.joining(" \n"));
 
-                return menteeLine + " " + mentors;
+                return menteeLine + "\n" + mentors + "\n";
             }
 
             @NotNull
             private String formatMentor(MentoringModel mentor, int candidateOrder) {
-                return " \nwe propose as number" + candidateOrder + " following candidate: "
+                return "we propose as number " + candidateOrder + " following candidate: "
                         + mentor.getFirstName() + " " + mentor.getLastName()
-                        + " of level " + mentor.getLevel() + " from " + mentor.getFamily() +
-                        " family with specialization " + mentor.getSpecialization() + "\n";
+                        + "  LVL:" + mentor.getLevel() + " location: " + mentor.getLocalization()
+                        + " Family:" + mentor.getFamily() + " Mentees: " + mentor.getMenteesAssigned() +
+                        " spec:" + mentor.getSpecialization();
             }
 
             @NotNull
             private String formatMentee(MentoringModel mentee) {
-                return "For menteee " + mentee.getFirstName() + " " + mentee.getLastName() +
-                        " that works in " + mentee.getFamily() + " family with specialization "
-                        + mentee.getSpecialization() + "\n";
+                return "For mentee *" + mentee.getFirstName() + "* " + "*" + mentee.getLastName() + "*" +
+                        " from Family:" + mentee.getFamily() + " location: " + mentee.getLocalization()
+                        + " spec: " + mentee.getSpecialization();
             }
         }
 
