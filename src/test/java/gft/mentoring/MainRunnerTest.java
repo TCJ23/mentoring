@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,11 +18,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("7 - This class will run E2E tests for this application")
 class MainRunnerTest {
@@ -31,7 +34,7 @@ class MainRunnerTest {
     private static final String HAPPY_PATH_TEST = "./happyPathTest";
     private static final String FILE_TO_WRITE = "./";
     private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "./ignoringMentorFromFirstIteration";
-    private static final String CORRECT_FILE = "ignoringMentorFromFirstIteration/correct file.txt";
+    private static final String CORRECT_FILE = "ignoringMentorFromFirstIteration_expected/correct file.txt";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
@@ -58,8 +61,8 @@ class MainRunnerTest {
                 .loadResources()
                 .mergeDataFromSystems());
         assertThat(exception.getMessage())
-                .isEqualToIgnoringCase("File not found or inaccessible");
-//                .isEqualToIgnoringCase("Files are missing or you have more than 2 files in same folder");
+//                .isEqualToIgnoringCase("File not found or inaccessible");
+                .isEqualToIgnoringCase("Files are missing or you have more than 2 files in same folder");
         System.out.println(exception.getMessage());
     }
 
@@ -89,16 +92,16 @@ class MainRunnerTest {
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
         //then
-         val devmanfile = Files.walk(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
-                .filter(path -> path.toString().contains("devman")).findFirst().get().toFile();
+        /* val devmanfile = Files.walk(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
+                .filter(path -> path.toString().contains("devman")).findFirst().get().toFile();*/
 
-      /*  File devmanfile = Files.find(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION), 1, (p, a) ->
-                a.lastModifiedTime().toMillis() > BASE_DATE.toEpochSecond(ZoneOffset.ofTotalSeconds(0)))
-                .map(path -> path.toFile()).collect(Collectors.toList()).get(0);*/
-
-//        val strings = Files.readAllLines(devmanfile.toPath());
-//        strings.forEach(s -> System.out.println(s));
+        Path devman = Files.list(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
+                .filter(path -> path.getFileName().toString().matches("devman-proposals-\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}\\.txt"))
+                .sorted().findFirst().orElseThrow(FileNotFoundException::new);
+        File devmanfile = devman.toFile();
 
         assertThat(devmanfile).hasSameContentAs(new File(CORRECT_FILE));
+
+        Files.delete(devmanfile.toPath());
     }
 }

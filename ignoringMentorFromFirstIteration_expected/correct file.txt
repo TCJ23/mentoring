@@ -1,0 +1,10 @@
+For mentee *Mentee* *IamDeveloper* from Family:PROJECT_DEVELOPMENT location: Lodz spec: Java
+we propose as number 1 following candidate: BestMentor IamDeveloper  LVL:7 location:Lodz Family:PROJECT_DEVELOPMENT Mentees: 0 spec:Java 
+we propose as number 2 following candidate: BestMentor NextInLineDeveloper  LVL:7 location:Lodz Family:PROJECT_DEVELOPMENT Mentees: 0 spec:Java 
+we propose as number 3 following candidate: Mentor IamDeveloper  LVL:4 location:Lodz Family:PROJECT_DEVELOPMENT Mentees: 0 spec:Java
+
+For mentee *MenteeNumberTwo* *IamDeveloper* from Family:PROJECT_DEVELOPMENT location: Lodz spec: Java
+we propose as number 1 following candidate: BestMentor NextInLineDeveloper  LVL:7 location:Lodz Family:PROJECT_DEVELOPMENT Mentees: 0 spec:Java
+we propose as number 2 following candidate: BestMentor IamDeveloper  LVL:7 location:Lodz Family:PROJECT_DEVELOPMENT Mentees: 0 spec:Java
+we propose as number 3 following candidate: Mentor IamDeveloper  LVL:4 location:Lodz Family:PROJECT_DEVELOPMENT Mentees: 0 spec:Java
+

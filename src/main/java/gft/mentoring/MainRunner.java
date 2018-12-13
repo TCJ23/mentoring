@@ -47,8 +47,7 @@ class MainRunner {
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-            throw new ExcelException("File not found or inaccessible", e.getCause());
-//            throw new ExcelException("Files are missing or you have more than 2 files in same folder", e.getCause());
+            throw new ExcelException("Files are missing or you have more than 2 files in same folder", e.getCause());
         }
     }
 
@@ -64,16 +63,20 @@ class MainRunner {
 
         DataSaver mergeDataFromSystems() throws ExcelException, InvalidFormatException {
 
-            val sapMentoringModels =
-                    new ConverterSAP(currentDate).convertInputToSAPMentoringModel(getSAPfileName(filenames));
+            try {
+                val sapMentoringModels =
+                        new ConverterSAP(currentDate).convertInputToSAPMentoringModel(getSAPfileName(filenames));
 
-            val trsMentoringModels =
-                    new ConvertTRS(currentDate).convertInputToTRSMentoringModel(getTRSfileName(filenames));
+                val trsMentoringModels =
+                        new ConvertTRS(currentDate).convertInputToTRSMentoringModel(getTRSfileName(filenames));
 
-            val mentoringModels = new ModelMatcher().
-                    createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
+                val mentoringModels = new ModelMatcher().
+                        createMentoringModelsFromMatchingGFTPeople(sapMentoringModels, trsMentoringModels);
 
-            return new DataSaver(mentoringModels);
+                return new DataSaver(mentoringModels);
+            } catch (ExcelException e) {
+                throw new ExcelException("Files are missing or you have more than 2 files in same folder", e.getCause());
+            }
         }
 
         class DataSaver {
@@ -127,6 +130,7 @@ class MainRunner {
                         + mentor.getFirstName() + " " + mentor.getLastName()
                         + "  LVL:" + mentor.getLevel() + " location:" + mentor.getLocalization()
                         + " Family:" + mentor.getFamily() + " Mentees: " + mentor.getMenteesAssigned() +
+                        " NOWE MENTOSY " + mentor.getNewMenteesAssigned() +
                         " spec:" + mentor.getSpecialization();
             }
 
