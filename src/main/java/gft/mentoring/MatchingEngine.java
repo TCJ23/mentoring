@@ -40,8 +40,8 @@ class MatchingEngine {
         return Arrays.stream(candidates)
                 .map(mentorCandidate -> new SympathyResultTuple(mentorCandidate, sympathy(mentee, mentorCandidate)))
                 .filter(sympathyResultTuple -> !SympathyResult.None.equals(sympathyResultTuple.sympathy))
-                .map(mentorCandidate -> new SymapthyLevelTuple(mentorCandidate.mentor,
-                        ((SympathyResult.Some) mentorCandidate.sympathy).getValue()))
+                .map(mentorCandidateWithSympathy -> new SymapthyLevelTuple(mentorCandidateWithSympathy.mentor,
+                        ((SympathyResult.Some) mentorCandidateWithSympathy.sympathy).getValue()))
                 .sorted((mentorCandidate1, mentorCandidate2) -> -(mentorCandidate1.sympathy - mentorCandidate2.sympathy))
                 .map(symapthyLevelTuple -> symapthyLevelTuple.mentor)
                 ;

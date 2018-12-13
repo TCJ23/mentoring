@@ -93,10 +93,14 @@ class MainRunner {
 
 
                 val matchingEngine = new MatchingEngine();
-                List<String> devmanAssignmentsInfo = new ArrayList<>();
+                val devmanAssignmentsInfo = new ArrayList<String>();
                 for (MentoringModel mentee : mentees) {
-                    devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, matchingEngine.findProposals(mentee,
-                            mentoringModels.toArray(new MentoringModel[0]))));
+                    List<MentoringModel> proposals = matchingEngine.findProposals(mentee,
+                            mentoringModels.toArray(new MentoringModel[0])).collect(Collectors.toList());
+
+                    markPreferredMentors(proposals);
+
+                    devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, proposals));
                 }
 
                 try {
@@ -108,10 +112,10 @@ class MainRunner {
                 }
             }
 
-            String createDevmanInformationLines(MentoringModel mentee, Stream<MentoringModel> candidates) {
+            String createDevmanInformationLines(MentoringModel mentee, List<MentoringModel> candidates) {
                 val menteeLine = formatMentee(mentee);
                 val index = new AtomicInteger(1);
-                val mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
+                val mentors = candidates.stream().map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
                         .collect(Collectors.joining(" \n"));
 
                 return menteeLine + "\n" + mentors + "\n";
@@ -132,6 +136,11 @@ class MainRunner {
                         " from Family:" + mentee.getFamily() + " location: " + mentee.getLocalization()
                         + " spec: " + mentee.getSpecialization();
             }
+        }
+
+        private void markPreferredMentors(List<MentoringModel> candidates) {
+            MentoringModel preferredMentor = candidates.get(0);
+            preferredMentor.setNewMenteesAssigned(preferredMentor.getNewMenteesAssigned() + 1);
         }
 
         private String getSAPfileName(List<String> fileNames) {

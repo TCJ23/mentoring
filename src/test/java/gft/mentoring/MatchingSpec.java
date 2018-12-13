@@ -34,12 +34,12 @@ class MatchingSpec {
      */
     private static MentoringModel.MentoringModelBuilder newMentor() {
         return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 4, 3 * 365,
-                "Lodz", false, false, 0, 23, false).toBuilder();
+                "Lodz", false, false, 0, 23, false, 0).toBuilder();
     }
 
     private static MentoringModel.MentoringModelBuilder newMentee() {
         return new MentoringModel(NO_NAME, NO_NAME, Family.PROJECT_DEVELOPMENT, "JAVA", 3, 30,
-                "Lodz", false, true, 0, 23, true).toBuilder();
+                "Lodz", false, true, 0, 23, true, 0).toBuilder();
     }
 
     @ParameterizedTest(name = "{index} => {0}")

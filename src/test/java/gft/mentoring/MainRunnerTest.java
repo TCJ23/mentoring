@@ -8,13 +8,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -28,6 +31,7 @@ class MainRunnerTest {
     private static final String HAPPY_PATH_TEST = "./happyPathTest";
     private static final String FILE_TO_WRITE = "./";
     private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "./ignoringMentorFromFirstIteration";
+    private static final String CORRECT_FILE = "ignoringMentorFromFirstIteration/correct file.txt";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
@@ -85,9 +89,16 @@ class MainRunnerTest {
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
         //then
-        val devmanfile = Files.walk(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
-                .filter(path -> path.toString().endsWith(".txt")).findFirst().get();
-        val strings = Files.readAllLines(devmanfile);
-        strings.forEach(s -> System.out.println(s));
+         val devmanfile = Files.walk(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
+                .filter(path -> path.toString().contains("devman")).findFirst().get().toFile();
+
+      /*  File devmanfile = Files.find(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION), 1, (p, a) ->
+                a.lastModifiedTime().toMillis() > BASE_DATE.toEpochSecond(ZoneOffset.ofTotalSeconds(0)))
+                .map(path -> path.toFile()).collect(Collectors.toList()).get(0);*/
+
+//        val strings = Files.readAllLines(devmanfile.toPath());
+//        strings.forEach(s -> System.out.println(s));
+
+        assertThat(devmanfile).hasSameContentAs(new File(CORRECT_FILE));
     }
 }

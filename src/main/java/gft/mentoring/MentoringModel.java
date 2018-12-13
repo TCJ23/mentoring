@@ -1,7 +1,10 @@
 package gft.mentoring;
 
 import lombok.Builder;
+import lombok.Data;
+import lombok.Setter;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 
 /**
  * @author tzje
@@ -21,6 +24,9 @@ public class MentoringModel {
      * if this is B2B type of employment they're contractors.
      * @param leaver - person that has submitted resignation from work in GFT
      * @param menteesAssigned - for GFT Mentor number of current mentees assigned
+     * @param newMenteesAssigned - is used when assigning Best Matching Mentors to Mentee. It's a flag that removes best
+     *                           matching mentor from next iteration using strategy
+     * @see gft.mentoring.strategies.PreferDevManWithLowerNumberOfAssignedMenteesStrategy
      * @param age - we prefer experienced GFT Mentors starting from 30 years to 40
      */
 
@@ -36,4 +42,6 @@ public class MentoringModel {
     private int menteesAssigned;
     private int age;
     private boolean isMentee;
+    @NonFinal @Setter
+    private int newMenteesAssigned;
 }
