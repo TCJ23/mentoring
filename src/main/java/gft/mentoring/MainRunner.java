@@ -47,7 +47,7 @@ class MainRunner {
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-            throw new ExcelException("Files are missing or you have more than 2 files in same folder", e.getCause());
+            throw new ExcelException("Directory in which we launch devman is corrupted", e.getCause());
         }
     }
 
@@ -101,7 +101,7 @@ class MainRunner {
                     List<MentoringModel> proposals = matchingEngine.findProposals(mentee,
                             mentoringModels.toArray(new MentoringModel[0])).collect(Collectors.toList());
 
-                    markPreferredMentors(proposals);
+                    markBestMatchningMentorAsTaken(proposals);
 
                     devmanAssignmentsInfo.add(createDevmanInformationLines(mentee, proposals));
                 }
@@ -119,7 +119,7 @@ class MainRunner {
                 val menteeLine = formatMentee(mentee);
                 val index = new AtomicInteger(1);
                 val mentors = candidates.stream().map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
-                        .collect(Collectors.joining(" \n"));
+                        .collect(Collectors.joining("\n"));
 
                 return menteeLine + "\n" + mentors + "\n";
             }
@@ -130,7 +130,6 @@ class MainRunner {
                         + mentor.getFirstName() + " " + mentor.getLastName()
                         + "  LVL:" + mentor.getLevel() + " location:" + mentor.getLocalization()
                         + " Family:" + mentor.getFamily() + " Mentees: " + mentor.getMenteesAssigned() +
-                        " NOWE MENTOSY " + mentor.getNewMenteesAssigned() +
                         " spec:" + mentor.getSpecialization();
             }
 
@@ -138,11 +137,11 @@ class MainRunner {
             private String formatMentee(MentoringModel mentee) {
                 return "For mentee *" + mentee.getFirstName() + "* " + "*" + mentee.getLastName() + "*" +
                         " from Family:" + mentee.getFamily() + " location: " + mentee.getLocalization()
-                        + " spec: " + mentee.getSpecialization();
+                        + " spec:" + mentee.getSpecialization();
             }
         }
 
-        private void markPreferredMentors(List<MentoringModel> candidates) {
+        private void markBestMatchningMentorAsTaken(List<MentoringModel> candidates) {
             MentoringModel preferredMentor = candidates.get(0);
             preferredMentor.setNewMenteesAssigned(preferredMentor.getNewMenteesAssigned() + 1);
         }

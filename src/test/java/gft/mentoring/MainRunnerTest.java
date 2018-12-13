@@ -35,6 +35,7 @@ class MainRunnerTest {
     private static final String FILE_TO_WRITE = "./";
     private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "./ignoringMentorFromFirstIteration";
     private static final String CORRECT_FILE = "ignoringMentorFromFirstIteration_expected/correct file.txt";
+    public static final String NO_SUCH_DIRECTORY = "./trololololololo";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
@@ -52,7 +53,7 @@ class MainRunnerTest {
     }
 
     @Test
-    @DisplayName("7.2 - validate that missing files will throw custom ExcelException ")
+    @DisplayName("7.2a - validate that missing files will throw custom ExcelException ")
     void shouldThrowExcelExceptionWhenFilesAreMissingInTestingFolder() {
         //given & when
         //then
@@ -61,8 +62,21 @@ class MainRunnerTest {
                 .loadResources()
                 .mergeDataFromSystems());
         assertThat(exception.getMessage())
-//                .isEqualToIgnoringCase("File not found or inaccessible");
                 .isEqualToIgnoringCase("Files are missing or you have more than 2 files in same folder");
+        System.out.println(exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("7.2b - validate that missing files will throw custom ExcelException ")
+    void shouldThrowExcelExceptionWhenDirectoryIsCorrupted() {
+        //given & when
+        //then
+        Throwable exception = assertThrows(ExcelException.class, () -> new MainRunner(
+                new DevManConfig(BASE_DATE, NO_SUCH_DIRECTORY))
+                .loadResources()
+                .mergeDataFromSystems());
+        assertThat(exception.getMessage())
+                .isEqualToIgnoringCase("Directory in which we launch devman is corrupted");
         System.out.println(exception.getMessage());
     }
 
@@ -75,7 +89,7 @@ class MainRunnerTest {
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
         //then
-        Stream<Path> pathStream = Files.walk(Paths.get(FILE_TO_WRITE))
+        val pathStream = Files.walk(Paths.get(FILE_TO_WRITE))
                 .filter(path -> path.toString().endsWith(".txt"));
 
         assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
@@ -92,13 +106,12 @@ class MainRunnerTest {
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
         //then
-        /* val devmanfile = Files.walk(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
-                .filter(path -> path.toString().contains("devman")).findFirst().get().toFile();*/
 
-        Path devman = Files.list(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
+
+        val devman = Files.list(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
                 .filter(path -> path.getFileName().toString().matches("devman-proposals-\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}\\.txt"))
                 .sorted().findFirst().orElseThrow(FileNotFoundException::new);
-        File devmanfile = devman.toFile();
+        val devmanfile = devman.toFile();
 
         assertThat(devmanfile).hasSameContentAs(new File(CORRECT_FILE));
 
