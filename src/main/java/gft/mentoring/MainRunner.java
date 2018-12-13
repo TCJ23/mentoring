@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 
 class MainRunner {
 
-    private static LocalDateTime currentDate = LocalDateTime.now();
-    private static String directory = "./";
+    private LocalDateTime currentDate;
+    private String directory;
 
     MainRunner(DevManConfig conf) {
         directory = conf.getPath();
@@ -52,7 +52,7 @@ class MainRunner {
         }
     }
 
-    static class DataMerger {
+    class DataMerger {
 
         private final LocalDate currentDate;
         private final List<String> filenames;
@@ -76,7 +76,7 @@ class MainRunner {
             return new DataSaver(mentoringModels);
         }
 
-        static class DataSaver {
+        class DataSaver {
 
             private final List<MentoringModel> mentoringModels;
 
@@ -101,7 +101,7 @@ class MainRunner {
 
                 try {
                     Files.write(Paths.get(directory + "/devman-proposals-" +
-                            MainRunner.currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"))
+                            MainRunner.this.currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"))
                             + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
                     throw new ExcelException("Could not write to txt file ", e.getCause());
@@ -109,9 +109,9 @@ class MainRunner {
             }
 
             String createDevmanInformationLines(MentoringModel mentee, Stream<MentoringModel> candidates) {
-                String menteeLine = formatMentee(mentee);
-                AtomicInteger index = new AtomicInteger(1);
-                String mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
+                val menteeLine = formatMentee(mentee);
+                val index = new AtomicInteger(1);
+                val mentors = candidates.map(mentoringModel -> formatMentor(mentoringModel, index.getAndIncrement()))
                         .collect(Collectors.joining(" \n"));
 
                 return menteeLine + "\n" + mentors + "\n";
@@ -121,7 +121,7 @@ class MainRunner {
             private String formatMentor(MentoringModel mentor, int candidateOrder) {
                 return "we propose as number " + candidateOrder + " following candidate: "
                         + mentor.getFirstName() + " " + mentor.getLastName()
-                        + "  LVL:" + mentor.getLevel() + " location: " + mentor.getLocalization()
+                        + "  LVL:" + mentor.getLevel() + " location:" + mentor.getLocalization()
                         + " Family:" + mentor.getFamily() + " Mentees: " + mentor.getMenteesAssigned() +
                         " spec:" + mentor.getSpecialization();
             }
@@ -134,7 +134,7 @@ class MainRunner {
             }
         }
 
-        private static String getSAPfileName(List<String> fileNames) {
+        private String getSAPfileName(List<String> fileNames) {
             for (String file : fileNames) {
                 if (file.contains("SAP")) {
                     return file;
@@ -143,7 +143,7 @@ class MainRunner {
             return "";//TO DO return SAP SAMPLE GOLDEN FILE
         }
 
-        private static String getTRSfileName(List<String> fileNames) {
+        private String getTRSfileName(List<String> fileNames) {
             for (String file : fileNames) {
                 if (file.contains("employees")) {
                     return file;

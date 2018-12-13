@@ -78,12 +78,16 @@ class MainRunnerTest {
     @Test
     @DisplayName("7.4 - Once Best Mentor is proposed to Mentee, second Mentee should have proposed Next Best Mentor in line")
     void shouldAssignBestMentorToFirstMenteeThenNextBestMentorToSecondMentee()
-            throws ExcelException, InvalidFormatException {
+            throws ExcelException, InvalidFormatException, IOException {
         //given & when
         new MainRunner(new DevManConfig(BASE_DATE, IGNORE_MENTOR_FROM_FIRST_ITERATION))
                 .loadResources()
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
         //then
+        val devmanfile = Files.walk(Paths.get(IGNORE_MENTOR_FROM_FIRST_ITERATION))
+                .filter(path -> path.toString().endsWith(".txt")).findFirst().get();
+        val strings = Files.readAllLines(devmanfile);
+        strings.forEach(s -> System.out.println(s));
     }
 }
