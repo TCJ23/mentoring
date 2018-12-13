@@ -100,7 +100,7 @@ class MainRunner {
                 }
 
                 try {
-                    Files.write(Paths.get(directory + "/devman-proposals-" +
+                    Files.write(Paths.get(directory, "devman-proposals-" +
                             MainRunner.this.currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"))
                             + ".txt"), devmanAssignmentsInfo);
                 } catch (IOException e) {
