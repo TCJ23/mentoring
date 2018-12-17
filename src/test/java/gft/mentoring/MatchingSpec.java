@@ -318,18 +318,23 @@ class MatchingSpec {
     void shouldPreferMentorWithLessMenteesAssigned() {
         //given
         val mentee = newMentee().build();
-        val bigAmountofMentees = newMentor().menteesAssigned(5).build();
-        val smallAmountofMentees = newMentor().menteesAssigned(3).build();
-        val zeroMenteesAssigned = newMentor().menteesAssigned(0).build();
+        val bigAmountofMentees = newMentor().level(7).menteesAssigned(4).build();
+        val smallAmountofMentees = newMentor().level(7).menteesAssigned(3).build();
+        val zeroMenteesAssigned = newMentor().level(7).menteesAssigned(0).build();
         //when
         val proposals = new MatchingEngine().findProposals(mentee, bigAmountofMentees, smallAmountofMentees, zeroMenteesAssigned
         ).collect(Collectors.toList());
         val proposalsStrm = new MatchingEngine().findProposals(mentee, bigAmountofMentees, smallAmountofMentees, zeroMenteesAssigned);
         //then
         val proposedMentor = proposals.get(0);
+        val secondProposal = proposals.get(1);
+        val thirdProposal = proposals.get(2);
         val proposedMentorStrm = proposalsStrm.findFirst();
 
-        assertThat(proposedMentor.equals(zeroMenteesAssigned)).isTrue();
+        assertThat(proposals.size()).isEqualTo(3);
+        assertThat(proposedMentor).isEqualTo(zeroMenteesAssigned);
+        assertThat(secondProposal).isEqualTo(smallAmountofMentees);
+        assertThat(thirdProposal).isEqualTo(bigAmountofMentees);
         assertThat(proposedMentorStrm.isPresent() && proposedMentorStrm.get().equals(zeroMenteesAssigned)).isTrue();
     }
 

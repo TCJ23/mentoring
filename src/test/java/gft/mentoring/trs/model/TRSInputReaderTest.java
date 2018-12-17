@@ -86,7 +86,7 @@ class TRSInputReaderTest {
      with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputTest.exceptionInvalidFormat
     */
     void exceptionInvalidFormat() throws IOException {
-        File tempFile = File.createTempFile("123", "");
+        File tempFile = File.createTempFile("456", "");
         Throwable exception = assertThrows(ExcelException.class, () -> new TRSInputReader().readExcelTRSfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());

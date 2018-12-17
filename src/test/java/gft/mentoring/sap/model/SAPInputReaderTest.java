@@ -85,7 +85,7 @@ class SAPInputReaderTest {
     @Test
     @DisplayName("2.1.2a - test EmptyFileException, when incorrect file is given ")
     void incorrectFileGiven() throws IOException {
-        File tempFile = File.createTempFile("123", "");
+        File tempFile = File.createTempFile("789", "");
         FileChannel channel = new RandomAccessFile(tempFile.getName(), "rw").getChannel();
         FileLock lock = channel.lock();
         Throwable exception = assertThrows(EmptyFileException.class, () -> new SAPInputReader().readExcelSAPfile(tempFile.getName()));
@@ -100,7 +100,7 @@ class SAPInputReaderTest {
     @DisplayName("2.1.2b - test EmptyFileException, when incorrect file is given ")
         /* with wrong assertion exception thrown is at gft.mentoring.sap.model.SAPInputReaderTest.exceptionInvalidFormat*/
     void exceptionInvalidFormat() throws IOException {
-        File tempFile = File.createTempFile("123", "");
+        File tempFile = File.createTempFile("1011", "");
         Throwable exception = assertThrows(ExcelException.class, () -> new SAPInputReader().readExcelSAPfile(tempFile.getName()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());

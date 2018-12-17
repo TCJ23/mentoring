@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @implNote you will notice some hardcoded values, in this place we are exlpainig why?
  * Assumption is that Mentee always prefers Mentor with less Mentees currently assigned
  */
-public class PreferDevManWithLowerNumberOfAssignedMenteesStrategy implements VotingStrategy {
+public class PreferNextAvailableDevManWhenIteratingOverCandidates implements VotingStrategy {
     /**
      * @param mentor - we assumed that 5 mentees for 1 mentor in GFT is maximum one person can manage for taking GFT Poland
      *               experience as live example
@@ -32,7 +32,8 @@ public class PreferDevManWithLowerNumberOfAssignedMenteesStrategy implements Vot
          * we are faking count based on new field
          * @see MentoringModel#newMenteesAssigned
          * */
-        val points = (-20 * mentor.getMenteesAssigned()) + 100;
+
+        val points = (-20 * mentor.getNewMenteesAssigned()) + 100;
         if (points <= 0) {
             return Neutral.INSTANCE;
         }

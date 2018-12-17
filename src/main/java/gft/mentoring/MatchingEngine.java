@@ -14,6 +14,13 @@ import java.util.stream.Stream;
 
 class MatchingEngine {
 
+    /**
+     * Order of strategies is important,
+     * @see PreferNextAvailableDevManWhenIteratingOverCandidates#calculateSympathy(MentoringModel, MentoringModel)
+     * must be run before
+     * @see PreferDevManWithLowerNumberOfAssignedMenteesStrategy#calculateSympathy(MentoringModel, MentoringModel)
+     * please check tests 1.12 & 7.4
+     * */
     static VotingStrategy[] strategies = {
             new IgnoreLeaversStrategy(),
             new IgnoreContractorsStrategy(),
@@ -32,8 +39,9 @@ class MatchingEngine {
             new PreferDevManFromSameSpecializationStrategy(),
             new PreferDevManWithHigherLevelStrategy(),
             new PreferDevManWithHigherSeniorityStrategy(),
-            new PreferDevManWithLowerNumberOfAssignedMenteesStrategy(),
             new PreferDevManThatIsOlderThan30YearsOldStrategy(),
+            new PreferNextAvailableDevManWhenIteratingOverCandidates(),
+            new PreferDevManWithLowerNumberOfAssignedMenteesStrategy(),
     };
 
     Stream<MentoringModel> findProposals(MentoringModel mentee, MentoringModel... candidates) {
