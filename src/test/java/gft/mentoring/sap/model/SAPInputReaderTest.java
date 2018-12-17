@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,8 +29,8 @@ import static org.mockito.Mockito.when;
 @DisplayName("2 - Main class to test SAP INPUT")
 class SAPInputReaderTest {
 
-    private static final String SAP_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
-    private static final String BROKEN_FILE = "./broken-file.xlsx";
+    private static final String SAP_FILE = "src/test/Sample_SAP_DevMan_main_SAMPLE.xlsx";
+    private static final String BROKEN_FILE = "src/test/broken-file.xlsx";
 
     private static final int COLUMNS_COUNT = 13;
     private static final int FIRST_ROW = 0;
@@ -92,6 +93,7 @@ class SAPInputReaderTest {
         System.out.println(exception.getMessage());
         lock.close();
         tempFile.deleteOnExit();
+        Files.delete(tempFile.toPath());
     }
 
     @Test
@@ -103,6 +105,7 @@ class SAPInputReaderTest {
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
         tempFile.deleteOnExit();
+        Files.delete(tempFile.toPath());
     }
 
     @Test

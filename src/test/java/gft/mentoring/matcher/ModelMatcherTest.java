@@ -20,21 +20,17 @@ import java.time.temporal.ChronoUnit;
 @DisplayName("6 - Main class to test Matcher Component")
 class ModelMatcherTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String TRS_2_MENTEES_ASSIGNED = "TRS_2MenteesAssigned.xlsx";
-    private static final String SAP_2_MENTEES_ASSIGNED = "SAP_2MenteesAssigned.xlsx";
-    private static final String SAP_AGE_EXAMPLES = "SAP_age_conversion_check.xlsx";
-    private static final String SAP_SENIORITY_EXAMPLE = "SAP_seniority_conversion_check.xlsx";
-    private static final String TRS_LEAVER_EXAMPLES = "TRS_Leaver_Examples.xlsx";
-    private static final String SAP_RANDOM = "SAP_random.xlsx";
-    private static final String TRS_RANDOM = "TRS_random.xlsx";
-    private static final String SAP_MULTI_AND_ZERO_MATCHES = "SAP_duplicate_with_zero_match_entires.xlsx";
-    private static final String TRS_MULTI_AND_ZERO_MATCHES = "TRS_duplicate_with_zero_match_entires.xlsx";
-    private static final String SAP_ONE_TO_ONE = "SAP_OneToOneMatch_solid_example.xlsx";
-    private static final String TRS_ONE_TO_ONE = "TRS_OneToOneMatch_solid_example.xlsx";
-    private static final String SAP_3_PEOPLE_TO_MATCH = "SAP_3people_toMatch.xlsx";
-    private static final String TRS_3_PEOPLE_TO_MATCH = "TRS_3people_toMatch.xlsx";
-    private static final String SAP_IS_MENTEE_EXAMPLE = "SAP_marking_mentees_from_MentorIDColumn.xlsx";
-    private static final String TRS_MARKING_MENTEES = "TRS_marking_mentees_from_MentorIDColumn.xlsx";
+    private static final String SAP_AGE_EXAMPLES = "src/test/SAP_age_conversion_check.xlsx";
+    private static final String SAP_SENIORITY_EXAMPLE = "src/test/SAP_seniority_conversion_check.xlsx";
+    private static final String TRS_LEAVER_EXAMPLES = "src/test/TRS_Leaver_Examples.xlsx";
+    private static final String SAP_RANDOM = "src/test/SAP_random.xlsx";
+    private static final String TRS_RANDOM = "src/test/TRS_random.xlsx";
+    private static final String SAP_MULTI_AND_ZERO_MATCHES = "src/test/SAP_duplicate_with_zero_match_entires.xlsx";
+    private static final String TRS_MULTI_AND_ZERO_MATCHES = "src/test/TRS_duplicate_with_zero_match_entires.xlsx";
+    private static final String SAP_3_PEOPLE_TO_MATCH = "src/test/SAP_3people_toMatch.xlsx";
+    private static final String TRS_3_PEOPLE_TO_MATCH = "src/test/TRS_3people_toMatch.xlsx";
+    private static final String SAP_IS_MENTEE_EXAMPLE = "src/test/SAP_marking_mentees_from_MentorIDColumn.xlsx";
+    private static final String TRS_MARKING_MENTEES = "src/test/TRS_marking_mentees_from_MentorIDColumn.xlsx";
 
 
     @Test

@@ -10,7 +10,7 @@ import java.util.List;
 
 /** This class is used mainly for debugging and exercising within APACHE POI LIBRARY ! */
 class ExcelValidator {
-    private static final String GOLDEN_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
+    private static final String GOLDEN_FILE = "src/test/Sample_SAP_DevMan_main_SAMPLE.xlsx";
 
     boolean verifyExcelColumnOrder(@NotNull String fileName) throws ExcelException {
         try {

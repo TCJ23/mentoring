@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("5 - Main class for validating TRS conversion to intermediate Mentoring Model ")
 class ConvertTRSTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String TRS_FILE = "./Sample_TRS_DevMan_main_SAMPLE.xlsx";
+    private static final String TRS_FILE = "src/test/Sample_TRS_DevMan_main_SAMPLE.xlsx";
     private static final int firstRow = 0;
     private static final int nameCol = 0;
     private static final int surnameCol = 1;

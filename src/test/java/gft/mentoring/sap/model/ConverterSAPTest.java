@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("3 - Main class to test conversion from SAP file to Mentoring Model")
 class ConverterSAPTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String SAP_FILE = "./Sample_SAP_DevMan_main_SAMPLE.xlsx";
-    private static final String TRS_2_MENTEES_ASSIGNED = "TRS_2MenteesAssigned.xlsx";
-    private static final String SAP_2_MENTEES_ASSIGNED = "SAP_2MenteesAssigned.xlsx";
-    private static final String SAP_0_MENTEES_ASSIGNED_OR_BLANK = "SAP_0MenteesAssigned_or_Blank.xlsx";
+    private static final String SAP_FILE = "src/test/Sample_SAP_DevMan_main_SAMPLE.xlsx";
+    private static final String TRS_2_MENTEES_ASSIGNED = "src/test/TRS_2MenteesAssigned.xlsx";
+    private static final String SAP_2_MENTEES_ASSIGNED = "src/test/SAP_2MenteesAssigned.xlsx";
+    private static final String SAP_0_MENTEES_ASSIGNED_OR_BLANK = "src/test/SAP_0MenteesAssigned_or_Blank.xlsx";
     private static final int firstRow = 0;
     private static final String[] COLUMN_NAMES = new String[]{"first name", "last name", "initials",
             "pers.no.", "employee subgroup", "job family",

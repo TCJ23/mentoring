@@ -1,4 +1,4 @@
 git pull
 call mvnw.cmd clean package -DskipTests
-call java -jar target\devman-generator-1.0-SNAPSHOT.jar
+call java -jar target\devman-generator-ver-1.0.jar
 pause

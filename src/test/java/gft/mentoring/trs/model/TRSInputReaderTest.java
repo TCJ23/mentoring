@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("4 - Main Class for validating TRS INPUT")
 class TRSInputReaderTest {
     private static final LocalDate BASE_DATE = LocalDate.now();
-    private static final String TRS_FILE = "./Sample_TRS_DevMan_main_SAMPLE.xlsx";
+    private static final String TRS_FILE = "src/test/Sample_TRS_DevMan_main_SAMPLE.xlsx";
     private static final int firstRow = 0;
     private static final int nameCol = 0;
     private static final int surnameCol = 1;
@@ -77,6 +77,7 @@ class TRSInputReaderTest {
         System.out.println(exception.getMessage());
         lock.close();
         tempFile.deleteOnExit();
+        Files.delete(tempFile.toPath());
     }
 
     @Test
@@ -90,6 +91,7 @@ class TRSInputReaderTest {
         assertThat(exception.getMessage()).isEqualToIgnoringCase("File not found or inaccessible");
         System.out.println(exception.getMessage());
         tempFile.deleteOnExit();
+        Files.delete(tempFile.toPath());
     }
 
     @Test
