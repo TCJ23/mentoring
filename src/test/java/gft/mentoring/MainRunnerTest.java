@@ -89,11 +89,18 @@ class MainRunnerTest {
                 .mergeDataFromSystems()
                 .saveProposalsToFile();
         //then
-        val pathStream = Files.walk(Paths.get(FILE_TO_WRITE))
+        val pathStream = Files.walk(Paths.get(HAPPY_PATH_TEST))
                 .filter(path -> path.toString().endsWith(".txt"));
 
-        assertThat(Files.exists(Paths.get(FILE_TO_WRITE))).isTrue();
+        assertThat(Files.exists(Paths.get(HAPPY_PATH_TEST))).isTrue();
         assertThat(pathStream.findFirst().isPresent()).toString().startsWith("devman-proposals-");
+
+        val devman = Files.list(Paths.get(HAPPY_PATH_TEST))
+                .filter(path -> path.getFileName().toString().matches("devman-proposals-\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}\\.txt"))
+                .sorted().findFirst().orElseThrow(FileNotFoundException::new);
+        val devmanfile = devman.toFile();
+        Files.delete(devmanfile.toPath());
+
     }
 
     @Test
