@@ -80,7 +80,7 @@ class MatchingEngine {
         /**
          * first we need to collect VotingResults
          * @see {@link gft.mentoring.VotingResult}*/
-        List<VotingResult> votings = new ArrayList<>();
+        val votings = new ArrayList<VotingResult>();
         for (val strategy : strategies) {
             val result = strategy.calculateSympathy(mentee, mentor);
             votings.add(result);

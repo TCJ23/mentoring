@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("7 - This class will run E2E tests for this application")
 class MainRunnerTest {
     private static final LocalDateTime BASE_DATE = LocalDateTime.now();
-    private static final String TESTING_DIRECTORY = "./findFilesTest";
-    private static final String MISSING_FILE_TEST = "./missingFileTest";
-    private static final String HAPPY_PATH_TEST = "./happyPathTest";
+    private static final String TESTING_DIRECTORY = "src/test/findFilesTest";
+    private static final String MISSING_FILE_TEST = "src/test/missingFileTest";
+    private static final String HAPPY_PATH_TEST = "src/test/happyPathTest";
     private static final String FILE_TO_WRITE = "./";
-    private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "./ignoringMentorFromFirstIteration";
-    private static final String CORRECT_FILE = "ignoringMentorFromFirstIteration_expected/correct file.txt";
+    private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "src/test/ignoringMentorFromFirstIteration";
+    private static final String CORRECT_FILE = "src/test/ignoringMentorFromFirstIteration_expected/correct file.txt";
     private static final String NO_SUCH_DIRECTORY = "./trololololololo";
 
     @Test
