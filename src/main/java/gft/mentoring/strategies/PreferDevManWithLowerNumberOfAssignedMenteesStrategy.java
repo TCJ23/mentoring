@@ -26,8 +26,14 @@ public class PreferDevManWithLowerNumberOfAssignedMenteesStrategy implements Vot
          * we will use linear equation approach
          * if Mentor has 5 mentees he should score 0 points in Supporting Voting Result
          * if Mentor has 0 mentees he should score 100 points in Supporting Voting Result
+         * because we want to keep original amount of mentees in print out for Business Owner
+         * @weronika when we increment through proposals
+         * @see MatchingEngine#findProposals(MentoringModel, MentoringModel...)
+         * we are faking count based on new field
+         * @see MentoringModel#newMenteesAssigned
          * */
-        val points = (-20 * mentor.getMenteesAssigned()) + 100;
+//        val points = (-20 * mentor.getMenteesAssigned()) + 100;
+        val points = (-20 * mentor.getNewMenteesAssigned()) + 100;
         if (points <= 0) {
             return Neutral.INSTANCE;
         }
