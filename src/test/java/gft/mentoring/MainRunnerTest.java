@@ -35,7 +35,7 @@ class MainRunnerTest {
     private static final String FILE_TO_WRITE = "./";
     private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "./ignoringMentorFromFirstIteration";
     private static final String CORRECT_FILE = "ignoringMentorFromFirstIteration_expected/correct file.txt";
-    public static final String NO_SUCH_DIRECTORY = "./trololololololo";
+    private static final String NO_SUCH_DIRECTORY = "./trololololololo";
 
     @Test
     @DisplayName("7.1 - validate that loading resources finds proper files in testing folder")
