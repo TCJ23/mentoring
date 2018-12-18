@@ -1,7 +1,6 @@
 package gft.mentoring;
 
 import gft.mentoring.sap.model.ExcelException;
-import lombok.Value;
 import lombok.val;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.jupiter.api.DisplayName;
@@ -12,19 +11,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("7 - This class will run E2E tests for this application")
 class MainRunnerTest {
@@ -32,7 +23,6 @@ class MainRunnerTest {
     private static final String TESTING_DIRECTORY = "src/test/findFilesTest";
     private static final String MISSING_FILE_TEST = "src/test/missingFileTest";
     private static final String HAPPY_PATH_TEST = "src/test/happyPathTest";
-    private static final String FILE_TO_WRITE = "./";
     private static final String IGNORE_MENTOR_FROM_FIRST_ITERATION = "src/test/ignoringMentorFromFirstIteration";
     private static final String CORRECT_FILE = "src/test/ignoringMentorFromFirstIteration_expected/correct file.txt";
     private static final String NO_SUCH_DIRECTORY = "./trololololololo";
@@ -44,7 +34,8 @@ class MainRunnerTest {
         MainRunner.DataMerger dataMerger = new MainRunner(new DevManConfig(BASE_DATE, TESTING_DIRECTORY))
                 .loadResources();
         //then
-        /** due to Linux/Windows naming convention this assertions breaks build
+        /**
+         *  due to Linux/Windows naming convention this assertions breaks build
          assertThat(files).containsExactlyInAnyOrder(".\\findFilesTest\\employees-basic-report.xlsx",
          ".\\findFilesTest\\SAP_04122018.xlsx");
          * */
